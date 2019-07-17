@@ -3,12 +3,11 @@
 #
 import math
 
-from orientation import Orientation
-from commonOps import determinant2, determinant3, inner_product4, isZero
-from euclidean3 import VectorE3
-from euclidean2 import PointE2
-import spherical2
-from lazy import lazyproperty
+from .orientation import Orientation
+from .commonOps import determinant2, determinant3, inner_product4, isZero
+from .euclidean3 import VectorE3
+from .euclidean2 import PointE2
+from . import spherical2
 
 class PointOP2:
 
@@ -16,6 +15,11 @@ class PointOP2:
         self.hx = hx
         self.hy = hy
         self.hw = hw
+        
+    def __iter__(self):
+        yield self.hx
+        yield self.hy
+        yield self.hw
     
     def distSqTo(self, p):
         dx = p.hx / p.hw - self.hx / self.hw
@@ -43,6 +47,12 @@ class DiskOP2:
         self.b = b
         self.c = c
         self.d = d
+        
+    def __iter__(self):
+        yield self.a
+        yield self.b
+        yield self.c
+        yield self.d
     
     @classmethod
     def fromPointOP2(cls, p1, p2, p3):
@@ -95,15 +105,15 @@ class DiskOP2:
     def isLine(self):
         return isZero(self.a)
     
-    @lazyproperty
+    @property
     def center(self):
         return PointOP2(-self.b, -self.c, 2.0*self.a)
     
-    @lazyproperty
+    @property
     def radiusSq(self):
         return self.center.x*self.center.x + self.center.y * self.center.y - (self.d/self.a)
     
-    @lazyproperty
+    @property
     def radius(self):
         return math.sqrt(self.radiusSq)
     
@@ -213,6 +223,11 @@ class CircleArcOP2:
         self.source = source
         self.target = target
         self.disk   = disk
+        
+    def __iter__(self):
+        yield tuple(self.source)
+        yield tuple(self.target)
+        yield tuple(self.disk)
     
     @classmethod
     def fromPointOP2(cls, p1, p2, p3):
@@ -260,6 +275,11 @@ class LineOP2:
         self.a = a
         self.b = b
         self.c = c
+        
+    def __iter__(self):
+        yield self.a
+        yield self.b
+        yield self.c
     
     def intersectWithLineOP2(self, line2): 
         detx =  determinant2(self.b, self.c, line2.b, line2.c)
@@ -278,6 +298,11 @@ class VectorOP2:
         self.hx = hx
         self.hy = hy
         self.hw = hw
+        
+    def __iter__(self):
+        yield self.hx
+        yield self.hy
+        yield self.hw
         
     @classmethod
     def fromVectorOP2(cls, v):

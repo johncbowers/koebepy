@@ -9,6 +9,10 @@ class PointE2:
     def __init__(self, x = 0.0, y = 0.0):
         self.x = x
         self.y = y
+        
+    def __iter__(self):
+        yield self.x
+        yield self.y
     
     @classmethod
     def fromPointE2(cls, p):
@@ -47,6 +51,10 @@ class VectorE2:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        
+    def __iter__(self):
+        yield self.x
+        yield self.y
     
     def __add__(self, other):
         return VectorE2(self.x + other.x, 

@@ -3,10 +3,10 @@
 #
 
 import math
-from lazy import lazyproperty
 
-from commonOps import *
-from orientedProjective3 import PointOP3
+from .commonOps import *
+from .orientedProjective3 import PointOP3
+from enum import Enum
 
 class PointE3:
     
@@ -14,6 +14,11 @@ class PointE3:
         self.x = x
         self.y = y
         self.z = z
+        
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
         
     @classmethod
     def fromPointE3(cls, p):
@@ -56,6 +61,11 @@ class VectorE3:
         self.x = x
         self.y = y
         self.z = z
+        
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
         
     @classmethod
     def fromVectorE3(cls, v):
@@ -118,6 +128,11 @@ class DirectionE3:
     def __init__(self, vec):
         self.vec = vec
         self.__v = None
+        
+    def __iter__(self):
+        yield self.v.x
+        yield self.v.y
+        yield self.v.z
     
     @classmethod
     def fromDirectionE3(cls,d):
@@ -168,6 +183,10 @@ class PlaneE3:
     def __init__(self, N = VectorE3(0,0,1), d = 0):
         self.N = N
         self.d = d
+        
+    def __iter__(self):
+        yield tuple(self.N)
+        yield self.d
     
     @classmethod
     def fromPlaneE3(cls, p):
@@ -201,6 +220,41 @@ class PlaneE3:
     def __str__(self):
         return f"PlaneE3(N={self.N}, d={self.d})"
 # END PlaneE3
+
+class DominantE3(Enum):
+    E3_POSX = VectorE3(1.0, 0.0, 0.0)
+    E3_NEGX = VectorE3(-1.0, 0.0, 0.0)
+    E3_POSY = VectorE3(0.0, 1.0, 0.0)
+    E3_NEGY = VectorE3(0.0, -1.0, 0.0)
+    E3_POSZ = VectorE3(0.0, 0.0, 1.0)
+    E3_NEGZ = VectorE3(0.0, 0.0, -1.0)
+
+def dominant(dx, dy, dz):
+    dxabs = dx if (dx >= 0.0) else -dx
+    dyabs = dy if (dy >= 0.0) else -dy
+    dzabs = dz if (dz >= 0.0) else -dz
+
+    if (dxabs >= dyabs and dxabs >= dzabs):
+        return DominantE3.E3_POSX if (dx > 0.0) else DominantE3.E3_NEGX
+    elif(dyabs >= dzabs):
+        return DominantE3.E3_POSY if (dy > 0.0) else DominantE3.E3_NEGY
+    else:
+        return DominantE3.E3_POSZ if (dz > 0.0) else DominantE3.E3_NEGZ
+
+def least_dominant(dx, dy, dz):
+    dxabs = dx if (dx >= 0.0) else -dx
+    dyabs = dy if (dy >= 0.0) else -dy
+    dzabs = dz if (dz >= 0.0) else -dz
+
+    if (dxabs <= dyabs and dxabs <= dzabs):
+        return DominantE3.E3_POSX if (dx >= 0.0) else DominantE3.E3_NEGX
+    elif (dyabs <= dzabs):
+        return DominantE3.E3_POSY if (dy >= 0.0) else DominantE3.E3_NEGY
+    else:
+        return DominantE3.E3_POSZ if (dz >= 0.0) else DominantE3.E3_NEGZ
+    
+def least_dominant_VectorE3(v):
+    return least_dominant(v.x, v.y, v.z)
 
 # Class Objects
 PointE3.O      = PointE3()

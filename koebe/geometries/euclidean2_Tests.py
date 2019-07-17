@@ -1,7 +1,7 @@
 import unittest
 
 import math
-from euclidean2 import PointE2, VectorE2
+from .euclidean2 import PointE2, VectorE2
 
 class TestPointE2(unittest.TestCase):
 

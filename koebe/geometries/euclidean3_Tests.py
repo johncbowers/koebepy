@@ -1,8 +1,8 @@
 import unittest
 
 import math
-from euclidean3 import *
-from orientedProjective3 import *
+from .euclidean3 import *
+from .orientedProjective3 import *
 
 class TestPointE3(unittest.TestCase):
     def test_fromPointE3(self):

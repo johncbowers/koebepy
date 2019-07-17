@@ -2,7 +2,7 @@
 # Extended Complex Numbers (includes representations at infinity)
 #
 
-import spherical2
+from . import spherical2
 
 def absSq(z):
     return z.real * z.real + z.imag * z.imag
@@ -14,6 +14,10 @@ class ExtendedComplex:
         self.w = w
         if z == 0 and w == 0:
             raise ValueError("z and w cannot both be 0")
+        
+    def __iter__(self):
+        yield self.z
+        yield self.w
     
     @classmethod
     def fromExtendedComplex(cls, z):

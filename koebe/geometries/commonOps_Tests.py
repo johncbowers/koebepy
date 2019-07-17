@@ -1,6 +1,6 @@
 
 import unittest 
-from commonOps import *
+from .commonOps import *
 
 class TestCommonOps(unittest.TestCase):
     def test_isZero(self):

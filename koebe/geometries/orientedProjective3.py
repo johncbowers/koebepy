@@ -3,9 +3,8 @@
 #
 
 import math
-import euclidean3
-
-from commonOps import determinant2, isZero, are_dependent4, inner_product4
+from . import euclidean3
+from .commonOps import determinant2, isZero, are_dependent4, inner_product4
 
 class LineOP3:
     def __init__(self, p01, p02, p03, p12, p13, p23):
@@ -15,6 +14,14 @@ class LineOP3:
         self.p12 = p12
         self.p13 = p13
         self.p23 = p23
+        
+    def __iter__(self):
+        yield self.p01
+        yield self.p02
+        yield self.p03
+        yield self.p12
+        yield self.p13
+        yield self.p23
     
     @classmethod
     def fromPointOP3(cls, p1, p2):
@@ -116,6 +123,12 @@ class PointOP3:
         self.hy = hy
         self.hz = hz
         self.hw = hw
+        
+    def __iter__(self):
+        yield self.hx
+        yield self.hy
+        yield self.hz
+        yield self.hw
     
     @classmethod
     def fromPointOP3(cls, p):
@@ -196,6 +209,12 @@ class PlaneOP3:
         self.Y = Y
         self.Z = Z
         self.W = W
+        
+    def __iter__(self):
+        yield self.X
+        yield self.Y
+        yield self.Z
+        yield self.W
     
     @classmethod
     def fromPointOP3(cls, p1, p2, p3):
@@ -235,6 +254,12 @@ class VectorOP3:
         self.hy = hy
         self.hz = hz
         self.hw = hw
+        
+    def __iter__(self):
+        yield self.hx
+        yield self.hy
+        yield self.hz
+        yield self.hw
     
     @classmethod
     def fromVectorOP3(self, v):

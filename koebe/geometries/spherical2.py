@@ -2,12 +2,12 @@
 # Geometry of the Riemann Sphere S2
 #
 
-from euclidean2 import PointE2
-from euclidean3 import DirectionE3, VectorE3
-from orientedProjective2 import PointOP2
-from orientedProjective3 import PointOP3, PlaneOP3
-from extendedComplex import ExtendedComplex
-from commonOps import determinant2, determinant3
+from .euclidean2 import PointE2
+from .euclidean3 import DirectionE3, VectorE3, least_dominant_VectorE3, PointE3
+from .orientedProjective2 import PointOP2
+from .orientedProjective3 import PointOP3, PlaneOP3
+from .extendedComplex import ExtendedComplex
+from .commonOps import determinant2, determinant3, inner_product31
 import math
 from enum import Enum
 
@@ -17,6 +17,11 @@ class PointS2:
         self.x = x
         self.y = y
         self.z = z
+    
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
     
     @classmethod
     def fromVector(cls, v):
@@ -28,7 +33,7 @@ class PointS2:
     
     @property
     def directionE3(self):
-        return DirectionE3(VectorE3(x, y, z))
+        return DirectionE3(VectorE3(self.x, self.y, self.z))
     
     def __neg__(self):
         return self.antipode
@@ -72,6 +77,12 @@ class DiskS2:
         self.c = c
         self.d = d
     
+    def __iter__(self):
+        yield self.a
+        yield self.b
+        yield self.c
+        yield self.d
+        
     @classmethod
     def fromDiskS2(cls, disk):
         return cls(disk.a, disk.b, disk.c, disk.d)
@@ -114,7 +125,7 @@ class DiskS2:
     
     @property
     def basis1(self):
-        return least_dominant(VectorE3(self.a, self.b, self.c)).vec.cross(VectorE3(self.a, self.b, self.c))
+        return least_dominant_VectorE3(VectorE3(self.a, self.b, self.c)).value.cross(VectorE3(self.a, self.b, self.c))
     
     @property 
     def basis2(self):
@@ -269,30 +280,16 @@ class CPlaneS2:
         self.c = c
         self.d = d
     
+    def __iter__(self):
+        yield self.a
+        yield self.b
+        yield self.c
+        yield self.d
+        
     @classmethod
     def throughThreeDiskS2(cls, disk1, disk2, disk3):
-        return cls(
-                    a = + determinant(
-                            disk1.b, disk1.c, disk1.d,
-                            disk2.b, disk2.c, disk2.d,
-                            disk3.b, disk3.c, disk3.d
-                    ),
-                    b = - determinant(
-                            disk1.a, disk1.c, disk1.d,
-                            disk2.a, disk2.c, disk2.d,
-                            disk3.a, disk3.c, disk3.d
-                    ),
-                    c = + determinant(
-                            disk1.a, disk1.b, disk1.d,
-                            disk2.a, disk2.b, disk2.d,
-                            disk3.a, disk3.b, disk3.d
-                    ),
-                    d = - determinant(
-                            disk1.a, disk1.b, disk1.c,
-                            disk2.a, disk2.b, disk2.c,
-                            disk3.a, disk3.b, disk3.c
-                    )
-                  )
+        return join(disk1, disk2, disk3)
+    
     @property
     def dualDiskS2(self):
         return DiskS2(-self.a, -self.b, -self.c, self.d)
@@ -347,16 +344,20 @@ def join(disk1, disk2, disk3):
 
 def meet(plane1, plane2, plane3):
     return DiskS2(
-                    a = + determinant3(plane1.b, plane1.c, plane1.d,
+                    a = + determinant3(
+                            plane1.b, plane1.c, plane1.d,
                             plane2.b, plane2.c, plane2.d,
                             plane3.b, plane3.c, plane3.d),
-                    b = - determinant3(plane1.a, plane1.c, plane1.d,
+                    b = - determinant3(
+                            plane1.a, plane1.c, plane1.d,
                             plane2.a, plane2.c, plane2.d,
                             plane3.a, plane3.c, plane3.d),
-                    c = + determinant3(plane1.a, plane1.b, plane1.d,
+                    c = + determinant3(
+                            plane1.a, plane1.b, plane1.d,
                             plane2.a, plane2.b, plane2.d,
                             plane3.a, plane3.b, plane3.d),
-                    d = - determinant3(plane1.a, plane1.b, plane1.c,
+                    d = - determinant3(
+                            plane1.a, plane1.b, plane1.c,
                             plane2.a, plane2.b, plane2.c,
                             plane3.a, plane3.b, plane3.c)
                  )
