@@ -243,10 +243,10 @@ class DiskS2:
                )
 
         return DiskS2(
-                a - 2 * fact * diskS2.a,
-                b - 2 * fact * diskS2.b,
-                c - 2 * fact * diskS2.c,
-                d - 2 * fact * diskS2.d
+                self.a - 2 * fact * diskS2.a,
+                self.b - 2 * fact * diskS2.b,
+                self.c - 2 * fact * diskS2.c,
+                self.d - 2 * fact * diskS2.d
         )
     
     def sgProjectToOP2(self):

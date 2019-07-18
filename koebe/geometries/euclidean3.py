@@ -55,6 +55,32 @@ class PointE3:
     
 # END PointE3
 
+class SegmentE3:
+    def __init__(self, source, target):
+        self.source = source
+        self.target = target
+    
+    def __iter__(self):
+        yield tuple(self.source)
+        yield tuple(self.target)
+    
+    @property
+    def lengthSq(self):
+        return self.target.distSqTo(self.source)
+    
+    @property
+    def length(self):
+        return self.target.distTo(self.source)
+    
+    def pointAlongAt(self, t):
+        return ((1.0 - t) * self.source.toVectorE3() + t * self.target.toVectorE3()).toPointE3()
+
+    def closestPointE3To(self, p):
+        t = max(0.0, min(1.0, (p - self.source).dot(self.target - self.source) / self.lengthSq))
+        return self.pointAlongAt(t)
+    
+# END SegmentE3
+
 class VectorE3:
     
     def __init__(self, x, y, z):
