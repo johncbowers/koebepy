@@ -175,6 +175,36 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             p.ellipse(0, 0, diameter, diameter, 48);
             
         }
+        
+        p.drawPolygon = function(polygonData) {
+            let polygon = polygonData["vertices"];
+            p.beginShape();
+            polygon.forEach(v => {
+                p.vertex(v[0], v[1], v[2]);
+            });
+            p.endShape();
+        }
+        
+        p.drawPolygons = function (polygonsData) {
+            let polygons = polygonsData["polygons"];
+            polygons.forEach(polygon => {
+                p.beginShape();
+                polygon.forEach(v => {
+                    p.vertex(v[0], v[1], v[2]);
+                });
+                p.endShape();
+            });
+        }
+        
+        p.drawSegmentE3 = function (segData) {
+            let endpoints = segData["endpoints"];
+            p.line(endpoints[0][0],
+                   endpoints[0][1],
+                   endpoints[0][2],
+                   endpoints[1][0],
+                   endpoints[1][1],
+                   endpoints[1][2]);
+        }
 
         p.draw = function () {
             
@@ -185,21 +215,6 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             }
             
             p.background('#fff');
-//             let t = p.frameCount;
-//             let n = model.get('n_cubes');
-//             p.randomSeed(42);
-//             _.range(n).forEach(i => {
-//                 const R = 180 //+ 30 * p.sin(t * 0.2 + i);
-//                 const x = R * p.cos(i * p.TWO_PI / n);
-//                 const y = R * p.sin(i* p.TWO_PI / n);
-//                 p.push();
-//                 p.translate(x, y);
-//                 p.fill(p.random(255), p.random(255), p.random(255));
-//                 p.rotateY(t * 0.05 + i);
-//                 p.box(50);
-//                 p.pop();
-//             });
-            
             
             p.orbitControl(5, 5);
             //p.translate(p.width / 2.0, p.height / 2.0, 0.0);
@@ -211,7 +226,8 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             p.noStroke();
             p.lights();
             //p.sphereDetail(200);
-            p.sphere(0.999, 96, 64);
+            if (model.get('showSphere'))
+                p.sphere(0.999, 96, 64);
             //p.sphereDetail(30);
             
             p.objs.forEach(obj => {
@@ -222,6 +238,9 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
                 switch (obj["type"]) {
                     case "DiskS2": p.drawDiskS2(obj); break;
                     case "PointE3": p.drawPointE3(obj); break;
+                    case "Polygons": p.drawPolygons(obj); break;
+                    case "Polygon": p.drawPolygon(obj); break;
+                    case "SegmentE3": p.drawSegmentE3(obj); break;
                     default: console.log(obj["type"] + " is not drawable in this sketch.");
                 }
                 p.pop();
