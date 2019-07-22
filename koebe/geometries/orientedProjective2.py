@@ -3,18 +3,22 @@
 #
 import math
 
+from dataclasses import dataclass
+
 from .orientation import Orientation
 from .commonOps import determinant2, determinant3, inner_product4, isZero
 from .euclidean3 import VectorE3
 from .euclidean2 import PointE2
 from . import spherical2
 
+@dataclass(frozen=True)
 class PointOP2:
 
-    def __init__(self, hx, hy, hw = 1.0):
-        self.hx = hx
-        self.hy = hy
-        self.hw = hw
+    __slots__ = ["hx", "hy", "hw"]
+    
+    hx: float
+    hy: float
+    hw: float
         
     def __iter__(self):
         yield self.hx
@@ -34,19 +38,25 @@ class PointOP2:
              - VectorE3(p.hx, p.hy, p.hw).normalize())
         return LineOP2(v.x, v.y, v.z)
     
+    @classmethod
+    def fromPointE2(cls, p):
+        return cls(p.x, p.y, 1.0)
+    
     def toPointE2(self):
         fact = 1.0 / self.hw
-        return PointE2(self.hx * fact, self.hy * fact)
+        return PointE2(self.hx * fact, self.hy * fact, 1.0)
     
 # END PointOP2
 
+@dataclass(frozen=True)
 class DiskOP2:
+        
+    __slots__ = ['a', 'b', 'c', 'd']
     
-    def __init__(self, a, b, c, d):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
+    a: float
+    b: float
+    c: float
+    d: float
         
     def __iter__(self):
         yield self.a
@@ -217,12 +227,14 @@ class DiskOP2:
     
 # END DiskOP2
 
+@dataclass(frozen=True)
 class CircleArcOP2:
     
-    def __init__(self, source, target, disk):
-        self.source = source
-        self.target = target
-        self.disk   = disk
+    __slots__ = ["source", "target", "disk"]
+    
+    source: PointOP2
+    target: PointOP2
+    disk:   DiskOP2
         
     def __iter__(self):
         yield tuple(self.source)
@@ -269,12 +281,13 @@ class CircleArcOP2:
     
 # END CircleArcOP2
 
+@dataclass(frozen=True)
 class LineOP2:
 
-    def __init__(self, a, b, c):
-        self.a = a
-        self.b = b
-        self.c = c
+    __slots__ = ["a", "b", "c"]
+    a: float
+    b: float
+    c: float
         
     def __iter__(self):
         yield self.a
@@ -292,12 +305,14 @@ class LineOP2:
     
 # END LineOP2
 
+@dataclass(frozen=True)
 class VectorOP2:
     
-    def __init__(self, hx, hy, hw = 1.0):
-        self.hx = hx
-        self.hy = hy
-        self.hw = hw
+    __slots__ = ["hx", "hy", "hw"]
+    
+    hx: float
+    hy: float
+    hw: float
         
     def __iter__(self):
         yield self.hx
@@ -310,7 +325,7 @@ class VectorOP2:
     
     @classmethod
     def fromVectorE2(cls, v):
-        return cls(v.x, v.y)
+        return cls(v.x, v.y, 1.0)
     
     def __eq__(self, v):
         return self is v or (

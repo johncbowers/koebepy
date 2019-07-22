@@ -2,18 +2,23 @@
 # Oriented projective 3-space primitives
 #
 
+from dataclasses import dataclass
+
 import math
 from . import euclidean3
 from .commonOps import determinant2, isZero, are_dependent4, inner_product4
 
+@dataclass(frozen=True)
 class LineOP3:
-    def __init__(self, p01, p02, p03, p12, p13, p23):
-        self.p01 = p01
-        self.p02 = p02
-        self.p03 = p03
-        self.p12 = p12
-        self.p13 = p13
-        self.p23 = p23
+
+    __slots__ = ["p01", "p02", "p03", "p12", "p13", "p23"]
+    
+    p01: float
+    p02: float
+    p03: float
+    p12: float
+    p13: float
+    p23: float
         
     def __iter__(self):
         yield self.p01
@@ -116,13 +121,15 @@ class LineOP3:
         
 # END LineOP3
 
+@dataclass(frozen=True)
 class PointOP3:
     
-    def __init__(self, hx, hy, hz, hw = 1.0):
-        self.hx = hx
-        self.hy = hy
-        self.hz = hz
-        self.hw = hw
+    __slots__ = ['hx', 'hy', 'hz', 'hw']
+
+    hx: float
+    hy: float
+    hz: float
+    hw: float
         
     def __iter__(self):
         yield self.hx
@@ -136,7 +143,7 @@ class PointOP3:
     
     @classmethod
     def fromPointE3(cls, p):
-        return cls(p.x, p.y, p.z)
+        return cls(p.x, p.y, p.z, 1.0)
     
     def __sub__(self, p):
         if isinstance(p, VectorOP3):
@@ -203,12 +210,15 @@ class PointOP3:
     
 # END PointOP3
 
+@dataclass(frozen=True)
 class PlaneOP3:
-    def __init__(self, X, Y, Z, W):
-        self.X = X
-        self.Y = Y
-        self.Z = Z
-        self.W = W
+    
+    __slots__ = ["X", "Y", "Z", "W"]
+    
+    X: float
+    Y: float
+    Z: float
+    W: float
         
     def __iter__(self):
         yield self.X
@@ -248,12 +258,15 @@ class PlaneOP3:
                       + self.W * p.hw)
 # END PlaneOP3
 
+@dataclass(frozen=True)
 class VectorOP3:
-    def __init__(self, hx, hy, hz, hw = 1.0):
-        self.hx = hx
-        self.hy = hy
-        self.hz = hz
-        self.hw = hw
+    
+    __slots__ = ['hx', 'hy', 'hz', 'hw']
+
+    hx: float
+    hy: float
+    hz: float
+    hw: float
         
     def __iter__(self):
         yield self.hx
@@ -267,7 +280,7 @@ class VectorOP3:
     
     @classmethod
     def fromVectorE3(self, v):
-        return VectorOP3(v.x, v.y, v.z)
+        return VectorOP3(v.x, v.y, v.z, 1.0)
     
     def __eq__(self, v):
         return (

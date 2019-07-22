@@ -2,12 +2,19 @@
 # Extended Complex Numbers (includes representations at infinity)
 #
 
+from dataclasses import dataclass
 from . import spherical2
 
 def absSq(z):
     return z.real * z.real + z.imag * z.imag
 
+@dataclass(frozen=True)
 class ExtendedComplex:
+    
+    __slots__ = ['z', 'w']
+    
+    z: float
+    w: float
     
     def __init__(self, z, w):
         self.z = z

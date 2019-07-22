@@ -4,17 +4,20 @@
 
 import math
 
+from dataclasses import dataclass
+
 from .commonOps import *
 from .orientedProjective3 import PointOP3
 from enum import Enum
 
+@dataclass(frozen=True)
 class PointE3:
     
-    def __init__(self, x = 0.0, y = 0.0, z = 0.0):
-        self.x = x
-        self.y = y
-        self.z = z
-        
+    __slots__ = ['x', 'y', 'z']
+    x: float
+    y: float
+    z: float
+    
     def __iter__(self):
         yield self.x
         yield self.y
@@ -55,10 +58,13 @@ class PointE3:
     
 # END PointE3
 
+@dataclass(frozen=True)
 class SegmentE3:
-    def __init__(self, source, target):
-        self.source = source
-        self.target = target
+    
+    __slots__ = ["source", "target"]
+    
+    source: PointE3
+    target: PointE3
     
     def __iter__(self):
         yield tuple(self.source)
@@ -81,12 +87,13 @@ class SegmentE3:
     
 # END SegmentE3
 
+@dataclass(frozen=True)
 class VectorE3:
     
-    def __init__(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
+    __slots__ = ['x', 'y', 'z']
+    x: float
+    y: float
+    z: float
         
     def __iter__(self):
         yield self.x
@@ -149,16 +156,17 @@ class VectorE3:
     def __str__(self):
         return f"VectorE3({self.x}, {self.y}, {self.z})"
     
+@dataclass(frozen=True)
 class DirectionE3:
     
-    def __init__(self, vec):
-        self.vec = vec
-        self.__v = None
+    __slots__ = ["vec"]
+    vec: VectorE3
         
     def __iter__(self):
-        yield self.v.x
-        yield self.v.y
-        yield self.v.z
+        _v = self.v
+        yield _v.x
+        yield _v.y
+        yield _v.z
     
     @classmethod
     def fromDirectionE3(cls,d):
@@ -166,14 +174,14 @@ class DirectionE3:
     
     @property
     def v(self):
-        if self.__v == None:
-            norm = self.vec.norm()
-            if norm == 0: 
-                self.__v = VectorE3(0,0,0)
-            else:
-                invd     = 1.0 / norm
-                self.__v = VectorE3(self.vec.x * invd, self.vec.y * invd, self.vec.z * invd)
-        return self.__v
+        norm = self.vec.norm()
+        if norm == 0: 
+            return VectorE3(0,0,0)
+        else:
+            invd     = 1.0 / norm
+            return VectorE3(self.vec.x * invd, 
+                            self.vec.y * invd, 
+                            self.vec.z * invd)
     @property
     def endPoint(self):
         return PointE3(self.v.x, self.v.y, self.v.z)
@@ -204,11 +212,12 @@ class DirectionE3:
 
 # END DirectionE3
 
+@dataclass(frozen=True)
 class PlaneE3:
     
-    def __init__(self, N = VectorE3(0,0,1), d = 0):
-        self.N = N
-        self.d = d
+    __slots__ = ["N", "d"]
+    N: VectorE3
+    d: float
         
     def __iter__(self):
         yield tuple(self.N)
@@ -230,15 +239,23 @@ class PlaneE3:
                        -self.N.z * fact)
     
     def pointOP3ClosestOrigin(self):
-        return PointOP3(-self.N.x, 
-                        -self.N.y,
-                        -self.N.z,
-                        self.d / self.N.normSq())
+        nsq = self.N.normSq()
+        return PointOP3(-self.N.x * nsq, 
+                        -self.N.y * nsq,
+                        -self.N.z * nsq,
+                        self.d)
     
     def __eq__(self, other):
         return not other == None and (self is other or 
-                                     are_dependent4(self.N.x,  self.N.y,  self.N.z,  self.d,
-                                                    other.N.x,other.N.y, other.N.z, other.d))
+                                         are_dependent4(self.N.x,  
+                                                        self.N.y,  
+                                                        self.N.z,  
+                                                        self.d,
+                                                        other.N.x,
+                                                        other.N.y, 
+                                                        other.N.z, 
+                                                        other.d)
+                                     )
     
     def __ne__(self, other):
         return not self == other
@@ -283,7 +300,7 @@ def least_dominant_VectorE3(v):
     return least_dominant(v.x, v.y, v.z)
 
 # Class Objects
-PointE3.O      = PointE3()
+PointE3.O      = PointE3(0.0, 0.0, 0.0)
 
 VectorE3.e1    = VectorE3(1.0, 0.0, 0.0)
 VectorE3.e2    = VectorE3(0.0, 1.0, 0.0)

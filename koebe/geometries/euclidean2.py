@@ -4,12 +4,15 @@
 
 import math
 
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
 class PointE2:
     
-    def __init__(self, x = 0.0, y = 0.0):
-        self.x = x
-        self.y = y
-        
+    __slots__ = ["x", "y"]
+    x: float
+    y: float
+    
     def __iter__(self):
         yield self.x
         yield self.y
@@ -44,14 +47,15 @@ class PointE2:
 #         return self.distTo(disk.center) - disk.radius
   
 # END PointE2
-PointE2.O = PointE2()
+PointE2.O = PointE2(0.0, 0.0)
 
+@dataclass(frozen=True)
 class VectorE2:
     
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        
+    __slots__ = ["x", "y"]
+    x: float
+    y: float
+    
     def __iter__(self):
         yield self.x
         yield self.y
@@ -100,11 +104,13 @@ class VectorE2:
 
 # END VectorE2
 
+@dataclass(frozen=True)
 class SegmentE2:
     
-    def __init__(self, source, target):
-        self.source = source
-        self.target = target
+    __slots__ = ["source", "target"]
+    
+    source: PointE2
+    target: PointE2
     
     def __iter__(self):
         yield tuple(self.source)

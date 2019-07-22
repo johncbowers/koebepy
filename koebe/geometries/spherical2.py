@@ -2,6 +2,8 @@
 # Geometry of the Riemann Sphere S2
 #
 
+from dataclasses import dataclass
+
 from .euclidean2 import PointE2
 from .euclidean3 import DirectionE3, VectorE3, least_dominant_VectorE3, PointE3
 from .orientedProjective2 import PointOP2
@@ -12,11 +14,14 @@ import math
 from enum import Enum
 
 # Representation of a point on the Reimann sphere S2
+@dataclass(frozen=True)
 class PointS2:
-    def __init__(self, x = 1.0, y = 0.0, z = 0.0):
-        self.x = x
-        self.y = y
-        self.z = z
+    
+    __slots__ = ['x', 'y', 'z']
+    
+    x: float
+    y: float
+    z: float
     
     def __iter__(self):
         yield self.x
@@ -70,12 +75,15 @@ class PointS2:
     
 
 # Representation of a disk on the Riemann sphere S2
+@dataclass(frozen=True)
 class DiskS2:
-    def __init__(self, a, b, c, d):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
+    
+    __slots__ = ['a', 'b', 'c', 'd']
+    
+    a: float
+    b: float
+    c: float
+    d: float
     
     def __iter__(self):
         yield self.a
@@ -273,12 +281,15 @@ class CPlaneS2Type(Enum):
 # END CPlaneS2Type
 
 # Representation of a c-plane (aka bundle of circles) on the Riemann sphere S2
+@dataclass(frozen=True)
 class CPlaneS2:
-    def __init__(self, a, b, c, d):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
+    
+    __slots__ = ['a', 'b', 'c', 'd']
+    
+    a: float
+    b: float
+    c: float
+    d: float
     
     def __iter__(self):
         yield self.a
