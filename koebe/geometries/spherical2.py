@@ -173,7 +173,7 @@ class DiskS2:
     
     @property
     def centerE3(self):
-        return PointOP3(-self.a, -self.b, -self.c, (self.a * self.a + self.b * self.b + self.c * self.c) / self.d).toPointE3()
+        return PointOP3(-self.a * self.d, -self.b * self.d, -self.c * self.d, self.a * self.a + self.b * self.b + self.c * self.c).toPointE3()
     
     @property
     def radiusE3(self):
