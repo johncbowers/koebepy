@@ -1,1 +1,4 @@
 ipywidgets
+sympy
+scipy
+numpy
