@@ -55,6 +55,13 @@ def randomConvexHullE3(numPoints):
     
     # Compute the convex hull of the samples
     return incrConvexHull(points, orientationPointE3)
+
+def tetrahedron(size = 1):
+    points = [PointE3(size, -size / math.sqrt(3), -size / math.sqrt(6)), 
+              PointE3(-size, -size / math.sqrt(3), -size / math.sqrt(6)),
+              PointE3(0, 2*size / math.sqrt(3), -size / math.sqrt(6)),
+              PointE3(0, 0, 3*size / math.sqrt(6))]
+    return incrConvexHull(points, orientationPointE3)
         
 #### HELPER FUNCTIONS
 

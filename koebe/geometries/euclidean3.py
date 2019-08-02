@@ -4,6 +4,7 @@
 
 import math
 
+from typing import Any
 from dataclasses import dataclass
 
 from .commonOps import *
@@ -14,9 +15,9 @@ from enum import Enum
 class PointE3:
     
     __slots__ = ['x', 'y', 'z']
-    x: float
-    y: float
-    z: float
+    x: Any
+    y: Any
+    z: Any
     
     def __iter__(self):
         yield self.x
@@ -91,9 +92,9 @@ class SegmentE3:
 class VectorE3:
     
     __slots__ = ['x', 'y', 'z']
-    x: float
-    y: float
-    z: float
+    x: Any
+    y: Any
+    z: Any
         
     def __iter__(self):
         yield self.x
@@ -217,7 +218,7 @@ class PlaneE3:
     
     __slots__ = ["N", "d"]
     N: VectorE3
-    d: float
+    d: Any
         
     def __iter__(self):
         yield tuple(self.N)

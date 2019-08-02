@@ -2,6 +2,7 @@
 # Oriented projective 3-space primitives
 #
 
+from typing import Any
 from dataclasses import dataclass
 
 import math
@@ -13,12 +14,12 @@ class LineOP3:
 
     __slots__ = ["p01", "p02", "p03", "p12", "p13", "p23"]
     
-    p01: float
-    p02: float
-    p03: float
-    p12: float
-    p13: float
-    p23: float
+    p01: Any
+    p02: Any
+    p03: Any
+    p12: Any
+    p13: Any
+    p23: Any
         
     def __iter__(self):
         yield self.p01
@@ -126,10 +127,10 @@ class PointOP3:
     
     __slots__ = ['hx', 'hy', 'hz', 'hw']
 
-    hx: float
-    hy: float
-    hz: float
-    hw: float
+    hx: Any
+    hy: Any
+    hz: Any
+    hw: Any
         
     def __iter__(self):
         yield self.hx
@@ -215,10 +216,10 @@ class PlaneOP3:
     
     __slots__ = ["X", "Y", "Z", "W"]
     
-    X: float
-    Y: float
-    Z: float
-    W: float
+    X: Any
+    Y: Any
+    Z: Any
+    W: Any
         
     def __iter__(self):
         yield self.X
@@ -263,10 +264,10 @@ class VectorOP3:
     
     __slots__ = ['hx', 'hy', 'hz', 'hw']
 
-    hx: float
-    hy: float
-    hz: float
-    hw: float
+    hx: Any
+    hy: Any
+    hz: Any
+    hw: Any
         
     def __iter__(self):
         yield self.hx

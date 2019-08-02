@@ -3,13 +3,16 @@
 #
 
 from dataclasses import dataclass
+from typing import Any
 
 from .euclidean2 import PointE2
 from .euclidean3 import DirectionE3, VectorE3, least_dominant_VectorE3, PointE3
-from .orientedProjective2 import PointOP2
+#from . import orientedProjective2 as op2
+from . import orientedProjective2
 from .orientedProjective3 import PointOP3, PlaneOP3
-from .extendedComplex import ExtendedComplex
+from . import extendedComplex as ec
 from .commonOps import determinant2, determinant3, inner_product31
+
 import math
 from enum import Enum
 
@@ -19,9 +22,9 @@ class PointS2:
     
     __slots__ = ['x', 'y', 'z']
     
-    x: float
-    y: float
-    z: float
+    x: Any
+    y: Any
+    z: Any
     
     def __iter__(self):
         yield self.x
@@ -53,24 +56,61 @@ class PointS2:
     def toExtendedComplex(self):
         d = self.directionE3
         if d.v.z < 0:
-            return ExtendedComplex(d.v.x + d.v.y * 1j, 1 - d.v.z + 0j)
+            return ec.ExtendedComplex(complex(d.v.x, d.v.y), complex(1 - d.v.z, 0))
         else: 
-            return ExtendedComplex(1 + d.v.z + 0j, d.v.x - d.v.y * 1j)
+            return ec.ExtendedComplex(complex(1 + d.v.z, 0), complex(d.v.x, -d.v.y))
    
     def sgProjectToPointE2(self):
-        invNorm = 1.0 / Math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
-        X = x * invNorm
-        Y = y * invNorm
-        Z = z * invNorm
-        return PointE2(X / (Z + 1), Y / (Z + 1))
+        norm = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        fact = 1.0 / (self.z + norm)
+        return PointE2(self.x * fact, self.y * fact)
     
     def sgProjectToPointOP2(self):
-        invNorm = 1.0 / Math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
-        X = x * invNorm
-        Y = y * invNorm
-        Z = z * invNorm
-        return PointOP2(2.0 * X, 2.0 * Y, Z + 1.0)
+        norm = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        return orientedProjective2.PointOP2(self.x, self.y, self.z + norm)
+    
+    def sgProjectToExtendedComplex(self):
+        norm = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        if self.x == 0 and self.y == 0 and self.z < 0:
+            # Then our point is the south pole, which is infinity in the ExtendedComplex
+            return ec.ExtendedComplex.RINFINITY
+        else:
+            return ec.ExtendedComplex(complex(self.x, self.y), complex(self.z + norm, 0))
 
+    @classmethod
+    def sgProjectFromPointE2(cls, p: PointE2) -> "PointS2":
+        fact = 1.0 / (1 + p.x * p.x + p.y * p.y)
+        return cls(2.0 * p.x * fact, 2.0 * p.y * fact, (1 - (p.x * p.x + p.y * p.y)) * fact)
+    
+    @classmethod
+    def sgProjectFromPointOP2(cls, p: "orientedProjective2.PointOP2") -> "PointS2":
+        if p.hw == 0:
+            # Then the point is at infinity and maps to the south pole
+            return cls(0.0, 0.0, -1.0)
+        else:
+            fact = 1.0 / (p.hx * p.hx + p.hy * p.hy + p.hw * p.hw)
+            return cls(2.0 * p.hx * p.hw * fact, 
+                       2.0 * p.hy * p.hw * fact, 
+                       (p.hw * p.hw - p.hx * p.hx - p.hy * p.hy) * fact)
+    
+    @classmethod
+    def sgProjectFromExtendedComplex(cls, z: ec.ExtendedComplex) -> "PointS2":
+        if z.w == ec.ExtendedComplex.ZERO:
+            return cls(0.0, 0.0, -1.0)
+        
+        zwc = z.z * z.w.conjugate()
+        zcw = zwc.conjugate()
+        zwczcw = (zwc * zcw).real
+        R = zwc.real
+        I = zwc.imag
+        wmsq = z.w.real * z.w.real + z.w.imag * z.w.imag
+        wm4 = wmsq * wmsq
+        fact = 1.0 / (wm4 + zwczcw)
+        
+        return cls(2.0 * wmsq * R * fact, 
+                   2.0 * wmsq * I * fact, 
+                   (wm4 - zwczcw) * fact)
+    
 # END PointS2
     
 
@@ -80,10 +120,10 @@ class DiskS2:
     
     __slots__ = ['a', 'b', 'c', 'd']
     
-    a: float
-    b: float
-    c: float
-    d: float
+    a: Any
+    b: Any
+    c: Any
+    d: Any
     
     def __iter__(self):
         yield self.a
@@ -258,7 +298,7 @@ class DiskS2:
         )
     
     def sgProjectToOP2(self):
-        return DiskOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
+        return orientedProjective2.DiskOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
     
     def inversiveNormalize(self):
         scale = 1.0 / self.inversiveDistTo(self)
@@ -269,7 +309,7 @@ class DiskS2:
         return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
     
     def toDiskOP2(self): 
-        return DiskOP2(0.5 * (self.a - self.d), self.c, self.b, -(self.a + self.d) * 0.5)
+        return orientedProjective2.DiskOP2(0.5 * (self.a - self.d), self.c, self.b, -(self.a + self.d) * 0.5)
 # END DiskS2
 
 # The three types of c-planes
@@ -286,10 +326,10 @@ class CPlaneS2:
     
     __slots__ = ['a', 'b', 'c', 'd']
     
-    a: float
-    b: float
-    c: float
-    d: float
+    a: Any
+    b: Any
+    c: Any
+    d: Any
     
     def __iter__(self):
         yield self.a

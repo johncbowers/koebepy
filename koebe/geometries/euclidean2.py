@@ -4,14 +4,15 @@
 
 import math
 
+from typing import Any
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class PointE2:
     
     __slots__ = ["x", "y"]
-    x: float
-    y: float
+    x: Any
+    y: Any
     
     def __iter__(self):
         yield self.x
@@ -38,6 +39,10 @@ class PointE2:
     
     def __ne__(self, other):
         return not self == other
+    
+    def __add__(self, other: "VectorE2") -> "PointE2":
+        return PointE2(self.x + other.x, self.y + other.y)
+    
 # TODO After SegmentE2 and DiskE2 are implemented, uncomment
 #     def distSqToSegmentE2(self, seg):
 #         return self.distSqTo(seg.closestPointE2To(self))
@@ -53,8 +58,8 @@ PointE2.O = PointE2(0.0, 0.0)
 class VectorE2:
     
     __slots__ = ["x", "y"]
-    x: float
-    y: float
+    x: Any
+    y: Any
     
     def __iter__(self):
         yield self.x
@@ -132,3 +137,47 @@ class SegmentE2:
         return self.pointAlongAt(t)
 
 # END SegmentE2
+
+@dataclass(frozen=True)
+class CircleE2:
+    
+    __slots__ = ["center", "radius"]
+    
+    center: PointE2
+    radius: Any
+    
+    def __iter__(self):
+        yield tuple(self.center)
+        yield self.radius
+        
+    def inversiveDistTo(self, other: "CircleE2") -> float: 
+        dSq = self.center.distSqTo(other.center)
+        rSq = self.radius * self.radius
+        RSq = other.radius * other.radius
+        return (dSq - rSq - RSq) / (2.0 * self.radius * other.radius)
+    
+    def invertPointE2(self, p: PointE2) -> PointE2:
+        v = p - self.center
+        return self.center + (self.radius * self.radius * v / (v.normSq()))
+        
+    def contains(self, p: PointE2) -> bool:
+        return self.radius * self.radius >= self.center.distSqTo(p)
+    
+    def intersects(self, other: "CircleE2") -> bool:
+        radSum = self.radius + other.radius
+        return self.center.distSqTo(other.center) <= radSum * radSum
+    
+    @property
+    def area(self) -> float:
+        return math.pi * self.radius * self.radius
+    
+    @property
+    def perimeter(self):
+        return 2.0 * math.pi * self.radius
+    
+    @property
+    def diameter(self):
+        return 2.0 * self.radius
+    
+    
+# END CircleE2

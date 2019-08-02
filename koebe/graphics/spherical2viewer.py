@@ -147,7 +147,7 @@ class DefaultStyles:
     
 class S2Viewer():
     def __init__(self, width=500, height=500):
-        viewer_code = pkgutil.get_data("koebe.graphics.js.js", "p5viewer.js").decode("utf8")
+        viewer_code = pkgutil.get_data("koebe.graphics.js.js", "spherical2viewer.js").decode("utf8")
         display(Javascript(viewer_code))
         self._sketch = S2Sketch(width=width, height=height)
         self._objs   = []

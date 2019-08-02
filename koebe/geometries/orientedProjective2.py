@@ -3,23 +3,30 @@
 #
 import math
 
+from typing import Any
 from dataclasses import dataclass
 
 from .orientation import Orientation
 from .commonOps import determinant2, determinant3, inner_product4, isZero
 from .euclidean3 import VectorE3
-from .euclidean2 import PointE2
-from . import spherical2
+from .euclidean2 import PointE2, CircleE2
+
+import koebe.geometries.spherical2
 
 @dataclass(frozen=True)
 class PointOP2:
 
     __slots__ = ["hx", "hy", "hw"]
     
-    hx: float
-    hy: float
-    hw: float
-        
+    hx: Any
+    hy: Any
+    hw: Any
+    
+    def __init__(self, hx, hy, hw = 1.0):
+        object.__setattr__(self, 'hx', hx)
+        object.__setattr__(self, 'hy', hy)
+        object.__setattr__(self, 'hw', hw)
+    
     def __iter__(self):
         yield self.hx
         yield self.hy
@@ -44,25 +51,43 @@ class PointOP2:
     
     def toPointE2(self):
         fact = 1.0 / self.hw
-        return PointE2(self.hx * fact, self.hy * fact, 1.0)
+        return PointE2(self.hx * fact, self.hy * fact)
+    
+    def toExtendedComplex(self):
+        from .extendedComplex import ExtendedComplex
+        return ExtendedComplex(complex(self.hx, self.hy), complex(self.hw, 0))
     
 # END PointOP2
 
+PointOP2.O = PointOP2(0.0, 0.0)
+
 @dataclass(frozen=True)
 class DiskOP2:
+    """Disk stored in general form with boundary given by
+    a(x^2 + y^2) + b x + c y + d = 0. If a = 0 this is a line.
+    """
         
     __slots__ = ['a', 'b', 'c', 'd']
     
-    a: float
-    b: float
-    c: float
-    d: float
+    a: Any
+    b: Any
+    c: Any
+    d: Any
         
     def __iter__(self):
         yield self.a
         yield self.b
         yield self.c
         yield self.d
+    
+    def translate(self, tx, ty):
+        T = np.array([[1,               0,   0, 0], 
+                      [-2*tx,           1,   0, 0],
+                      [-2*ty,           0,   1, 0], 
+                      [tx*tx + ty*ty, -tx, -ty, 1]])
+        v = np.array(tuple(self))
+        w = T.dot(v)
+        return DiskOP2(*tuple(w))
     
     @classmethod
     def fromPointOP2(cls, p1, p2, p3):
@@ -90,13 +115,17 @@ class DiskOP2:
         )
    
     @classmethod
-    def fromCenterAndRadius(cls:"DiskOP2", center:PointOP2, radius:float) -> "DiskOP2":
+    def fromCenterAndRadius(cls, center:PointOP2, radius:float) -> "DiskOP2":
         return cls(
             a = center.hw * center.hw,
             b = -2.0 * center.hx * center.hw,
             c = -2.0 * center.hy * center.hw,
             d = center.hx * center.hx + center.hy * center.hy - radius * radius * center.hw * center.hw
         )
+    
+    @classmethod
+    def fromCircleE2(cls, circle: "CircleE2") -> "DiskOP2":
+        return cls.fromCenterAndRadius(PointOP2.fromPointE2(circle.center), circle.radius)
     
     # Returns Orientation.ZERO if p is on the boundary of the disk, Orientation.POSITIVE if it is on the positive side, and ORIENTATION.negative o/w
     def orientationOf(self, p:PointOP2) -> Orientation:
@@ -121,11 +150,16 @@ class DiskOP2:
     
     @property
     def radiusSq(self):
-        return self.center.x*self.center.x + self.center.y * self.center.y - (self.d/self.a)
+        #center = self.center.toPointE2()
+        return (self.b*self.b + self.c*self.c - 4.0*self.a*self.d) / (4.0*self.a*self.a)
+        #return center.x * center.x + center.y * center.y - (self.d/self.a)
     
     @property
     def radius(self):
         return math.sqrt(self.radiusSq)
+    
+    def toCircleE2(self):
+        return CircleE2(self.center.toPointE2(), self.radius)
     
     def intersectWithLineOP2(self: "DiskOP2", line: "LineOP2"):
         if not isZero(line.a):
@@ -190,7 +224,7 @@ class DiskOP2:
             return []
         # otherwise, call intersectWith on lineOP2 with 
         # coefficients A,B, and C and return result
-        return intersectWith( LineOP2(A, B, C) )
+        return self.intersectWithLineOP2( LineOP2(A, B, C) )
     
     def __funky_innerproduct(self, disk1, disk2):
         return disk1.b*disk2.b + disk1.c*disk2.c - 2*disk2.a*disk1.d - 2*disk1.a*disk2.d
@@ -285,9 +319,9 @@ class CircleArcOP2:
 class LineOP2:
 
     __slots__ = ["a", "b", "c"]
-    a: float
-    b: float
-    c: float
+    a: Any
+    b: Any
+    c: Any
         
     def __iter__(self):
         yield self.a
@@ -310,9 +344,9 @@ class VectorOP2:
     
     __slots__ = ["hx", "hy", "hw"]
     
-    hx: float
-    hy: float
-    hw: float
+    hx: Any
+    hy: Any
+    hw: Any
         
     def __iter__(self):
         yield self.hx
