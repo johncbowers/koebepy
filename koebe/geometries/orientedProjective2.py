@@ -391,3 +391,32 @@ class VectorOP2:
         return VectorE2(self.hx * fact, self.hy * fact)
     
 # END VectorOP2
+
+@dataclass(frozen=True)
+class SegmentOP2:
+    
+    __slots__ = ["source", "target"]
+    
+    source: PointOP2
+    target: PointOP2
+    
+    def __iter__(self):
+        yield tuple(self.source)
+        yield tuple(self.target)
+    
+    @property
+    def lengthSq(self):
+        return self.target.distSqTo(self.source)
+    
+    @property
+    def length(self):
+        return self.target.distTo(self.source)
+    
+    def pointAlongAt(self, t):
+        return ((1.0 - t) * self.source.toVectorE2() + t * self.target.toVectorE3()).toVectorE2()
+
+    def closestPointE2To(self, p):
+        t = max(0.0, min(1.0, (p - self.source).dot(self.target - self.source) / self.lengthSq))
+        return self.pointAlongAt(t)
+
+# END SegmentOP2
