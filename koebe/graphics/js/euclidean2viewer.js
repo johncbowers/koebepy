@@ -189,6 +189,12 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
                 p.pop();
             });
             
-        } 
+        }
+        
+        p.keyTyped = function () {
+          if (key === 'e') {
+            photo.save('photo', 'png');
+          }
+        }
     };
 })

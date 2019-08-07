@@ -18,7 +18,7 @@ import json #json.dumps(obj)
 
 # Packages for drawable objects
 from koebe.geometries.euclidean2 import PointE2, SegmentE2, CircleE2
-from koebe.geometries.orientedProjective2 import PointOP2, DiskOP2
+from koebe.geometries.orientedProjective2 import PointOP2, DiskOP2, SegmentOP2
 from koebe.geometries.hyperbolic2 import CircleH2
 from koebe.datastructures.dcel import DCEL, Face, Edge, Vertex
 
@@ -114,6 +114,9 @@ def _p5_dict(obj, style):
         result = _p5_face(obj, style)
     elif type(obj) is SegmentE2:
         result = _p5_segmentE2(obj, style)
+    elif type(obj) is SegmentOP2:
+        result = _p5_segmentE2(SegmentE2(obj.source.toPointE2(), 
+                                         obj.target.toPointE2()), style)
     else:
         result = None
     if result != None and style != None:
