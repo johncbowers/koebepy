@@ -14,7 +14,29 @@ class DCEL:
     def eulerCharacteristic(self):
         return len(self.verts) - (len(self.darts) / 2.0) + len(self.faces)
 
+    def reorderVerticesByBoundaryFirst(self):
+        bdryVerts = list(reversed(self.outerFace.vertices()))
+        bdryVertSet = set(bdryVerts)
+        otherVerts = [v for v in self.verts if v not in bdryVertSet]
+        self.verts = bdryVerts + otherVerts
     
+    def laplacian(self):
+        vertToIdx = dict((v, k) for k, v in enumerate(self.verts))
+        vertToDeg = [len(v.outDarts()) for v in self.verts]
+        mat = [[0 for _ in range(len(self.verts))] for _ in range(len(self.verts))]
+        for i in range(len(self.verts)):
+            u = self.verts[i]
+            neighbors = u.neighbors()
+            mat[i][i] = len(neighbors)
+            for v in neighbors:
+                mat[i][vertToIdx[v]] = -1
+        return mat
+    
+    def boundaryVerts(self):
+        if self.outerFace == None:
+            return []
+        return list(reversed(self.outerFace.vertices()))
+        
     # WARNING: NOT THOROUGHLY TESTED, MAY CONTAIN BUGS
     # Duplicates this DCEL
     # optional parameters: 
