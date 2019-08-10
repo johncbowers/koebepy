@@ -1,6 +1,26 @@
+from enum import Enum
+
+# The three types of c-planes
+class Orientation(Enum):
+    NEGATIVE = -1
+    ZERO = 0
+    POSITIVE = 1
+    
 # Test if x is zero?
 def isZero(x):
     return abs(x) < 1e-8
+
+def orientation2(x1, y1, x2, y2, x3, y3):
+    val = determinant2(
+        x1 - x3, y1 - y3, 
+        x2 - x3, y2 - y3
+    )
+    if isZero(val):
+        return Orientation.ZERO
+    elif val > 0:
+        return Orientation.POSITIVE
+    else:
+        return Orientation.NEGATIVE
 
 # Compute the 2x2 determinant
 def determinant2(a, b, 

@@ -113,6 +113,34 @@ class DiskOP2:
                     (p3.hx * p3.hx + p3.hy * p3.hy), p3.hx * p3.hw, p3.hy * p3.hw
             )
         )
+    
+    @classmethod
+    def orthogonalToDiskAndThroughPoints(cls, disk, p1, p2):
+        x12py12 = p1.hx * p1.hx + p1.hy * p1.hy
+        x22py22 = p2.hx * p2.hx + p2.hy * p2.hy
+        return cls(
+            a = + determinant3(
+                    p1.hx * p1.hw, p1.hy * p1.hw, p1.hw * p1.hw,
+                    p2.hx * p2.hw, p2.hy * p2.hw, p2.hw * p2.hw,
+                    disk.b, disk.c, -2 * disk.a
+                ),
+            b = - determinant3(
+                    x12py12, p1.hy * p1.hw, p1.hw * p1.hw,
+                    x22py22, p2.hy * p2.hw, p2.hw * p2.hw,
+                    -2 * disk.d, disk.c, -2 * disk.a
+                ), 
+            c = + determinant3(
+                    x12py12, p1.hx * p1.hw, p1.hw * p1.hw,
+                    x22py22, p2.hx * p2.hw, p2.hw * p2.hw,
+                    -2 * disk.d, disk.b, -2 * disk.a
+                ),
+            d = - determinant3(
+                    x12py12, p1.hx * p1.hw, p1.hy * p1.hw, 
+                    x22py22, p2.hx * p2.hw, p2.hy * p2.hw,
+                    -2 * disk.d, disk.b, disk.c
+                )
+
+        )
    
     @classmethod
     def fromCenterAndRadius(cls, center:PointOP2, radius:float) -> "DiskOP2":

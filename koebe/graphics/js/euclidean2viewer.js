@@ -159,7 +159,22 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
                    endpoints[1][0],
                    endpoints[1][1]);
         }
-
+        
+        p.drawCircleArcE2 = function (arcData) {
+            let center = arcData["center"];
+            let radius = arcData["radius"];
+            let srcAngle = arcData["srcAngle"];
+            let targetAngle = arcData["targetAngle"];
+            let diameter = 2 * radius;
+            
+            p.arc(center[0], center[1], diameter, diameter, srcAngle, targetAngle);
+        }
+/*
+"center": arc.disk.center.toPointE2(), 
+                      "radius": rad,
+                      "srcAngle": srcAngle, 
+                      "targetAngle": targetAngle}
+                      */
         p.draw = function () {
             
             p.scale(1 / p.canvasScale, -1 / p.canvasScale);
@@ -184,6 +199,7 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
                     case "Polygon": p.drawPolygon(obj); break;
                     case "SegmentE2": p.drawSegmentE2(obj); break;
                     case "CircleE2": p.drawCircleE2(obj); break;
+                    case "CircleArcE2": p.drawCircleArcE2(obj); break;
                     default: console.log(obj["type"] + " is not drawable in this sketch.");
                 }
                 p.pop();

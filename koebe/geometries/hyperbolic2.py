@@ -5,6 +5,8 @@
 from dataclasses import dataclass
 from .euclidean2 import PointE2, CircleE2
 from .extendedComplex import ExtendedComplex
+from . import orientedProjective2
+
 from typing import Any
 import math
 
@@ -47,6 +49,52 @@ class PointH2:
 # END PointH2
 
 PointH2.O = PointH2(ExtendedComplex.ZERO)
+
+@dataclass(frozen=True)
+class SegmentH2:
+    
+    __slots__ = ['source', 'target']
+    
+    source: PointH2
+    target: PointH2
+    
+    def __iter__(self):
+        yield self.source
+        yield self.target
+        
+    def toPoincareCircleArcOP2(self):
+        z = self.source.coord
+        w = self.target.coord
+        
+        unitDisk = orientedProjective2.DiskOP2(1,0,0,-1)
+        p1, p2 = (
+            orientedProjective2.PointOP2(z.real, z.imag), 
+            orientedProjective2.PointOP2(w.real, w.imag)
+        )
+        disk = orientedProjective2.DiskOP2.orthogonalToDiskAndThroughPoints(
+            unitDisk, p1, p2
+        )
+        sols = unitDisk.intersectWithDiskOP2(disk)
+        
+        if len(sols) < 2:
+            print(f"Couldn't do it for z: {z} and w: {w}")
+            return None
+        
+        q1, q2 = sols
+        arc0 = orientedProjective2.CircleArcOP2.fromPointOP2(q1, p1, q2)
+
+        if p1.hy * p2.hw > p2.hy * p1.hw:
+            arcDisk = arc0.disk
+        else:
+            arcDisk = orientedProjective2.DiskOP2(
+                -arc0.disk.a, 
+                -arc0.disk.b, 
+                -arc0.disk.c, 
+                -arc0.disk.d
+            )
+
+        return orientedProjective2.CircleArcOP2(p1, p2, arcDisk)
+# END PoincareSegment
 
 @dataclass(frozen=True)
 class CircleH2:

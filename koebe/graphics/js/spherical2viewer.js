@@ -118,7 +118,9 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
                 p.noStroke();
                 p.fill(100, 125, 255);
             }
-            p.sphere(0.035, 8, 8);
+            //p.sphereDetail(2);
+            //p.sphere(0.035, 8, 8);
+            p.box(0.035);
         }
         
         p.drawDiskS2 = function (diskData) {
@@ -226,6 +228,7 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             p.noStroke();
             p.lights();
             //p.sphereDetail(200);
+            //p.sphereDetail(30);
             if (model.get('showSphere'))
                 p.sphere(0.999, 96, 64);
             //p.sphereDetail(30);

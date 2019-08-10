@@ -107,7 +107,7 @@ def _p5_dict(obj, style):
     elif type(obj) is PointE3:
         result = _p5_pointE3(obj)
     elif type(obj) is PointS2:
-        result = _p5_pointE3(point.directionE3.endPoint)
+        result = _p5_pointE3(obj.directionE3.endPoint)
     elif type(obj) is PointOP3:
         result = _p5_pointE3(obj.toPointE3())
     elif type(obj) is CPlaneS2:

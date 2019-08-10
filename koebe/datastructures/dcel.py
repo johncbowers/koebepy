@@ -32,6 +32,21 @@ class DCEL:
                 mat[i][vertToIdx[v]] = -1
         return mat
     
+    def weightedLaplacian(self, weight):
+        vertToIdx = dict((v, k) for k, v in enumerate(self.verts))
+        vertToDeg = [len(v.outDarts()) for v in self.verts]
+        mat = [[0 for _ in range(len(self.verts))] for _ in range(len(self.verts))]
+        for i in range(len(self.verts)):
+            u = self.verts[i]
+            neighbors = u.neighbors()
+            theSum = 0
+            for v in neighbors:
+                w = weight(u, v)
+                theSum += w
+                mat[i][vertToIdx[v]] = -w
+            mat[i][i] = theSum
+        return mat
+    
     def boundaryVerts(self):
         if self.outerFace == None:
             return []

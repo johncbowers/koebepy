@@ -17,10 +17,12 @@ from traitlets import Unicode, Int, Bool, Float
 import json #json.dumps(obj)
 
 # Packages for drawable objects
-from koebe.geometries.euclidean2 import PointE2, SegmentE2, CircleE2
-from koebe.geometries.orientedProjective2 import PointOP2, DiskOP2, SegmentOP2
-from koebe.geometries.hyperbolic2 import CircleH2
+from koebe.geometries.euclidean2 import PointE2, SegmentE2, CircleE2, VectorE2
+from koebe.geometries.orientedProjective2 import PointOP2, DiskOP2, SegmentOP2, CircleArcOP2
+from koebe.geometries.hyperbolic2 import CircleH2, SegmentH2
 from koebe.datastructures.dcel import DCEL, Face, Edge, Vertex
+
+import math
 
 from .viewer import Viewer
 from .viewer import makeStyle as _makeStyle
@@ -73,7 +75,7 @@ def _p5_dcel(dcel, style):
     return result
 
 def _p5_edge(edge, style):
-    return _p5_segmentE3((_pointTypes_to_E2(edge.aDart.origin.data), 
+    return _p5_segmentE2((_pointTypes_to_E2(edge.aDart.origin.data), 
                           _pointTypes_to_E2(edge.aDart.dest.data)), 
                          style)
 
@@ -83,6 +85,57 @@ def _p5_segmentE2(seg, style):
     if style == None:
         result["style"] = makeStyle(stroke = "#000", strokeWeight = 2)
     return result
+
+def _p5_circleArcOP2(arc, style):
+    if arc == None:
+        return None
+    if arc.disk.a == 0:
+        return _p5_segmentE2(
+            SegmentE2(
+                arc.source.toPointE2(),
+                arc.target.toPointE2()
+            ), 
+            style
+        )
+    else:
+        rad = arc.radius
+        
+        srcOP2, trgOP2 = (arc.source, arc.target) if arc.disk.a >= 0 else (arc.target, arc.source)
+        src, trg = srcOP2.toPointE2(), trgOP2.toPointE2()
+        
+        ratio = math.sqrt(src.distTo(trg)) / rad
+        
+        if ratio < 0.1:
+            return _p5_segmentE2(
+                SegmentE2(
+                    arc.source.toPointE2(),
+                    arc.target.toPointE2()
+                ), 
+                style
+            )
+        else: 
+            radInv = 1.0 / rad
+            center = arc.disk.center.toPointE2()
+            
+            srcV = VectorE2((src.x - center.x) * radInv, (src.y - center.y) * radInv)
+            trgV = VectorE2((trg.x - center.x) * radInv, (trg.y - center.y) * radInv)
+
+            srcAngle = srcV.angleFromXAxis()
+            targetAngle = trgV.angleFromXAxis()
+            
+            if srcAngle > targetAngle:
+                targetAngle += 2.0 * math.pi
+            
+            result = {"type": "CircleArcE2", 
+                      "center": tuple(center), 
+                      "radius": rad,
+                      "srcAngle": srcAngle, 
+                      "targetAngle": targetAngle}
+            
+            if style == None:
+                result["style"] = makeStyle(stroke = "#000", strokeWeight = 1)
+                
+            return result
 
 def _p5_circleE2(circle, style):
     result = {"type": "CircleE2", 
@@ -112,15 +165,21 @@ def _p5_dict(obj, style):
         result = _p5_edge(obj, style)
     elif type(obj) is Face:
         result = _p5_face(obj, style)
+    elif type(obj) is CircleArcOP2:
+        result = _p5_circleArcOP2(obj, style)
     elif type(obj) is SegmentE2:
         result = _p5_segmentE2(obj, style)
     elif type(obj) is SegmentOP2:
         result = _p5_segmentE2(SegmentE2(obj.source.toPointE2(), 
                                          obj.target.toPointE2()), style)
+    elif type(obj) is SegmentH2:
+        result = _p5_circleArcOP2(obj.toPoincareCircleArcOP2(), style)
     else:
         result = None
+        
     if result != None and style != None:
         result["style"] = style
+        
     return result
 
 
