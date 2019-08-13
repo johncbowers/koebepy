@@ -94,7 +94,7 @@ class PointS2:
                        (p.hw * p.hw - p.hx * p.hx - p.hy * p.hy) * fact)
     
     @classmethod
-    def sgProjectFromExtendedComplex(cls, z: ec.ExtendedComplex) -> "PointS2":
+    def sgProjectFromExtendedComplex(cls, z) -> "PointS2":
         if z.w == ec.ExtendedComplex.ZERO:
             return cls(0.0, 0.0, -1.0)
         

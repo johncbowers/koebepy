@@ -4,8 +4,8 @@
 
 from typing import Any, Optional, Union, List
 from dataclasses import dataclass
-from . import spherical2
-from . import orientedProjective2
+import koebe.geometries.spherical2
+import koebe.geometries.orientedProjective2
 
 import math
 
