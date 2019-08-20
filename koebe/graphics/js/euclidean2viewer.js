@@ -177,33 +177,36 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
                       */
         p.draw = function () {
             
-            p.scale(1 / p.canvasScale, -1 / p.canvasScale);
-            p.translate(p.canvasScale * p.width * 0.5, -p.canvasScale * p.height * 0.5);
-            
-            if (_DEBUG) console.log("DRAWING"); 
             if (model.get('objectsDirty')) {
                 model.set('objectsDirty', false);
                 p.objs = JSON.parse(model.get('objects'));
+                
+                
+                p.scale(1 / p.canvasScale, -1 / p.canvasScale);
+                p.translate(p.canvasScale * p.width * 0.5, -p.canvasScale * p.height * 0.5);
+                
+            
+                p.background('#fff');
+
+                p.objs.forEach(obj => {
+                    p.push();
+                    if ("style" in obj && obj["style"] != null) {
+                        p.setStyle(obj["style"]);
+                    }
+                    switch (obj["type"]) {
+                        case "PointE2": p.drawPointE2(obj); break;
+                        case "Polygons": p.drawPolygons(obj); break;
+                        case "Polygon": p.drawPolygon(obj); break;
+                        case "SegmentE2": p.drawSegmentE2(obj); break;
+                        case "CircleE2": p.drawCircleE2(obj); break;
+                        case "CircleArcE2": p.drawCircleArcE2(obj); break;
+                        default: console.log(obj["type"] + " is not drawable in this sketch.");
+                    }
+                    p.pop();
+                });
+                
+                p.noLoop();
             }
-            
-            p.background('#fff');
-            
-            p.objs.forEach(obj => {
-                p.push();
-                if ("style" in obj && obj["style"] != null) {
-                    p.setStyle(obj["style"]);
-                }
-                switch (obj["type"]) {
-                    case "PointE2": p.drawPointE2(obj); break;
-                    case "Polygons": p.drawPolygons(obj); break;
-                    case "Polygon": p.drawPolygon(obj); break;
-                    case "SegmentE2": p.drawSegmentE2(obj); break;
-                    case "CircleE2": p.drawCircleE2(obj); break;
-                    case "CircleArcE2": p.drawCircleArcE2(obj); break;
-                    default: console.log(obj["type"] + " is not drawable in this sketch.");
-                }
-                p.pop();
-            });
             
         }
         

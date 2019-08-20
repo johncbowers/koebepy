@@ -38,10 +38,11 @@ class Viewer:
         self._sketch.objects = self._toJson()
         self._sketch.objectsDirty = True
     
-    def setStyle(self, obj, style, updateJson=True):
+    def update(self):
+        self._updateJson()
+    
+    def setStyle(self, obj, style):
         self._styles[id(obj)] = style
-        if (updateJson):
-            self._updateJson()
         
     def setStyles(self, objs, style):
         for obj in objs:
@@ -54,22 +55,21 @@ class Viewer:
             return None
     
     def show(self):
+        self._updateJson()
         display(self._sketch)
     
     def add(self, obj, style = None):
         self._objs.append(obj)
         if (style != None):
-            self.setStyle(obj, style, False)
-        self._updateJson()
+            self.setStyle(obj, style)
     
     def addAll(self, objs):
         for obj in objs:
             if isinstance(obj, tuple):
                 self._objs.append(obj[0])
-                self.setStyle(obj[0], obj[1], False)
+                self.setStyle(obj[0], obj[1])
             else:
                 self._objs.append(obj)
-        self._updateJson()
         
     def _toJson(self):
         return json.dumps([d for d in [self.obj_json_convert_func(o, self.getStyle(o)) for o in self._objs] if not d == None])

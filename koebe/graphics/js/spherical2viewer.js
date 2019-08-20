@@ -153,20 +153,20 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
                 0, 0, 0, 1
             );
             
-            if (_DEBUG) {
-                console.log("applying matrix\n" +       
-                    b1[0] + " " + b2[0] + " " + b3[0] + " " + 0 + "\n" + 
-                    b1[1] + " " + b2[1] + " " + b3[1] + " " + 0 + "\n" + 
-                    b1[2] + " " + b2[2] + " " + b3[2] + " " + 0 + "\n" + 
-                    "0 0 0 1"
-                );
-            }
+//             if (_DEBUG) {
+//                 console.log("applying matrix\n" +       
+//                     b1[0] + " " + b2[0] + " " + b3[0] + " " + 0 + "\n" + 
+//                     b1[1] + " " + b2[1] + " " + b3[1] + " " + 0 + "\n" + 
+//                     b1[2] + " " + b2[2] + " " + b3[2] + " " + 0 + "\n" + 
+//                     "0 0 0 1"
+//                 );
+//             }
             
             if (disk[3] < 0) {
-                if (_DEBUG) console.log("translate " + centerDist);
+//                 if (_DEBUG) console.log("translate " + centerDist);
                 p.translate(0, 0,  centerDist);
             } else {
-                if (_DEBUG) console.log("translate " + (-centerDist));
+//                 if (_DEBUG) console.log("translate " + (-centerDist));
                 p.translate(0, 0, -centerDist);
             }
             
@@ -210,7 +210,6 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
 
         p.draw = function () {
             
-            if (_DEBUG) console.log("DRAWING"); 
             if (model.get('objectsDirty')) {
                 model.set('objectsDirty', false);
                 p.objs = JSON.parse(model.get('objects'));
