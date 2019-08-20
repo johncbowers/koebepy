@@ -2,3 +2,5 @@ ipywidgets
 sympy
 scipy
 numpy
+pillow
+matplotlib
