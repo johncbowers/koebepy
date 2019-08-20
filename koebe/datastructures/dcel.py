@@ -125,6 +125,9 @@ class Vertex:
     def edges(self):
         return [dart.edge for dart in self.outDarts()]
     
+    def degree(self):
+        return len(self.outDarts())
+    
     def outDarts(self):
         # ERMERGERD Why do I have to eliminate tail recursion myself!!!
         # The only reason python is not the worst language is because
