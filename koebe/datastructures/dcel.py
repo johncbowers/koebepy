@@ -225,7 +225,8 @@ class Dart:
                  face   = None,
                  prev   = None,
                  next   = None,
-                 twin   = None):
+                 twin   = None, 
+                 data   = None):
         
         self.dcel = dcel
         self.dcel.darts.append(self)
@@ -236,6 +237,7 @@ class Dart:
         self.prev   = prev
         self.next   = next
         self.twin   = twin
+        self.data   = data
         
         if self.edge != None:
             self.edge.aDart = self
@@ -255,6 +257,12 @@ class Dart:
         if self.twin == None:
             raise MalformedDCELException("Dart.twin is None")
         return self.twin.origin
+    
+    @property
+    def pred(self): # predecessor vertex
+        if self.prev == None:
+            raise MalformedDCELException("Dart.prev is None")
+        return self.prev.origin
     
     def makeNext(self, newNext):
         self.next = newNext

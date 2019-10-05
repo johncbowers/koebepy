@@ -56,6 +56,44 @@ def randomConvexHullE3(numPoints):
     # Compute the convex hull of the samples
     return incrConvexHull(points, orientationPointE3)
 
+def randomConvexHullE3WithHighDegreeVertex(numPoints, highDegree):
+    
+    # We require at least four points
+    if numPoints < 4:
+        return None
+    
+    # Let's not do floating point multiplication more than necessary
+    # here's 2*pi
+    twopi = 2.0 * math.pi
+    
+    #  The degree to guarantee
+    deg = min(numPoints - 1, highDegree)
+    
+    # The number of remaining vertices to generate
+    n = numPoints - deg - 1
+    
+    # Generate random samples of the sphere. Note that these are not
+    # a uniform sampling of the sphere. 
+    samples = [(uniform(0, twopi), uniform(0, math.pi))
+                for _ in range(numPoints)]
+    
+    points = [PointE3(1.01 * math.cos(theta) * math.sin(phi),
+                      1.01 * math.sin(theta) * math.sin(phi),
+                      abs(1.01 * math.cos(phi)))
+              for (theta, phi) in samples]
+    
+    # Generate the points on the equator
+    samplesOnEq = [(uniform(0, twopi), (uniform(0, 1) - 0.5) * 1e-5)
+                   for _ in range(deg)]
+    
+    pointsOnEq = [PointE3(1.01 * math.cos(theta), 
+                          1.01 * math.sin(theta),
+                          z)
+                  for (theta, z) in samplesOnEq]
+    
+    return incrConvexHull(points + pointsOnEq + [PointE3(0, 0, -1.1)], 
+                          orientationPointE3)
+
 def tetrahedron(size = 1):
     points = [PointE3(size, -size / math.sqrt(3), -size / math.sqrt(6)), 
               PointE3(-size, -size / math.sqrt(3), -size / math.sqrt(6)),

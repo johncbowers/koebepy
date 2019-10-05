@@ -276,7 +276,9 @@ def wcvt_denominator(spts, P):
     w, h = P.shape
     for i in range(0, len(spts), 2):
         x1, y = trunc(*spts[i], w, h)
-        x2, _ = trunc(*spts[i+1], w, h)
+        x2, yp = trunc(*spts[i+1], w, h)
+        if y != yp:
+            print("ERROR in wcvt_denominator")
         result_sum += (P[x2][y] - P[x1][y])
     return result_sum
 
@@ -296,7 +298,9 @@ def wcvt_ynumerator(spts, P):
     w, h = P.shape
     for i in range(0, len(spts), 2):
         x1, y = trunc(*spts[i], w, h)
-        x2, _ = trunc(*spts[i+1], w, h)
+        x2, yp = trunc(*spts[i+1], w, h)
+        if y != yp:
+            print("ERROR in wcvt_ynumerator")
         result_sum += (y * (P[x2][y] - P[x1][y]))
     return result_sum
 
@@ -318,7 +322,9 @@ def wcvt_xnumerator(spts, P, Q):
     w, h = P.shape
     for i in range(0, len(spts), 2):
         x1, y = trunc(*spts[i], w, h)
-        x2, _ = trunc(*spts[i+1], w, h)
+        x2, yp = trunc(*spts[i+1], w, h)
+        if y != yp:
+            print("ERROR in wcvt_xnumerator")
         result_sum += ((x2 * P[x2][y] - Q[x2][y]) - (x1 * P[x1][y] - Q[x1][y]))
     return result_sum
 
@@ -426,4 +432,4 @@ def intCoords(coords):
     Returns:
         List[(int, int)]
     """
-    return [(int(x), int(y)) for x, y in coords]
+    return [(int(round(x)), int(round(y))) for x, y in coords]
