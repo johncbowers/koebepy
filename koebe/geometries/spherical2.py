@@ -11,7 +11,7 @@ from .euclidean3 import DirectionE3, VectorE3, least_dominant_VectorE3, PointE3
 from . import orientedProjective2
 from .orientedProjective3 import PointOP3, PlaneOP3
 from . import extendedComplex as ec
-from .commonOps import determinant2, determinant3, inner_product31
+from .commonOps import determinant2, determinant3, inner_product31, isZero
 
 import math
 from enum import Enum
@@ -277,13 +277,13 @@ class DiskS2:
         isNegZ4 = isZero(1.0 - newBasis4.dot(negZ) / newBasis4.norm())
 
         if (not (isNegZ1 or isNegZ2 or isNegZ3)):
-            return [PointS2(newBasis1), PointS2(newBasis2), PointS2(newBasis3)]
+            return [PointS2(*newBasis1), PointS2(*newBasis2), PointS2(*newBasis3)]
         elif (not (isNegZ2 or isNegZ3 or isNegZ4)):
-            return [PointS2(newBasis2), PointS2(newBasis3), PointS2(newBasis4)]
+            return [PointS2(*newBasis2), PointS2(*newBasis3), PointS2(*newBasis4)]
         elif (not (isNegZ3 or isNegZ4 or isNegZ1)):
-            return [PointS2(newBasis3), PointS2(newBasis4), PointS2(newBasis1)]
+            return [PointS2(*newBasis3), PointS2(*newBasis4), PointS2(*newBasis1)]
         else:
-            return [PointS2(newBasis4), PointS2(newBasis1), PointS2(newBasis2)]
+            return [PointS2(*newBasis4), PointS2(*newBasis1), PointS2(*newBasis2)]
         
     def invertThrough(self, diskS2):
         fact = (inner_product31(self.a, self.b, self.c, self.d, diskS2.a, diskS2.b, diskS2.c, diskS2.d) /
@@ -298,7 +298,7 @@ class DiskS2:
         )
     
     def sgProjectToOP2(self):
-        return orientedProjective2.DiskOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
+        return orientedProjective2.DiskOP2.fromPointOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
     
     def inversiveNormalize(self):
         scale = 1.0 / self.inversiveDistTo(self)
@@ -371,7 +371,66 @@ class CPlaneS2:
     def isElliptic(self):
         return self.type == CPlaneS2Type.ELLIPTIC
     
-# END CPlaneS2  
+# END CPlaneS2
+
+
+@dataclass(frozen=True)
+class CircleArcS2:
+    
+    __slots__ = ['source', 'target', 'disk']
+    
+    source: Any
+    target: Any
+    disk: Any
+        
+    def __iter__(self):
+        yield self.source
+        yield self.target
+        yield self.disk
+    
+    @property
+    def basis1(self):
+        return self.disk.basis1
+    
+    @property
+    def basis2(self):
+        return self.disk.basis2
+    
+    @property
+    def basis3(self):
+        return self.disk.basis3
+    
+    @property
+    def normedBasis1(self):
+        return self.disk.normedBasis1
+    
+    @property
+    def normedBasis2(self):
+        return self.disk.normedBasis2
+    
+    @property
+    def normedBasis3(self):
+        return self.disk.normedBasis3
+    
+    @property 
+    def centerE3(self):
+        return self.disk.centerE3
+    
+    @property
+    def radiusE3(self):
+        return self.disk.radiusE3
+    
+    def sgToCircleArcOP2(self):
+        # Project the PointE3s to PointOP2s
+        pointsOP2 = [p.sgProjectToPointOP2() 
+                     for p in self.disk.get3PointsOnDisk()]
+        
+        # Return the CircleArcOP2 through with the source and target PointOP2s and DiskOP2
+        return orientedProjective2.CircleArcOP2(self.source.sgProjectToPointOP2(), 
+                            self.target.sgProjectToPointOP2(), 
+                            iskOP2(*pointsOP2))
+# END CircleArcS2
+    
 
 def join(disk1, disk2, disk3):
     return CPlaneS2(

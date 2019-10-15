@@ -119,8 +119,6 @@ class Vertex:
         self.dcel.verts.append(self)
         self.aDart = aDart
         self.data  = data
-        if data == None:
-            raise Exception("Just set a None data vertex")
     
     def edges(self):
         return [dart.edge for dart in self.outDarts()]
@@ -317,9 +315,17 @@ class Dart:
     # Splits this dart (and twin) by the introduction of a vertex. The new vertex
     # data is given by vData, and the new edge data is given by eData.
     # The old dart is recycled to be the dart ccw before the new one.
-    def split(vData, eData):
+    def split(self, vData, eData):
         # TODO
         raise NotImplementedError("split not yet implemented, sorry.")
+    
+    # Convenience method for creating an edge for this dart.
+    def createEdge(self, data = None):
+        e = Edge(self.dcel, aDart = self, data = data)
+        self.edge = e
+        if self.twin != None:
+            self.twin.edge = e
+        return e
 
 # END Dart
         
@@ -332,6 +338,9 @@ class Edge:
         
         self.aDart = aDart
         self.data  = data
+    
+    def endPoints(self):
+        return [self.aDart.origin, self.aDart.dest]
         
     # Cuts this edge into two by introducing a zero-area face. 
     # The new edge's data is set to the eData parameter and 
@@ -369,6 +378,26 @@ class Face:
     
     def vertices(self):
         return [dart.origin for dart in self.darts()]
+    
+    def starTriangulate(self, vdata = None):
+        v = Vertex(self.dcel, data = vdata)
+        darts = self.darts()
+        tris = [self] + [Face(self.dcel, data = self.data) for _ in range(len(darts)-1)]
+        for i in range(len(darts)):
+            tri = tris[i]
+            ab = darts[i]
+            ab.face = tri
+            bc = Dart(self.dcel, origin = ab.dest, face = tri)
+            ca = Dart(self.dcel, origin = v, face = tri)
+            ab.makeNext(bc)
+            bc.makeNext(ca)
+            ca.makeNext(ab)
+            tri.aDart = ab
+        for i in range(len(darts)):
+            darts[i].prev.makeTwin(darts[i-1].next)
+            darts[i].prev.createEdge()
+        return tris
+        
 
 # END Face
 
