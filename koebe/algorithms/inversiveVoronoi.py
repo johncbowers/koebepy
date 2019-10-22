@@ -25,16 +25,22 @@ def computeVoronoiArc(d1, d2, d3, d4):
     ortho123 = CPlaneS2(d1, d2, d3)
     ortho142 = CPlaneS2(d1, d4, d2)
     
-    pt1 = genPoints1[0] if (len(genPoints1) == 1 
-                            or isZero(inner_product(ortho123.a, ortho123.b, ortho123.c, ortho123.d,
-                                                    genPoints1[0].x, genPoints1[0].y, genPoints1[0].z, 1)))
-                        else genPoints1[1]
+    pt1DotOrtho123 = inner_product(ortho123.a, ortho123.b, ortho123.c, ortho123.d,
+                                   genPoints1[0].x, genPoints1[0].y, genPoints1[0].z, 1)
     
-    pt2 = genPoints2[0] if (len(genPoints2) == 1 
-                            or isZero(inner_product(ortho142.a, ortho142.b, ortho142.c, ortho142.d,
-                                                    genPoints2[0].x, genPoints2[0].y, genPoints2[0].z, 1)))
-                        else genPoints2[1]
-        
+    if len(genPoints1) == 1 or isZero(pt1DotOrtho123):
+        pt1 = genPoints1[0]
+    else:
+        pt1 = genPoints1[1]
+    
+    pt2DotOrtho142 = inner_product(ortho142.a, ortho142.b, ortho142.c, ortho142.d,
+                                   genPoints2[0].x, genPoints2[0].y, genPoints2[0].z, 1)
+    
+    if len(genPoints2) == 1 or isZero(pt2DotOrtho142):
+        pt2 = genPoints2[0]
+    else:
+        pt2 = genPoints2[1]
+
     return CircleArcS2(pt1, pt2, dual12)
     
     

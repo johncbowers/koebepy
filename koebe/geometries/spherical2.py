@@ -8,7 +8,7 @@ from typing import Any
 from .euclidean2 import PointE2
 from .euclidean3 import DirectionE3, VectorE3, least_dominant_VectorE3, PointE3
 #from . import orientedProjective2 as op2
-from . import orientedProjective2
+
 from .orientedProjective3 import PointOP3, PlaneOP3
 from . import extendedComplex as ec
 from .commonOps import determinant2, determinant3, inner_product31, isZero
@@ -66,8 +66,9 @@ class PointS2:
         return PointE2(self.x * fact, self.y * fact)
     
     def sgProjectToPointOP2(self):
+        import koebe.geometries.orientedProjective2
         norm = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
-        return orientedProjective2.PointOP2(self.x, self.y, self.z + norm)
+        return koebe.geometries.orientedProjective2.PointOP2(self.x, self.y, self.z + norm)
     
     def sgProjectToExtendedComplex(self):
         norm = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
@@ -83,7 +84,7 @@ class PointS2:
         return cls(2.0 * p.x * fact, 2.0 * p.y * fact, (1 - (p.x * p.x + p.y * p.y)) * fact)
     
     @classmethod
-    def sgProjectFromPointOP2(cls, p: "orientedProjective2.PointOP2") -> "PointS2":
+    def sgProjectFromPointOP2(cls, p: "koebe.geometries.orientedProjective2.PointOP2") -> "PointS2":
         if p.hw == 0:
             # Then the point is at infinity and maps to the south pole
             return cls(0.0, 0.0, -1.0)
@@ -298,7 +299,8 @@ class DiskS2:
         )
     
     def sgProjectToOP2(self):
-        return orientedProjective2.DiskOP2.fromPointOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
+        import koebe.geometries.orientedProjective2
+        return koebe.geometries.orientedProjective2.DiskOP2.fromPointOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
     
     def inversiveNormalize(self):
         scale = 1.0 / self.inversiveDistTo(self)
@@ -309,7 +311,8 @@ class DiskS2:
         return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
     
     def toDiskOP2(self): 
-        return orientedProjective2.DiskOP2(0.5 * (self.a - self.d), self.c, self.b, -(self.a + self.d) * 0.5)
+        import koebe.geometries.orientedProjective2
+        return koebe.geometries.orientedProjective2.DiskOP2(0.5 * (self.a - self.d), self.c, self.b, -(self.a + self.d) * 0.5)
 # END DiskS2
 
 # The three types of c-planes
@@ -421,12 +424,13 @@ class CircleArcS2:
         return self.disk.radiusE3
     
     def sgToCircleArcOP2(self):
+        import koebe.geometries.orientedProjective2
         # Project the PointE3s to PointOP2s
         pointsOP2 = [p.sgProjectToPointOP2() 
                      for p in self.disk.get3PointsOnDisk()]
         
         # Return the CircleArcOP2 through with the source and target PointOP2s and DiskOP2
-        return orientedProjective2.CircleArcOP2(self.source.sgProjectToPointOP2(), 
+        return koebe.geometries.orientedProjective2.CircleArcOP2(self.source.sgProjectToPointOP2(), 
                             self.target.sgProjectToPointOP2(), 
                             iskOP2(*pointsOP2))
 # END CircleArcS2

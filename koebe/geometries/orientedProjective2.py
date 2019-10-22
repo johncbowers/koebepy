@@ -11,7 +11,7 @@ from .commonOps import determinant2, determinant3, inner_product4, isZero
 from .euclidean3 import VectorE3
 from .euclidean2 import PointE2, CircleE2
 
-import koebe.geometries.spherical2
+
 
 @dataclass(frozen=True)
 class PointOP2:
@@ -281,7 +281,8 @@ class DiskOP2:
                        self.d * scale
                       )
     def toDiskS2(self):
-        return spherical2.DiskS2(self.a - self.d, 
+        import koebe.geometries.spherical2
+        return koebe.geometries.spherical2.DiskS2(self.a - self.d, 
                       self.c, 
                       self.b, 
                       -(self.a + self.d)

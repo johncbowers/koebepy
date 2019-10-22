@@ -60,9 +60,9 @@ class DCEL:
     #   * ddata_transform transform the edge data on duplication
     #   * fdata_transform transform the face data on duplication
     #
-    def duplicate(self, vdata_transform = (lambda v : v), 
-                        edata_transform = (lambda e : e), 
-                        fdata_transform = (lambda f : f)):
+    def duplicate(self, vdata_transform = (lambda vData : vData), 
+                        edata_transform = (lambda eData : eData), 
+                        fdata_transform = (lambda fData : fData)):
         
         new_dcel = DCEL()        
         
@@ -110,7 +110,59 @@ class DCEL:
         
         return new_dcel
     
+    @classmethod
+    def generateCycle(cls, n = None, vdata = None):
+
+        dcel  = cls()
+        
+        if n == None and vdata == None:
+            raise RuntimeError("Either n must be set, or vdata must be set.")
+        elif vdata == None:
+            vdata = [None for _ in range(n)]
+        elif n == None:
+            n = len(vdata)
+        elif n != len(vdata):
+            raise RuntimeError("Length of vdata must be equal to n if both are set.")
+            
+        verts = [Vertex(dcel = dcel, data = vd)
+                 for vd in vdata]
+        
+        dcel.outerFace = Face(dcel = dcel)
+        interiorFace   = Face(dcel = dcel)
+
+        interiorDarts = [Dart(dcel = dcel, origin = v, face = interiorFace) 
+                         for v in verts]
+
+        # Chain the next/prev pointers
+        for i in range(n):
+            interiorDarts[i-1].makeNext(interiorDarts[i])
+
+        # Create the outer face darts
+        exteriorDarts = [Dart(dcel = dcel, origin = verts[(n - vIdx) % n], face = dcel.outerFace) 
+                         for vIdx in range(n)]
+
+        # Chain the next/prev pointers
+        for i in range(n):
+            exteriorDarts[i-1].makeNext(exteriorDarts[i])
+
+        # Make the twins
+        for i in range(n):
+            interiorDarts[i].makeTwin(exteriorDarts[n-i-1])
+
+        # Set the aDart pointers for the faces to the darts coming out
+        # of the first vertex
+        interiorFace.aDart   = interiorDarts[0]
+        dcel.outerFace.aDart = exteriorDarts[0]
+
+        # Create edge data for each edge
+        for dart in interiorDarts:
+            dart.createEdge()
+
+        return dcel
 # END DCEL
+
+
+    
 
 class Vertex:
     
@@ -341,6 +393,9 @@ class Edge:
     
     def endPoints(self):
         return [self.aDart.origin, self.aDart.dest]
+    
+    def darts(self):
+        return [self.aDart, self.aDart.twin]
         
     # Cuts this edge into two by introducing a zero-area face. 
     # The new edge's data is set to the eData parameter and 
