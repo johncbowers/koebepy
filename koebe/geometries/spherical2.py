@@ -504,9 +504,11 @@ class CircleArcS2:
                      for p in self.disk.get3PointsOnDisk()]
         
         # Return the CircleArcOP2 through with the source and target PointOP2s and DiskOP2
-        return koebe.geometries.orientedProjective2.CircleArcOP2(self.source.sgProjectToPointOP2(), 
-                            self.target.sgProjectToPointOP2(), 
-                            iskOP2(*pointsOP2))
+        return koebe.geometries.orientedProjective2.CircleArcOP2(
+                self.source.sgProjectToPointOP2(), 
+                self.target.sgProjectToPointOP2(), 
+                koebe.geometries.orientedProjective2.DiskOP2.fromPointOP2(*pointsOP2)
+        )
 # END CircleArcS2
     
 
