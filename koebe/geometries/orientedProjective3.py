@@ -96,29 +96,32 @@ class LineOP3:
         # want the point where p+tv intersects the unit sphere, i.e. where ||p|| = 1;  p.p = 1
 
         # determine whether line intersects sphere at 0, 1, or 2 points
-        rad = math.sqrt( 4*math.pow(p.dot(v), 2.0) - 4.0*(p.dot(p)- 1)*(v.dot(v)) )
-
-        # if intersects at one point (line is tangent to the unit sphere)
-        if (isZero(rad)):
-
-            t = -p.dot(v)/v.dot(v)
-            u = (p + t * v).toPointE3()
-
-            return [u]
-        # if line intersects the sphere at two points
-        elif rad > 0.0:
-
-            t1 = (-2 * (p.dot(v)) + math.sqrt(4 * math.pow(p.dot(v), 2.0) - 4.0 * (p.dot(p) - 1) * (v.dot(v)))) / (2 * v.dot(v))
-            t2 = (-2 * (p.dot(v)) - math.sqrt(4 * math.pow(p.dot(v), 2.0) - 4.0 * (p.dot(p) - 1) * (v.dot(v)))) / (2 * v.dot(v))
-
-            # plugging back into the parametrized eq. for the line p + tv
-            u1 = (p + t1 * v).toPointE3()
-            u2 = (p + t2 * v).toPointE3()
-
-            return [u1, u2]
-        # if line does not intersect the sphere
-        else:
+        if 4*math.pow(p.dot(v), 2.0) - 4.0*(p.dot(p)- 1)*(v.dot(v)) < 0:
             return []
+        else:
+            rad = math.sqrt( 4*math.pow(p.dot(v), 2.0) - 4.0*(p.dot(p)- 1)*(v.dot(v)) )
+
+            # if intersects at one point (line is tangent to the unit sphere)
+            if (isZero(rad)):
+
+                t = -p.dot(v)/v.dot(v)
+                u = (p + t * v).toPointE3()
+
+                return [u]
+            # if line intersects the sphere at two points
+            elif rad > 0.0:
+
+                t1 = (-2 * (p.dot(v)) + math.sqrt(4 * math.pow(p.dot(v), 2.0) - 4.0 * (p.dot(p) - 1) * (v.dot(v)))) / (2 * v.dot(v))
+                t2 = (-2 * (p.dot(v)) - math.sqrt(4 * math.pow(p.dot(v), 2.0) - 4.0 * (p.dot(p) - 1) * (v.dot(v)))) / (2 * v.dot(v))
+
+                # plugging back into the parametrized eq. for the line p + tv
+                u1 = (p + t1 * v).toPointE3()
+                u2 = (p + t2 * v).toPointE3()
+
+                return [u1, u2]
+            # if line does not intersect the sphere
+            else:
+                return []
         
 # END LineOP3
 

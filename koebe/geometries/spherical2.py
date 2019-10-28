@@ -9,7 +9,7 @@ from .euclidean2 import PointE2
 from .euclidean3 import DirectionE3, VectorE3, least_dominant_VectorE3, PointE3
 #from . import orientedProjective2 as op2
 
-from .orientedProjective3 import PointOP3, PlaneOP3
+from .orientedProjective3 import PointOP3, LineOP3, PlaneOP3
 from . import extendedComplex as ec
 from .commonOps import determinant2, determinant3, inner_product31, isZero
 
@@ -314,6 +314,80 @@ class DiskS2:
         import koebe.geometries.orientedProjective2
         return koebe.geometries.orientedProjective2.DiskOP2(0.5 * (self.a - self.d), self.c, self.b, -(self.a + self.d) * 0.5)
 # END DiskS2
+
+class CoaxialFamilyS2Type(Enum):
+    PARABOLIC = 0
+    ELLIPTIC = 1
+    HYPERBOLIC = 2
+
+@dataclass(frozen=True)
+class CoaxialFamilyS2:
+    __slots__ = ['source', 'target']
+    
+    source: Any
+    target: Any
+    
+    def __iter__(self):
+        yield self.source
+        yield self.target
+    
+    def type(self):
+        isectCount = len(LineOP3.fromPlaneOP3(self.source.dualPlaneOP3, self.target.dualPlaneOP3).getIntersectionWithUnit2Sphere())
+        if isectCount == 0:
+            return CoaxialFamilyS2Type.HYPERBOLIC
+        elif isectCount == 1:
+            return CoaxialFamilyS2Type.PARABOLIC
+        else:
+            return CoaxialFamilyS2Type.ELLIPTIC
+    
+    def isHyperbolic(self):
+        return self.type() == CoaxialFamilyS2Type.HYPERBOLIC
+    
+    def isParabolic(self):
+        return self.type() == CoaxialFamilyS2Type.PARABOLIC
+    
+    def isElliptic(self):
+        return self.type() == CoaxialFamilyS2Type.ELLIPTIC
+    
+    def dualLineOP3(self):
+        return LineOP3(
+                determinant2(self.source.a, self.source.b, self.target.a, self.target.b), # p01
+                determinant2(self.source.a, self.source.c, self.target.a, self.target.c), # p02
+                determinant2(self.source.a, self.source.d, self.target.a, self.target.d), # p03
+                determinant2(self.source.b, self.source.c, self.target.b, self.target.c), # p12
+                determinant2(self.source.b, self.source.d, self.target.b, self.target.d), # p13
+                determinant2(self.source.c, self.source.d, self.target.c, self.target.d)  # p23
+        )
+    def generatorPoints(self):
+        line = (LineOP3.fromPlaneOP3(self.source.dualPlaneOP3, self.target.dualPlaneOP3)
+                if   self.isElliptic()
+                else LineOP3.fromPointOP3(self.source.dualPointOP3, self.target.dualPointOP3)
+                )
+        return [PointS2.fromVector(p.toVectorE3()) for p in line.getIntersectionWithUnit2Sphere()]
+                
+    def diskThroughPointS2(self, pt):
+        a1 = self.source.a
+        b1 = self.source.b
+        c1 = self.source.c
+        d1 = self.source.d
+
+        a2 = self.target.a
+        b2 = self.target.b
+        c2 = self.target.c
+        d2 = self.target.d
+
+        x = pt.directionE3.v.x
+        y = pt.directionE3.v.y
+        z = pt.directionE3.v.z
+
+        return DiskS2(
+                a2 * (d1 + b1 * y + c1 * z) - a1 * (d2 + b2 * y + c2 * z),
+                b2 * (d1 + a1 * x + c1 * z) - b1 * (d2 + a2 * x + c2 * z),
+                c2 * (d1 + a1 * x + b1 * y) - c1 * (d2 + a2 * x + b2 * y),
+                -a2 * d1 * x + d2 * (a1 * x + b1 * y + c1 * z) - d1 * (b2 * y + c2 * z)
+        )
+
+# END CoaxialFamilyS2
 
 # The three types of c-planes
 class CPlaneS2Type(Enum):
