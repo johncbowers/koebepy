@@ -22,6 +22,11 @@ from koebe.geometries.spherical2 import DiskS2, PointS2, CPlaneS2
 from koebe.geometries.orientedProjective3 import PointOP3
 from koebe.datastructures.dcel import DCEL, Face, Edge, Vertex
 
+from .viewer import Viewer
+from .viewer import makeStyle as _makeStyle
+
+makeStyle = _makeStyle
+
 # Use should be:
 # from spherical2viewer import S2Viewer
 #
@@ -145,46 +150,67 @@ class DefaultStyles:
 
 ### THE ACTUAL VIEWER CLASSES
     
-class S2Viewer():
+class S2Viewer(Viewer):
     def __init__(self, width=500, height=500):
-        viewer_code = pkgutil.get_data("koebe.graphics.js.js", "spherical2viewer.js").decode("utf8")
-        display(Javascript(viewer_code))
-        self._sketch = S2Sketch(width=width, height=height)
-        self._objs   = []
-        self._styles = {}
-    
-    def _updateJson(self):
-        self._sketch.objects = self._toJson()
-        self._sketch.objectsDirty = True
-    
-    def setStyle(self, obj, style):
-        self._styles[id(obj)] = style
-        self._updateJson()
-    
-    def getStyle(self, obj):
-        if id(obj) in self._styles:
-            return self._styles[id(obj)]
-        else:
-            return None
-    
-    def show(self):
-        display(self._sketch)
-    
-    def add(self, obj, style = None):
-        self._objs.append(obj)
-        if (style != None):
-            self.setStyle(obj, style)
-        self._updateJson()
-    
-    def addAll(self, objs):
-        self._objs.extend(objs)
-        self._updateJson()
-        
-    def _toJson(self):
-        return json.dumps([d for d in [_p5_dict(o, self.getStyle(o)) for o in self._objs] if not d == None])
-    
+        super().__init__(width = width, 
+                         height = height, 
+                         scale = 1.0, 
+                         jsSketchFile = "spherical2viewer.js", 
+                         SketchClass = S2Sketch,
+                         obj_json_convert_func = _p5_dict)
+
     def toggleSphere(self):
         self._sketch.showSphere = not self._sketch.showSphere
+            
+# class S2Viewer():
+#     def __init__(self, width=500, height=500):
+#         viewer_code = pkgutil.get_data("koebe.graphics.js.js", "spherical2viewer.js").decode("utf8")
+#         display(Javascript(viewer_code))
+#         self._sketch = S2Sketch(width=width, height=height)
+#         self._objs   = []
+#         self._anim   = []
+#         self._styles = {}
+    
+#     def _updateJson(self):
+#         self._sketch.objects = self._toJson()
+#         self._sketch.objectsDirty = True
+    
+#     def setStyle(self, obj, style):
+#         self._styles[id(obj)] = style
+#         self._updateJson()
+    
+#     def getStyle(self, obj):
+#         if id(obj) in self._styles:
+#             return self._styles[id(obj)]
+#         else:
+#             return None
+    
+#     def show(self):
+#         display(self._sketch)
+    
+#     def add(self, obj, style = None):
+#         self._objs.append(obj)
+#         if (style != None):
+#             self.setStyle(obj, style)
+#         self._updateJson()
+    
+#     def addAll(self, objs):
+#         self._objs.extend(objs)
+#         self._updateJson()
+        
+#     def pushAnimFrame(self):
+#         self._anim.append(self._objs)
+#         self._objs = []
+        
+#     def _toJson(self):
+#         frames = self._anim + [self._objs]
+#         return json.dumps(
+#             [[d for d in [_p5_dict(o, self.getStyle(o)) for o in frame] if not d == None] 
+#              for frame in frames]
+#         )
+    
+#     def toggleSphere(self):
+#         self._sketch.showSphere = not self._sketch.showSphere
     
 
 class S2Sketch(widgets.DOMWidget):

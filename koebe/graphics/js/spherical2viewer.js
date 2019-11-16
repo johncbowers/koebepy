@@ -86,6 +86,7 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             let h = model.get('height');
             p.createCanvas(w, h, p.WEBGL);
             p.zoom = 1.0;
+            p.frame = 0;
         }
         
         p.setStyle = function(style) {
@@ -232,7 +233,7 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
                 p.sphere(0.999, 96, 64);
             //p.sphereDetail(30);
             
-            p.objs.forEach(obj => {
+            p.objs[p.frame].forEach(obj => {
                 p.push();
                 if ("style" in obj && obj["style"] != null) {
                     p.setStyle(obj["style"]);
@@ -248,6 +249,9 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
                 p.pop();
             });
             
+            if (p.objs.length != 1) {
+                p.frame = (p.frame + 1) % p.objs.length;
+            }
         } 
     };
 })

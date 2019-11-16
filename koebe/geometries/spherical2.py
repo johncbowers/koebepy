@@ -161,6 +161,19 @@ class DiskS2:
                     )
                   )
     
+    @classmethod
+    def withDiameterS2(cls, p1, p2):
+        v1 = p1S2.directionE3.v
+        v2 = p2S2.directionE3.v
+        v  = (v1 + v2) * 0.5
+        vn = v.normalize()
+        return cls(vn.x, vn.y, vn.z, -v.norm())
+    
+    @classmethod
+    def withCenterAndRadiusS2(cls, center, rho):
+        c = center.directionE3.v.normalize()
+        return cls(c.x, c.y, c.z, -math.cos(rho))
+    
     # Returns the great circle through two points
     @classmethod
     def throughTwoPointS2(cls, p1, p2):

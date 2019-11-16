@@ -88,6 +88,7 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
             p.createCanvas(w, h);
             p.zoom = 1.0;
             p.canvasScale = s;
+            p.frame = 0;
         }
         
         p.setStyle = function(style) {
@@ -177,7 +178,7 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
                       */
         p.draw = function () {
             
-            if (model.get('objectsDirty')) {
+            if (model.get('objectsDirty') || p.objs.length > 1) {
                 model.set('objectsDirty', false);
                 p.objs = JSON.parse(model.get('objects'));
                 
@@ -188,7 +189,7 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
             
                 p.background('#fff');
 
-                p.objs.forEach(obj => {
+                p.objs[p.frame].forEach(obj => {
                     p.push();
                     if ("style" in obj && obj["style"] != null) {
                         p.setStyle(obj["style"]);
@@ -204,8 +205,11 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
                     }
                     p.pop();
                 });
-                
-                p.noLoop();
+                if (p.objs.length == 1) {
+                    p.noLoop();
+                } else {
+                    p.frame = (p.frame + 1) % p.objs.length;
+                }
             }
             
         }

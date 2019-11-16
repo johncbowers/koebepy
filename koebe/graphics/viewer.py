@@ -31,6 +31,7 @@ class Viewer:
         display(Javascript(viewer_code))
         self._sketch = SketchClass(width=width, height=height, scale=scale)
         self._objs   = []
+        self._anim   = []
         self._styles = {}
         self.obj_json_convert_func = obj_json_convert_func
     
@@ -70,6 +71,14 @@ class Viewer:
                 self.setStyle(obj[0], obj[1])
             else:
                 self._objs.append(obj)
+                
+    def pushAnimFrame(self):
+        self._anim.append(self._objs)
+        self._objs = []
         
     def _toJson(self):
-        return json.dumps([d for d in [self.obj_json_convert_func(o, self.getStyle(o)) for o in self._objs] if not d == None])
+        frames = self._anim + [self._objs]
+        return json.dumps(
+            [[d for d in [self.obj_json_convert_func(o, self.getStyle(o)) for o in frame] if not d == None] 
+             for frame in frames]
+        )
