@@ -123,13 +123,13 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
             p.circle(pt[0], pt[1], 5 * p.canvasScale);
         }
         
-        p.drawPolygon = function(polygonData) {
+        p.drawPolygonE2 = function(polygonData) {
             let polygon = polygonData["vertices"];
             p.beginShape();
             polygon.forEach(v => {
                 p.vertex(v[0], v[1]);
             });
-            p.endShape();
+            p.endShape(p.CLOSE);
         }
         
         p.drawPolygons = function (polygonsData) {
@@ -194,10 +194,11 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
                     if ("style" in obj && obj["style"] != null) {
                         p.setStyle(obj["style"]);
                     }
+                    
                     switch (obj["type"]) {
                         case "PointE2": p.drawPointE2(obj); break;
                         case "Polygons": p.drawPolygons(obj); break;
-                        case "Polygon": p.drawPolygon(obj); break;
+                        case "PolygonE2": p.drawPolygonE2(obj); break;
                         case "SegmentE2": p.drawSegmentE2(obj); break;
                         case "CircleE2": p.drawCircleE2(obj); break;
                         case "CircleArcE2": p.drawCircleArcE2(obj); break;
@@ -214,10 +215,10 @@ createSketchView('E2Sketch', ['euclidean2Module'], (Settings, model) => {
             
         }
         
-        p.keyTyped = function () {
-          if (key === 'e') {
-            photo.save('photo', 'png');
-          }
-        }
+//         p.keyTyped = function () {
+//           if (key === 'e') {
+//             photo.save('photo', 'png');
+//           }
+//         }
     };
 })

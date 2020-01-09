@@ -17,7 +17,7 @@ from traitlets import Unicode, Int, Bool, Float
 import json #json.dumps(obj)
 
 # Packages for drawable objects
-from koebe.geometries.euclidean2 import PointE2, SegmentE2, CircleE2, VectorE2
+from koebe.geometries.euclidean2 import PointE2, SegmentE2, CircleE2, VectorE2, PolygonE2
 from koebe.geometries.orientedProjective2 import PointOP2, DiskOP2, SegmentOP2, CircleArcOP2
 from koebe.geometries.hyperbolic2 import CircleH2, SegmentH2
 from koebe.datastructures.dcel import DCEL, Face, Edge, Vertex
@@ -145,6 +145,13 @@ def _p5_circleE2(circle, style):
         result["style"] = makeStyle(stroke = "#000", strokeWeight = 1)
     return result
 
+def _p5_polygonE2(polygon, style):
+    result = {"type": "PolygonE2", 
+              "vertices": [(p.x, p.y) for p in polygon.vertices]}
+    if style == None:
+        result["style"] = makeStyle(stroke = "#000", strokeWeight = 1)
+    return result
+
 def _p5_dict(obj, style):
     
     if type(obj) is Vertex:
@@ -174,6 +181,8 @@ def _p5_dict(obj, style):
                                          obj.target.toPointE2()), style)
     elif type(obj) is SegmentH2:
         result = _p5_circleArcOP2(obj.toPoincareCircleArcOP2(), style)
+    elif type(obj) is PolygonE2:
+        result = _p5_polygonE2(obj, style)
     else:
         result = None
         
