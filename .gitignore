@@ -2,3 +2,5 @@
 !.gitignore
 *.pyc
 data/*
+Rougier-2017/*
+Projects/*
