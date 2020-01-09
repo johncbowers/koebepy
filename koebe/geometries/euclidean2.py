@@ -12,6 +12,21 @@ from .commonOps import *
 
 @dataclass(frozen=True)
 class PointE2:
+    """2D Euclidean Point
+    
+    This class represents a 2D point and has several operators overloaded. 
+    Let p and q be PointE2 objects and v be a VectorE2 object. 
+    
+    Then p - q gives the vector from q to p and p + v gives the point obtained
+    by moving p along the vector v. 
+    
+    PointE2s can also compute their distances (and squared distances) to other 
+    PointE2s. 
+    
+    Attributes:
+        x: The x-coordinate of the point.
+        y: The y-coordinate of the point.
+    """
     
     __slots__ = ["x", "y"]
     x: Any
@@ -21,23 +36,52 @@ class PointE2:
         yield self.x
         yield self.y
     
-    @classmethod
-    def fromPointE2(cls, p):
-        return cls(p.x, p.y)
-    
     def __sub__(self, other):
+        """Computes the Vector from another point to this one. 
+        
+        Args: 
+            other: The PointE2 to subtract from this one.
+        
+        Returns:
+            A VectorE2 representing the vector from the other PointE2 to this PointE2. 
+        """
         return VectorE2(self.x - other.x,
                         self.y - other.y)
     
     def distSqTo(self, p):
+        """Returns the squared distance from this point to a PointE2 p. 
+        
+        Args: 
+            p: The PointE2 to compute the squared distance to. 
+        
+        Returns:
+            The squared distance from this to p. 
+        """
         dx = p.x - self.x
         dy = p.y - self.y
         return dx * dx + dy * dy
     
     def distTo(self, p):
+        """Returns the distance from this point to a PointE2 p. 
+        
+        Args: 
+            p: The PointE2 to compute the distance to. 
+        
+        Returns:
+            The distance from this to p. 
+        """
         return math.sqrt(self.distSqTo(p))
     
     def __eq__(self, other):
+        """Tests equality between PointE2 objects.  
+        
+        Args: 
+            other: The other PointE2 object. 
+        
+        Returns:
+            True if this PointE2's x and y attributes equal other's.
+            False otherwise.
+        """
         if other == None:
             return False
         return self.x == other.x and self.y == other.y
@@ -46,6 +90,14 @@ class PointE2:
         return not self == other
     
     def __add__(self, other: "VectorE2") -> "PointE2":
+        """Adds a VectorE2 to this point coordinate-wise. 
+        
+        Args: 
+            other: The VectorE2 to add to this point.
+        
+        Returns:
+            A new PointE2 object displaced by the given vector. 
+        """
         return PointE2(self.x + other.x, self.y + other.y)
     
 # TODO After SegmentE2 and DiskE2 are implemented, uncomment
