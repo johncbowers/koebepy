@@ -9,6 +9,6 @@
 # jupyter widgets running properly on the lab machines.
 
 pip3 install --user wheel
-pip3 install --user ipycanvas ipywidgets ipyevents
+pip3 install --user ipycanvas ipywidgets ipyevents dataclasses
 
 jupyter nbextension enable --py widgetsnbextension
