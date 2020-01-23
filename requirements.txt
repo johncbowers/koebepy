@@ -1,4 +1,6 @@
 ipywidgets
+ipycanvas
+ipyevents
 sympy
 scipy
 numpy
