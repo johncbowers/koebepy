@@ -1,0 +1,6 @@
+[submodule "traveling-salesman-art"]
+	path = traveling-salesman-art
+	url = https://github.com/jxmorris12/traveling-salesman-art.git
+[submodule "Rougier-2017"]
+	path = Rougier-2017
+	url = https://github.com/ReScience-Archives/Rougier-2017.git
