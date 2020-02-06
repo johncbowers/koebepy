@@ -7,7 +7,7 @@ import itertools
 import random
 import math
 
-def triangleAreaE3(face):
+def faceAreaE3(face):
     """Computes the area of a triangular DCEL face with vertex coordinates given
     as PointE3 objects.
     
@@ -65,7 +65,8 @@ def surfaceSampling(dcel, nsamples, face_weight_function = triangleAreaE3, face_
         face_sampling_function: (Face) -> Sample. A function that computes a sample of a given face. 
         
     Returns:
-        A list of sample points. 
+        A list of sample points given as a pair (point, face) where point is the point returned
+        by the face_sampling_function and face is the Face of the triangle containing it. 
     """
     # Get the actual faces: 
     faces = [f for f in dcel.faces if dcel.outerFace != f]
@@ -84,7 +85,7 @@ def surfaceSampling(dcel, nsamples, face_weight_function = triangleAreaE3, face_
         if tri_idx >= len(faces):
             tri_idx = len(faces) - 1
         # Compute a random point on the given triangle
-        return face_sampling_function(faces[tri_idx])
+        return (face_sampling_function(faces[tri_idx]), faces[tri_idx])
     
     # Return as many samples as requested
     return [sample() for _ in range(nsamples)]
