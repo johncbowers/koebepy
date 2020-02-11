@@ -1,4 +1,4 @@
-# koebe.py
+# koebepy
 A python library for inversive geometry and circle packing on the Reimann sphere with sample Jupyter notebook uses.
 
 # View it in Binder
