@@ -8,3 +8,8 @@ pillow
 matplotlib
 pybind11
 MeshPy
+Cython
+pyopengl
+triangle
+glumpy
+vispy

@@ -139,7 +139,7 @@ def slowAmbientSurfaceSampling(dcel,
         if tri_idx >= len(faces):
             tri_idx = len(faces) - 1
         # Compute a random point on the given triangle
-        return (face_sampling_function(faces[tri_idx]), faces[tri_idx])
+        return face_sampling_function(faces[tri_idx])
     
     def defaultReject(s1, s2):
         return s1.distSqTo(s2) < radius * radius
@@ -153,7 +153,7 @@ def slowAmbientSurfaceSampling(dcel,
     while fail_count < stop_count:
         s = sample()
         for x in samples: 
-            if reject_function(s[0], x[0]):
+            if reject_function(s, x):
                 fail_count += 1
                 break
         else:
@@ -179,7 +179,7 @@ def slowAmbientBoundarySampling(face,
         dart_idx = binarySearch(lengthAccSum, dart_length)
         if dart_idx >= len(darts):
             dart_idx = len(darts) - 1
-        return (dart_sampling_function(darts[dart_idx]), darts[dart_idx])
+        return dart_sampling_function(darts[dart_idx])
         
     def defaultReject(s1, s2):
         return s1.distSqTo(s2) < radius * radius
@@ -193,7 +193,7 @@ def slowAmbientBoundarySampling(face,
     while fail_count < stop_count:
         s = sample()
         for x in samples: 
-            if reject_function(s[0], x[0]):
+            if reject_function(s, x):
                 fail_count += 1
                 break
         else:

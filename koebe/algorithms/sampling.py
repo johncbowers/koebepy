@@ -49,7 +49,43 @@ def binarySearch(A, x):
             low = mid + 1
     return low
 
-def surfaceSampling(dcel, nsamples, face_weight_function = triangleAreaE3, face_sampling_function = uniformTriangleSampleE3):
+def weightedIndexSampling1D(rho, n):
+    """Samples in range(0,len(rho)) where the probability that a given index i is drawn is rho[i] / sum(rho)
+    
+    Args:
+        rho: (List[float]) A density function defined over the indices where each rho[i] > 0 and rho[i] represents the density at index i. 
+        n: int The number of samples to draw. 
+    """
+    acc = [0] + list(itertools.accumulate(rho))
+    samples = [binarySearch(acc, random.random() * acc[-1]) - 1 for _ in range(n)]
+    return samples
+
+def weightedIndexSampling2D(rho, n):
+    """Samples the index set (i, j) of indices into the 2D list rho. The samples will be indices (i, j) into rho.
+    
+    Args:
+        rho: (List[List[float]]) A 2D density function defined over the indices where each rho[i][j] > 0 and rho[i][j] represents the density at index (i, j). 
+        n: int The number of samples to draw. 
+    """
+    indices = [(i, j) for i in range(len(rho)) for j in range(len(rho[i]))]
+    flattened_rho = [rho[i][j] for i, j in indices]
+    flattened_samples = weightedIndexSampling1D(flattened_rho, n)
+    samples = [indices[i] for i in flattened_samples]
+    return samples
+
+def weightedSubgridSampling2D(rho, n):
+    """Samples a grid using a 2D density function rho. First each grid index (i, j) is drawn using the proportion of the 
+    density at rho[i][j]. Then a uniform sample of that grid index (i + random.random(), j + random.random()) is selected.
+    
+    Args:
+        rho: (List[List[float]]) A 2D density function defined over the indices where each rho[i][j] > 0 and rho[i][j] represents the density at index (i, j). 
+        n: int The number of samples to draw. 
+    """
+    indices = weightedIndexSampling2D(rho, n)
+    samples = [(i + random.random(), j + random.random()) for i, j in indices]
+    return samples
+    
+def surfaceSampling(dcel, nsamples, face_weight_function = faceAreaE3, face_sampling_function = uniformTriangleSampleE3):
     """Computes a sampling of a DCEL. Faces are weighted using the face_weight_function and a 
     selected by a weighted sampling. Then a sample is drawn by running the face_sampling_function
     on the selected face. 
@@ -81,11 +117,11 @@ def surfaceSampling(dcel, nsamples, face_weight_function = triangleAreaE3, face_
         # Select a random area from 0 to totalArea
         tri_area = random.random() * totalArea
         # Grab the triangle whose area contains tri_area in the sum
-        tri_idx = binarySearch(areaAccSum, tri_area)
+        tri_idx = binarySearch(areaAccSum, tri_area) - 1
         if tri_idx >= len(faces):
             tri_idx = len(faces) - 1
         # Compute a random point on the given triangle
-        return (face_sampling_function(faces[tri_idx]), faces[tri_idx])
+        return face_sampling_function(faces[tri_idx])
     
     # Return as many samples as requested
     return [sample() for _ in range(nsamples)]
@@ -110,7 +146,7 @@ def boundarySampling(face, nsamples, dart_weight_function = dartLengthE3, dart_s
     
     def sample():
         dart_length = random.random() * totalLength
-        dart_idx = binarySearch(lengthAccSum, dart_length)
+        dart_idx = binarySearch(lengthAccSum, dart_length) - 1
         if dart_idx >= len(darts):
             dart_idx = len(darts) - 1
         return dart_sampling_function(darts[dart_idx])
