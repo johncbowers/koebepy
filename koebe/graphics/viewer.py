@@ -24,6 +24,24 @@ class DefaultStyles:
     GREEN_FILL = makeStyle(fill = "#00ff00")
     BLUE_FILL = makeStyle(fill = "#0000ff")
     
+
+class VertexColoredTriangle:
+    def __init__(self, p1, p2, p3, color1, color2, color3):
+        self.p1 = p1
+        self.p2 = p2
+        self.p3 = p3
+        self.color1 = color1
+        self.color2 = color2
+        self.color3 = color3
+    def to_dict(self):
+        return {"type": "VertexColoredTriangle", 
+                "p1":   tuple(self.p1), 
+                "p2":   tuple(self.p2),
+                "p3":   tuple(self.p3),
+                "color1": self.color1,
+                "color2": self.color2,
+                "color3": self.color3}
+    
 class Viewer:
     
     def __init__(self, width, height, scale, jsSketchFile, SketchClass, obj_json_convert_func):

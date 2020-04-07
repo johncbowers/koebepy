@@ -9,7 +9,7 @@
 /*** LIBRARIES ***/
 require.config({
     paths: {
-        'p5': 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min',
+        'p5': 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.min',
         'lodash': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min'
     }
 });
@@ -199,6 +199,45 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             });
         }
         
+        p.drawVertexColoredTriangle = function(triangleData) {
+            let p1 = triangleData["p1"];
+            let p2 = triangleData["p2"];
+            let p3 = triangleData["p3"];
+            let color1 = triangleData["color1"];
+            let color2 = triangleData["color2"];
+            let color3 = triangleData["color3"];
+            
+//             if (_DEBUG) {
+//                 _DEBUG = false;
+//                 console.log(p1);
+//                 console.log(p2);
+//                 console.log(p3);
+//                 console.log(color1);
+//                 console.log(color2);
+//                 console.log(color3);
+//                 alert(color1);
+//                 alert(color2);
+//                 alert(color3);
+//             }
+            
+            p.beginShape(p.TRIANGLES);
+            p.fill(color1);
+            p.vertex(p1[0], p1[1], p1[2]);
+            p.fill(color2);
+            p.vertex(p2[0], p2[1], p2[2]);
+            p.fill(color3);
+            p.vertex(p3[0], p3[1], p3[2]);
+            p.endShape(p.CLOSE);
+//               p.beginShape(p.TRIANGLES);
+//               p.fill(255, 0, 0);
+//               p.vertex(-1, -1, 0);
+//               p.fill(0, 255, 0);
+//               p.vertex( 1, -1, 0);
+//               p.fill(0, 0, 255);
+//               p.vertex( 0,  1, 0);
+//               p.endShape(p.CLOSE);
+        }
+        
         p.drawSegmentE3 = function (segData) {
             let endpoints = segData["endpoints"];
             p.line(endpoints[0][0],
@@ -226,13 +265,12 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             
             //p.pushStyle();
             p.noStroke();
-            p.lights();
+            //p.lights();
             //p.sphereDetail(200);
             //p.sphereDetail(30);
             if (model.get('showSphere'))
                 p.sphere(0.999, 96, 64);
             //p.sphereDetail(30);
-            
             p.objs[p.frame].forEach(obj => {
                 p.push();
                 if ("style" in obj && obj["style"] != null) {
@@ -244,6 +282,7 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
                     case "Polygons": p.drawPolygons(obj); break;
                     case "Polygon": p.drawPolygon(obj); break;
                     case "SegmentE3": p.drawSegmentE3(obj); break;
+                    case "VertexColoredTriangle": p.drawVertexColoredTriangle(obj); break;
                     default: console.log(obj["type"] + " is not drawable in this sketch.");
                 }
                 p.pop();

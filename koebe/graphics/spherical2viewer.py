@@ -22,7 +22,7 @@ from koebe.geometries.spherical2 import DiskS2, PointS2, CPlaneS2
 from koebe.geometries.orientedProjective3 import PointOP3
 from koebe.datastructures.dcel import DCEL, Face, Edge, Vertex
 
-from .viewer import Viewer
+from .viewer import Viewer, VertexColoredTriangle
 from .viewer import makeStyle as _makeStyle
 
 makeStyle = _makeStyle
@@ -36,6 +36,8 @@ makeStyle = _makeStyle
 
 ### GEOMETRIC OBJECTS TO DICTIONARIES FOR THE P5 SCRIPT
 
+
+    
 def _p5_pointE3(point):
     return {"type": "PointE3", 
             "point": tuple(point)}
@@ -125,6 +127,8 @@ def _p5_dict(obj, style):
         result = _p5_face(obj, style)
     elif type(obj) is SegmentE3:
         result = _p5_segmentE3(obj, style)
+    elif isinstance(obj, VertexColoredTriangle):
+        result = obj.to_dict()
     else:
         result = None
     if result != None and style != None:
