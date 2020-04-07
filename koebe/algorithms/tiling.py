@@ -70,6 +70,9 @@ class TilingRules:
     def createInitialTile(self, tileType):
         prototile = self.getPrototile(tileType)
         tiling    = Tiling.generateCycle(vdata = prototile.tileVerts)
+        if prototile.tileData != []:
+            for i in range(len(tiling.verts)):
+                tiling.verts[i].point = prototile.tileData[i]
         tiling.faces[-1].tileType = tileType
         return tiling
     
@@ -91,13 +94,18 @@ class Prototile:
         """
         self.tilingRules  = tilingRules
         self.tileType     = tileType
-        self.tileVerts    = tileVerts
+        if len(tileVerts) > 0 and isinstance(tileVerts[0], tuple):
+            self.tileVerts = [v for v, _ in tileVerts]
+            self.tileData = [d for _, d in tileVerts]
+        else: 
+            self.tileVerts = tileVerts
+            self.tileData = []
         self.splitRules   = dict()
         self.splitFn      = dict()
         self.childDartsOf = dict()
         self.parentDartOf = dict()
         self.newVertRules = list()
-        self.newVertFn    = list()
+        self.newVertFnHandler = None
         self.subtiles     = list()
     
     def addSplitEdgeRule(self, edge, newverts, fn = None):
@@ -140,15 +148,18 @@ class Prototile:
         for command in splitCommands: 
             self.addSplitEdgeRule(*command)
     
-    def addNewVertexRule(self, vertName, fn = None):
+    def addNewVertexRule(self, vertName):
         """
         Args:
             vertName: the name of the new vertex
             fn: (Face) -> None
         """
         self.newVertRules.append(vertName)
-        if fn != None:
-            self.newVertFn[vertName] = fn
+#         if fn != None:
+#             self.newVertFn[vertName] = fn
+    
+    def setNewVertexHandlerFn(self, fn):
+        self.newVertFnHandler = fn
     
     def addNewVertexRules(self, vertNames):
         for vertName in vertNames:
@@ -177,190 +188,6 @@ def subdivideTile(tilingRules, tiling, tile):
     prototile = tilingRules.getPrototile(tile)
     tile.subtiles = [Tile(tiling, prototile.subtiles[i][0]) for i in range(len(prototile.subtiles))]
     dartFrom = originNameToDartDict(tilingRules, tile)
-
-def tilingPass(tilingRules, tiling):
-    
-    # tiles that need to be subdivided
-    tiles = [tile for tile in tiling.faces if tile != tiling.outerFace]
-    
-    tiling.addLevel()
-    
-    dartsByNameForTile = [originNameToDartDict(tilingRules, tile) for tile in tiles]
-
-def _old_setTileAnnotations(tilingRules, tiles):
-    """
-    For each tile adds a .vertexByName dictionary for mapping 
-    """
-    for tile in tiles: 
-        prototile = tilingRules.getPrototile(tile.tileType)
-        theDarts  = tile.darts()
-        
-        if len(theDarts) != len(prototile.tileVerts):
-            raise PrototileFormationError(
-                    f"Prototile vertex count ({len(theDarts)}) does not match tile"
-                    + f" vertex count for tile type {tile.tileType}."
-            )
-        
-        tile.vertexByName = {}
-        # Build a mapping from vertex names to darts originating at the vertex
-        # and vice versa. 
-#         tile.vertexToDart   = {}
-        for i in range(len(theDarts)):
-            vertexName = prototile.tileVerts[i]
-#             tile.vertexToDart[vertexName] = theDarts[i]
-            theDarts[i].originName = vertexName
-        
-        tile.edgeNameToDart = {}
-        for dart in theDarts:
-            name = (dart.originName, dart.next.originName)
-            tile.edgeNameToDart[name] = dart
-            dart.edgeName = name
-        
-        tile.splitEdgeNameToDart = {}
-    
-def _old_tilingPass(tilingRules, tiling):
-    
-    # tiles that need to be subdivided
-    tiles = [tile for tile in tiling.faces if tile != tiling.outerFace]
-    
-    # Annotate each tile with dictionaries to switch between 
-    # vertex names and darts within the tile and edge names and darts. 
-    setTileAnnotations(tilingRules, tiles)
-            
-    # For each tile, annotate any edge that needs to be split with its split rules. 
-    for tile in tiles:
-        prototile = tilingRules.getPrototile(tile.tileType)
-        theDarts  = tile.darts()
-        for dart in theDarts:
-            if dart.edgeName in prototile.splitRules:
-                dart.splitRule = prototile.splitRules[dart.edgeName]
-            else:
-                dart.splitRule = ""
-    for dart in tiling.outerFace.darts():
-        dart.splitRule = ""
-    
-    def annotateAndCheckEdge(edge):
-        """
-        Annotates the edge with .newVertexCount, the number of new vertices to subdivide it into. 
-        Return:
-            True iff. the split count is consistent on both sides of the edge. 
-        """
-        dart1, dart2 = edge.darts()
-        if dart1.face == edge.dcel.outerFace:
-            edge.newVertexCount = len(dart2.splitRule)
-        elif dart2.face == edge.dcel.outerFace:
-            edge.newVertexCount = len(dart1.splitRule)
-        elif len(dart1.splitRule) == len(dart2.splitRule):
-            edge.newVertexCount = len(dart2.splitRule)
-        else:
-            edge.newVertexCount = None
-        return edge.newVertexCount != None
-    
-    def raiseEdgeError(edge):
-        dart1, dart2 = edge.darts()
-        tileName1 = dart1.face.tileType
-        tileName2 = dart2.face.tileType
-        splitCount1 = len(dart1.splitRule) + 1
-        splitCount2 = len(dart2.splitRule) + 1
-        
-        raise PrototileFormationError(
-                "Edge subdivision cannot be performed because "
-                + f"edge {dart1.edgeName} of tile {tileName1}"
-                + f" has to split into {splitCount1} edges"
-                + " but is matched with "
-                + f"edge {dart2.edgeName} of tile {tileName2}," 
-                + f" which has to split into {splitCount2} edges"
-        )
-    
-    # Check that each edge compiles:
-    for edge in tiling.edges:
-        if not annotateAndCheckEdge(edge):
-            raiseEdgeError(edge)
-    
-    # Now we need to actually split each edge introducing new vertices
-    # then add the new edges and stitch the tiles up. 
-
-    def getSplitVertexNames(dart):
-        """ For each dart get the vertex names for the split. For example
-            if we're splitting a dart representing AB in a tiling by introducing
-            a single vertex named a, then getSplitVertexNames will return ("A", "a", "B")
-            as a tuple.
-            
-            Args: 
-            dart: The dart that needs to be split. 
-            
-            Returns:
-            A tuple containing the vertex names for the split version of the dart.
-        """
-        if dart.face != dart.dcel.outerFace:
-            split_vertex_names = (dart.edgeName[0]) + dart.splitRule + (dart.edgeName[-1])
-#             print(f"dart splitRule: {dart.edgeName} to {dart.splitRule} to form {split_vertex_names}")
-        else:
-            split_vertex_names = None
-        return split_vertex_names
-    
-    def setVertexAndEdgeNames(dartList, vertexNames, parentTile, lastVertex):
-        if vertexNames != None:
-            for i in range(len(dartList)):
-                d = dartList[i]
-                d.edgeName = (vertexNames[i], vertexNames[i+1])
-                if parentTile != d.dcel.outerFace:
-                    parentTile.vertexByName[vertexNames[i]] = d.origin 
-                    parentTile.splitEdgeNameToDart[d.edgeName] = d
-            if parentTile != d.dcel.outerFace:
-                parentTile.vertexByName[vertexNames[-1]] = lastVertex
-    
-    old_darts, old_edges, old_faces = tiling.addLevel() # Push all the current level info onto the various stacks and reset for new one. 
-    
-    # Split all edges/darts according to their split rules and store a mapping from new split dart names
-    # to Dart objects in the corresponding tile. 
-    for e in old_edges:
-        
-        # For each dart get the vertex names for the split. For example
-        # if we're splitting a dart representing AB in a tiling by introducing
-        # a single vertex named a, then getSplitVertexNames will return ("A", "a", "B")
-        # as a tuple. 
-        vertNames1 = getSplitVertexNames(e.aDart)
-        vertNames2 = getSplitVertexNames(e.aDart.twin)
-        
-        # Create the new vertices along the edge and the new darts. 
-        newVerts = [Vertex(e.dcel) for _ in range(e.newVertexCount)]  
-        
-        nDarts1 = ([Dart(e.dcel, origin = e.aDart.origin)] 
-                   + [Dart(e.dcel, origin = v) for v in newVerts])
-        
-        nDarts2 = ([Dart(e.dcel, origin = e.aDart.dest)] 
-                   + [Dart(e.dcel, origin = v) for v in reversed(newVerts)])
-        
-        setVertexAndEdgeNames(nDarts1, vertNames1, e.aDart.face, e.aDart.dest)
-        setVertexAndEdgeNames(nDarts2, vertNames2, e.aDart.twin.face, e.aDart.origin)
-        
-        e.aDart.childDarts = nDarts1
-        e.aDart.twin.childDarts = nDarts2
-        
-        e.childEdges = []
-        for i in range(len(nDarts1)):
-            nDarts1[i].makeTwin(nDarts2[len(nDarts2) - 1 - i])
-            newEdge = Edge(e.dcel, aDart = nDarts1[i])
-            e.childEdges.append(newEdge)
-            nDarts1[i].edge = newEdge
-            nDarts2[i].edge = newEdge
-    
-    # Split all tiles
-    for tile in tiles:
-        # Create any new vertices not obtained via splitting
-        # and add them to the vertexByName map. 
-        
-        # Create a new face for each subtile getting either a dart
-        # created in the edge split pass or creating a brand new dart
-        
-        # Loop over all the darts and find any that do not have a twin
-        # for any that do not have a twin, set their twin correctly and
-        # create an Edge between them
-        
-        pass
-    print(tile.vertexByName)
-
 
 def starTriangulateAllFaces(tiling):
     for face in tuple(tiling.faces):
@@ -397,6 +224,9 @@ def tilingPass(tiling, tilingRules):
                     vert = TilingVertex(tiling)
                     vertNamed[vName] = vert
                     dart.splitVertices.append(vert)
+                if prototile.tileVerts[i] in prototile.splitFn:
+                    fn = prototile.splitFn[prototile.tileVerts[i]]
+                    fn(dart)
                 dart.twin.splitVertices = list(reversed(dart.splitVertices))
             else:
                 for vIdx in range(len(splitRule[1])):
@@ -407,6 +237,11 @@ def tilingPass(tiling, tilingRules):
         # Create the other new vertices
         for vName in prototile.newVertRules:
             vertNamed[vName] = TilingVertex(tiling)
+            
+        if prototile.newVertFnHandler:
+            fn = prototile.newVertFnHandler
+            fn(vertNamed)
+        
 
         #####
         # 2. Create the new darts and tiles.  
