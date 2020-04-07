@@ -254,6 +254,13 @@ class CircleE2:
     def diameter(self):
         return 2.0 * self.radius
     
+    @classmethod
+    def fromPointE2(cls, p1:PointE2, p2:PointE2, p3:PointE2) -> "CircleE2":
+        import koebe.geometries.orientedProjective2 as OP2
+        op1, op2, op3 = OP2.PointOP2.fromPointE2(p1), OP2.PointOP2.fromPointE2(p2), OP2.PointOP2.fromPointE2(p3)
+        disk = OP2.DiskOP2.fromPointOP2(op1, op2, op3)
+        return disk.toCircleE2()
+    
     
 # END CircleE2
 
