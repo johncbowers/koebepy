@@ -8,11 +8,17 @@ class DCEL:
         self.edges = []
         self.faces = []
         
+        self.Vertex = Vertex
+        self.Edge   = Edge
+        self.Dart   = Dart
+        self.Face   = Face
+        
         self.outerFace = (None if outerFaceData == None 
-                               else Face(self, data = outerFaceData))
+                               else self.Face(self, data = outerFaceData))
+        
     
     def eulerCharacteristic(self):
-        return len(self.verts) - (len(self.darts) / 2.0) + len(self.faces)
+        return len(self.verts) - (len(self.darts) / 2) + len(self.faces)
 
     def reorderVerticesByBoundaryFirst(self):
         bdryVerts = list(reversed(self.outerFace.vertices()))
@@ -64,13 +70,13 @@ class DCEL:
                         edata_transform = (lambda eData : eData), 
                         fdata_transform = (lambda fData : fData)):
         
-        new_dcel = DCEL()        
+        new_dcel = self.__class__()        
         
         # create new versions for each object
-        new_verts = [Vertex(new_dcel, data = vdata_transform(v.data)) for v in self.verts]
-        new_darts = [Dart(new_dcel)                                   for _ in self.darts]
-        new_edges = [Edge(new_dcel, data = edata_transform(e.data))   for e in self.edges]
-        new_faces = [Face(new_dcel, data = fdata_transform(f.data))   for f in self.faces]
+        new_verts = [self.Vertex(new_dcel, data = vdata_transform(v.data)) for v in self.verts]
+        new_darts = [self.Dart(new_dcel)                                   for _ in self.darts]
+        new_edges = [self.Edge(new_dcel, data = edata_transform(e.data))   for e in self.edges]
+        new_faces = [self.Face(new_dcel, data = fdata_transform(f.data))   for f in self.faces]
         
         o2n = dict() # old to new object map
         
@@ -124,13 +130,13 @@ class DCEL:
         elif n != len(vdata):
             raise RuntimeError("Length of vdata must be equal to n if both are set.")
             
-        verts = [Vertex(dcel = dcel, data = vd)
+        verts = [dcel.Vertex(dcel = dcel, data = vd)
                  for vd in vdata]
         
-        dcel.outerFace = Face(dcel = dcel)
-        interiorFace   = Face(dcel = dcel)
+        dcel.outerFace = dcel.Face(dcel = dcel)
+        interiorFace   = dcel.Face(dcel = dcel)
 
-        interiorDarts = [Dart(dcel = dcel, origin = v, face = interiorFace) 
+        interiorDarts = [dcel.Dart(dcel = dcel, origin = v, face = interiorFace) 
                          for v in verts]
 
         # Chain the next/prev pointers
@@ -138,7 +144,7 @@ class DCEL:
             interiorDarts[i-1].makeNext(interiorDarts[i])
 
         # Create the outer face darts
-        exteriorDarts = [Dart(dcel = dcel, origin = verts[(n - vIdx) % n], face = dcel.outerFace) 
+        exteriorDarts = [dcel.Dart(dcel = dcel, origin = verts[(n - vIdx) % n], face = dcel.outerFace) 
                          for vIdx in range(n)]
 
         # Chain the next/prev pointers
@@ -241,7 +247,7 @@ class Vertex:
                   for i in range(len(indarts))]
         
         # Create a new face to replace the old one
-        newFace = Face(self.dcel, chains[0][0], newFaceData)
+        newFace = self.Face(self.dcel, chains[0][0], newFaceData)
         
         # Connect up all the chains and set their face to the new face
         for cIdx in range(len(chains)):
@@ -373,7 +379,7 @@ class Dart:
     
     # Convenience method for creating an edge for this dart.
     def createEdge(self, data = None):
-        e = Edge(self.dcel, aDart = self, data = data)
+        e = self.dcel.Edge(self.dcel, aDart = self, data = data)
         self.edge = e
         if self.twin != None:
             self.twin.edge = e
@@ -435,15 +441,15 @@ class Face:
         return [dart.origin for dart in self.darts()]
     
     def starTriangulate(self, vdata = None):
-        v = Vertex(self.dcel, data = vdata)
+        v = self.dcel.Vertex(self.dcel, data = vdata)
         darts = self.darts()
-        tris = [self] + [Face(self.dcel, data = self.data) for _ in range(len(darts)-1)]
+        tris = [self] + [self.dcel.Face(self.dcel, data = self.data) for _ in range(len(darts)-1)]
         for i in range(len(darts)):
             tri = tris[i]
             ab = darts[i]
             ab.face = tri
-            bc = Dart(self.dcel, origin = ab.dest, face = tri)
-            ca = Dart(self.dcel, origin = v, face = tri)
+            bc = self.dcel.Dart(self.dcel, origin = ab.dest, face = tri)
+            ca = self.dcel.Dart(self.dcel, origin = v, face = tri)
             ab.makeNext(bc)
             bc.makeNext(ca)
             ca.makeNext(ab)
