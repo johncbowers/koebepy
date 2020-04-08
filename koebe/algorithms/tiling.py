@@ -1,5 +1,7 @@
 from koebe.datastructures.dcel import *
 
+from koebe.graphics.euclidean2viewer import UnitScaleE2Sketch, PoincareDiskViewer, E2Viewer, makeStyle
+
 class Tiling(DCEL):
     
     def __init__(self, outerFaceData = None):
@@ -81,6 +83,12 @@ class TilingRules:
         for _ in range(depth): tilingPass(tiling, self)
         return tiling
 
+def midp(dart):
+    u = dart.origin.point - PointE2.O
+    v = dart.dest.point - PointE2.O
+    vs = dart.splitVertices
+    vs[0].point = PointE2.O + (u + v) / 2
+    return vs[0].point
     
     
 class Prototile:
@@ -166,6 +174,11 @@ class Prototile:
             self.addNewVertexRule(vertName)
     
     def addSubtile(self, subtileType, subtileVerts):
+        if len(subtileVerts) != len(self.tilingRules.getPrototile(subtileType).tileVerts):
+            raise PrototileFormationError(
+                f"Subtiles of type {subtileType} require {len(self.tilingRules.getPrototile(subtileType).tileVerts)}"
+                + f" vertices, but the given vertex set was {subtileVerts} with {len(subtileVerts)} vertices."
+            )
         self.subtiles.append((subtileType, subtileVerts))
     
 class PrototileFormationError(Exception):
@@ -288,7 +301,7 @@ def tilingPass(tiling, tilingRules):
         # For each original dart, set its children list: 
         nameOfOriginalDart = dict([(originalDarts[i-1], (prototile.tileVerts[i-1], prototile.tileVerts[i])) 
                               for i in range(len(originalDarts))])
-
+        
         for originalDart in originalDarts:
             name = nameOfOriginalDart[originalDart]
             originalDart.subdarts = [dartNamed[childName] 
@@ -430,3 +443,159 @@ def generateCirclePackingLayout(tiling, centerDartIdx = -1):
         packing.verts[vIdx].is_tile_vertex = vIdx < tile_vertex_count
     
     return packing, duplicate_tiling
+
+
+def random_fill(tile):
+    import random
+    rcolor = int(random.random() * 360)
+    rsat   = int(random.random()*70) + 30
+    rlight = int(random.random()*50) + 40
+    color = f"hsl({rcolor},{rsat}%,{rlight}%)"
+    return makeStyle(fill=color)
+
+def tileIdx_fill_fromList(colorList):
+    def fn(tile):
+        nonlocal colorList
+        return makeStyle(fill=colorList[tile.idx % len(colorList)])
+    return fn
+
+def tileType_fill_fromDict(colorDict):
+    def fn(tile):
+        nonlocal colorDict
+        return makeStyle(fill=colorDict[tile.tileType])
+    return fn
+
+def collectFaces(face):
+    if len(face.subtiles) > 0:
+        return [subface for subtile in face.subtiles for subface in collectFaces(subtile)]
+    else: 
+        return [face]
+
+def GeometricTilingViewer(tiling, 
+                          size=(600, 600), 
+                          edgeStyle=makeStyle(stroke="#0375b4", strokeWeight=1.0), 
+                          shadedLevel=-1, 
+                          style_fn=random_fill, 
+                          BaseViewer=E2Viewer):
+
+    import random
+
+    from koebe.geometries.euclidean2 import PointE2, SegmentE2, PolygonE2
+    
+    w, h = size
+
+    xs = [v.point.x for v in tiling.verts]
+    ys = [v.point.y for v in tiling.verts]
+
+    minx, maxx = min(xs), max(xs)
+    miny, maxy = min(ys), max(ys)
+
+    dx = maxx - minx
+    dy = maxy - miny
+
+    sc = min(w-6, h-6) / min(dx, dy)
+
+    def mvPt(p):
+        nonlocal minx, miny, w, h
+        return PointE2((p.x - minx) * sc - w*0.5 + 3, (p.y - miny) * sc - h*0.5 + 3)
+        
+    def pointSegmentE2For(dart):
+        return SegmentE2(mvPt(dart.origin.point), mvPt(dart.dest.point))
+
+    viewer = BaseViewer(w, h)
+
+    if shadedLevel != -1 and shadedLevel <= len(tiling.faceLevels):
+        faces = (tiling.faceLevels[shadedLevel] 
+                 if shadedLevel < len(tiling.faceLevels) 
+                 else tiling.faces)
+        for i in range(1,len(faces)):
+            faces[i].idx = i
+            style = style_fn(faces[i])
+            for tile in collectFaces(faces[i]):
+                viewer.add(PolygonE2([mvPt(v.point) for v in tile.vertices()]), style)
+
+    edgeSegs = [(pointSegmentE2For(e.aDart), edgeStyle)
+               for e in tiling.edges]
+
+    viewer.addAll(edgeSegs)
+    return viewer
+
+def CirclePackedTilingViewer(tiling, 
+                              packing, 
+                                size = (600, 600),
+                                edgeStyle = makeStyle(stroke="#0375b4", strokeWeight=2.0),
+                                showCircles = True,
+                                circleStyle = makeStyle(stroke="#007849", strokeWeight=0.5),
+                                showTriangulation = False,
+                                triangulationStyle = makeStyle(stroke="#fece00", strokeWeight=1.0),
+                                shadedLevel = -1,
+                                style_fn=random_fill,
+                                BaseViewer=PoincareDiskViewer):
+
+    for vIdx in range(len(tiling.verts)):
+        tiling.verts[vIdx].idx = vIdx
+
+    from koebe.geometries.euclidean2 import PointE2, SegmentE2, PolygonE2
+
+    def PointE2For(v):
+        return PointE2(v.data.center.coord.real, v.data.center.coord.imag)
+
+    def SegmentE2For(dart):
+        return SegmentE2(PointE2For(dart.origin), PointE2For(dart.dest))
+
+    viewer = BaseViewer(600, 600)
+
+    if shadedLevel != -1 and shadedLevel < len(tiling.faceLevels):
+        faces = (tiling.faceLevels[shadedLevel]
+                 if shadedLevel < len(tiling.faceLevels)
+                 else tiling.faces)
+        for i in range(1,len(faces)):
+            faces[i].idx = i
+            style = style_fn(faces[i])
+            for tile in collectFaces(faces[i]):
+                viewer.add(PolygonE2([PointE2For(packing.verts[v.idx]) for v in tile.vertices()]), style)
+
+    if showCircles:
+        viewer.addAll([(v.data, circleStyle) for v in packing.verts])
+
+    # Ucomment to view the triangulation vertices
+    if showTriangulation:
+        triSegs = [(SegmentE2For(e.aDart), triangulationStyle)
+                   for e in packing.edges if not e.aDart.origin.is_tile_vertex or not e.aDart.dest.is_tile_vertex]
+        viewer.addAll(triSegs)
+
+    edgeSegs = [(SegmentE2For(e.aDart), edgeStyle)
+               for e in packing.edges if e.aDart.origin.is_tile_vertex and e.aDart.dest.is_tile_vertex]
+    viewer.addAll(edgeSegs)
+    
+    return viewer
+
+def TutteEmbeddedTilingViewer(tiling, 
+                              tutteGraph, 
+                              edgeStyle = makeStyle(stroke="#0375b4", strokeWeight=0.5),
+                              shadedLevel = -1,
+                              style_fn=random_fill):
+
+    from koebe.geometries.euclidean2 import SegmentE2, PolygonE2
+
+    for vIdx in range(len(tiling.verts)):
+        tiling.verts[vIdx].idx = vIdx
+
+    viewer = UnitScaleE2Sketch()
+
+    if shadedLevel != -1 and shadedLevel < len(tiling.faceLevels):
+        faces = (tiling.faceLevels[shadedLevel]
+                 if shadedLevel < len(tiling.faceLevels)
+                 else tiling.faces)
+        for i in range(1,len(faces)):
+            faces[i].idx = i
+            style = style_fn(faces[i])
+            for tile in collectFaces(faces[i]):
+                viewer.add(PolygonE2([tutteGraph.verts[v.idx].data for v in tile.vertices()]), style)
+
+    viewer.addAll(
+        [(SegmentE2(e.aDart.origin.data, e.aDart.twin.origin.data), edgeStyle)
+        for e in tutteGraph.edges]
+    )
+    
+    return viewer

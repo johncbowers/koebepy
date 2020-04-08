@@ -5,19 +5,19 @@ from scipy.sparse.linalg import inv
 import numpy as np
 import math
 
-def sparse_laplacian(self):
-    print("Creating vertToIdx array...")
+def sparse_laplacian(self, verbose=False):
+    if verbose: print("Creating vertToIdx array...")
     vertToIdx = dict((v, k) for k, v in enumerate(self.verts))
-    print("Creating vertToDeg array...")
+    if verbose: print("Creating vertToDeg array...")
     vertToDeg = [len(v.outDarts()) for v in self.verts]
-    print("Creating mat...")
+    if verbose: print("Creating mat...")
     #mat = [[0 for _ in range(len(self.verts))] for _ in range(len(self.verts))]
     
     row_array = []
     col_array = []
     dat_array = []
 
-    print("Done.")
+    if verbose: print("Done.")
     for i in range(len(self.verts)):
         u = self.verts[i]
         neighbors = u.neighbors()
@@ -32,7 +32,7 @@ def sparse_laplacian(self):
             col_array.append(vertToIdx[v])
             dat_array.append(-1)
     
-    print(f"Returning coo_matrix with shape ({len(self.verts)}, {len(self.verts)})")
+    if verbose: print(f"Returning coo_matrix with shape ({len(self.verts)}, {len(self.verts)})")
     return coo_matrix((np.array(dat_array), (np.array(row_array), np.array(col_array))), shape=(len(self.verts), len(self.verts))).tocsc()
 
 def tutteEmbeddingE2(graphDCEL, in_place = False, verbose = False):
@@ -54,6 +54,9 @@ def tutteEmbeddingE2(graphDCEL, in_place = False, verbose = False):
     else:
         graph = graphDCEL
     
+    for vIdx in range(len(graph.verts)): 
+        graph.verts[vIdx]._original_idx = vIdx
+    
     if verbose: print("Reordering vertices...")
     graph.reorderVerticesByBoundaryFirst()
     if verbose: print("done.")
@@ -68,7 +71,7 @@ def tutteEmbeddingE2(graphDCEL, in_place = False, verbose = False):
     if verbose: print("done.")
     
     if verbose: print("Computing graph laplacian...")
-    L = sparse_laplacian(graph)
+    L = sparse_laplacian(graph, verbose)
     if verbose: print("done.")
 
     if verbose: print("Computing Tutte embedding...")
@@ -103,4 +106,11 @@ def tutteEmbeddingE2(graphDCEL, in_place = False, verbose = False):
         else:
             graph.verts[i].tutte_data = PointE2(P[i,0],P[i,1])
     if verbose: print("done.")
+        
+    vs = [None for _ in range(len(graph.verts))]
+    for v in graph.verts: 
+        vs[v._original_idx] = v
+    
+    graph.verts = vs
+    
     return graph
