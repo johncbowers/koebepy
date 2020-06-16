@@ -36,6 +36,12 @@ class PointE2:
         yield self.x
         yield self.y
     
+    def __mul__(self, a):
+        return PointE2(self.x * a, self.y * a)
+    
+    def __rmul__(self, a):
+        return PointE2(self.x * a, self.y * a)
+    
     def __sub__(self, other):
         """Computes the Vector from another point to this one. 
         
@@ -261,6 +267,22 @@ class CircleE2:
         disk = OP2.DiskOP2.fromPointOP2(op1, op2, op3)
         return disk.toCircleE2()
     
+    def __add__(self, other: "VectorE2") -> "CircleE2":
+        """Adds a VectorE2 to this circle's center. 
+        
+        Args: 
+            other: The VectorE2 to add to this point.
+        
+        Returns:
+            A new PointE2 object displaced by the given vector. 
+        """
+        return CircleE2(self.center + other, self.radius)
+    
+    def __mul__(self, a):
+        return CircleE2(PointE2(self.center.x * a, self.center.y * a), self.radius*a)
+    
+    def __rmul__(self, a):
+        return CircleE2(PointE2(self.center.x * a, self.center.y * a), self.radius*a)
     
 # END CircleE2
 

@@ -34,6 +34,13 @@ class PointE3:
     def __sub__(self: "PointE3", other: "PointE3") -> "VectorE3":
         return VectorE3(self.x - other.x, self.y - other.y, self.z - other.z)
     
+   
+    def __mul__(self, a):
+        return PointE3(self.x * a, self.y * a, self.z * a)
+    
+    def __rmul__(self, a):
+        return PointE3(a * self.x, a * self.y, a * self.z)
+    
     def distSqTo(self, p):
         dx = p.x - self.x
         dy = p.y - self.y

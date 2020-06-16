@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import math
 from . import euclidean3
-from .commonOps import determinant2, isZero, are_dependent4, inner_product4
+from .commonOps import determinant2, determinant3, isZero, are_dependent4, inner_product4
 
 @dataclass(frozen=True)
 class LineOP3:
@@ -233,29 +233,29 @@ class PlaneOP3:
     @classmethod
     def fromPointOP3(cls, p1, p2, p3):
         return cls(
-            X = + determinant(
+            X = + determinant3(
                     p1.hy, p1.hz, p1.hw,
                     p2.hy, p2.hz, p2.hw,
                     p3.hy, p3.hz, p3.hw
             ),
-            Y = - determinant(
+            Y = - determinant3(
                     p1.hx, p1.hz, p1.hw,
                     p2.hx, p2.hz, p2.hw,
                     p3.hx, p3.hz, p3.hw
             ),
-            Z = + determinant(
+            Z = + determinant3(
                     p1.hx, p1.hy, p1.hw,
                     p2.hx, p2.hy, p2.hw,
                     p3.hx, p3.hy, p3.hw
             ),
-            W = - determinant(
+            W = - determinant3(
                     p1.hx, p1.hy, p1.hz,
                     p2.hx, p2.hy, p2.hz,
                     p3.hx, p3.hy, p3.hz
             )
         )
     
-    def isIncident(p: PointOP3):
+    def isIncident(self, p: PointOP3):
         return isZero(  self.X * p.hx 
                       + self.Y * p.hy 
                       + self.Z * p.hz 
