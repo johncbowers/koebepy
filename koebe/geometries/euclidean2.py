@@ -162,6 +162,9 @@ class VectorE2:
     
     def norm(self):
         return math.sqrt(self.normSq())
+
+    def cross(self, p):
+        return VectorE2(self.x * p.y - p.x * self.y, 0)
     
     def angleFromXAxis(self):
         normInv = 1.0 / self.norm()
