@@ -261,11 +261,15 @@ def _place_circles(dcel: DCEL, centerDartIdx: int) -> None:
         next_dart = Q.popleft()
         vertex_to_place = next_dart.next.dest
         if not vertex_to_place._is_placed:
-            vertex_to_place.data = _compute_center(next_dart.origin.data[0], 
+            try:
+                vertex_to_place.data = _compute_center(next_dart.origin.data[0], 
                                                    next_dart.dest.data[0], 
                                                    next_dart.origin.data[1], 
                                                    next_dart.dest.data[1],
                                                    vertex_to_place.data[1])
+            except: 
+                print("Error: most likely a circle shrunk to zero radius.")
+                vertex_to_place.data = None
             vertex_to_place.placing_dart = next_dart
             vertex_to_place._is_placed = True
             #TODO We could here compute the maximum error in placement by how different the
@@ -277,7 +281,11 @@ def _place_circles(dcel: DCEL, centerDartIdx: int) -> None:
                 Q.append(dart.twin)
     
 
-def maximalPacking(diskDcel: DCEL, num_passes: int = 1000, tolerance: float = 3e-10, centerDartIdx: int = -1) -> (DCEL, int):
+def maximalPacking(diskDcel: DCEL, 
+                   num_passes: int = 1000, 
+                   tolerance: float = 3e-10, 
+                   centerDartIdx: int = -1, 
+                   placeCircles: bool = True) -> (DCEL, int):
     """Computes a hyperbolic maximal packing of the given DCEL. 
     
     This function assumes that the DCEL is a triangulated disk with the boundary given
@@ -317,13 +325,16 @@ def maximalPacking(diskDcel: DCEL, num_passes: int = 1000, tolerance: float = 3e
         b.aim = -1.0
     
     repack_iterations = repack(dcel, num_passes, tolerance)
-    _place_circles(dcel, centerDartIdx)
     
-    # Finally, let's convert the ((x+iy), r) data to CircleH2 types
-    for v in dcel.verts:
-        data = v.data
-        v.data = CircleH2(PointH2(data[0]), data[1])
-    
+    if placeCircles:
+        _place_circles(dcel, centerDartIdx)
+
+        # Finally, let's convert the ((x+iy), r) data to CircleH2 types
+        for v in dcel.verts:
+            data = v.data
+            if data:
+                v.data = CircleH2(PointH2(data[0]), data[1])
+                
     return dcel, repack_iterations
 
 def _set_center(v: Vertex, z: ExtendedComplex) -> None:

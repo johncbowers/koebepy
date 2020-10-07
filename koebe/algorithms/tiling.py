@@ -84,6 +84,7 @@ class TilingRules:
         return tiling
 
 def midp(dart):
+    from koebe.geometries.euclidean2 import PointE2
     u = dart.origin.point - PointE2.O
     v = dart.dest.point - PointE2.O
     vs = dart.splitVertices
@@ -476,7 +477,9 @@ def GeometricTilingViewer(tiling,
                           edgeStyle=makeStyle(stroke="#0375b4", strokeWeight=1.0), 
                           shadedLevel=-1, 
                           style_fn=random_fill, 
-                          BaseViewer=E2Viewer):
+                          BaseViewer=E2Viewer, 
+                          scale_factor=1,
+                          scale_translation=(0,0)):
 
     import random
 
@@ -496,8 +499,9 @@ def GeometricTilingViewer(tiling,
     sc = min(w-6, h-6) / min(dx, dy)
 
     def mvPt(p):
-        nonlocal minx, miny, w, h
-        return PointE2((p.x - minx) * sc - w*0.5 + 3, (p.y - miny) * sc - h*0.5 + 3)
+        nonlocal minx, miny, w, h, scale_factor, scale_translation
+        tx, ty = scale_translation
+        return PointE2(((p.x - minx) * sc - w*0.5 + 3)*scale_factor+tx, ((p.y - miny) * sc - h*0.5 + 3)*scale_factor+ty)
         
     def pointSegmentE2For(dart):
         return SegmentE2(mvPt(dart.origin.point), mvPt(dart.dest.point))
@@ -574,7 +578,8 @@ def TutteEmbeddedTilingViewer(tiling,
                               tutteGraph, 
                               edgeStyle = makeStyle(stroke="#0375b4", strokeWeight=0.5),
                               shadedLevel = -1,
-                              style_fn=random_fill):
+                              style_fn=random_fill, 
+                              showVertices=False):
 
     from koebe.geometries.euclidean2 import SegmentE2, PolygonE2
 
@@ -597,5 +602,7 @@ def TutteEmbeddedTilingViewer(tiling,
         [(SegmentE2(e.aDart.origin.data, e.aDart.twin.origin.data), edgeStyle)
         for e in tutteGraph.edges]
     )
+    
+    if showVertices: viewer.addAll([v.data for v in tutteGraph.verts])
     
     return viewer
