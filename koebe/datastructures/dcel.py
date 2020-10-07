@@ -247,7 +247,7 @@ class Vertex:
                   for i in range(len(indarts))]
         
         # Create a new face to replace the old one
-        newFace = self.Face(self.dcel, chains[0][0], newFaceData)
+        newFace = self.dcel.Face(self.dcel, chains[0][0], newFaceData)
         
         # Connect up all the chains and set their face to the new face
         for cIdx in range(len(chains)):
@@ -399,6 +399,9 @@ class Edge:
     
     def endPoints(self):
         return [self.aDart.origin, self.aDart.dest]
+    
+    def incidentFaces(self):
+        return [self.aDart.face, self.aDart.twin.face]
     
     def darts(self):
         return [self.aDart, self.aDart.twin]
