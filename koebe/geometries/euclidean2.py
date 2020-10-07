@@ -162,6 +162,17 @@ class VectorE2:
     
     def norm(self):
         return math.sqrt(self.normSq())
+
+    def cross(self, p):
+        """Finds the cross product for two vectors.
+
+                Args:
+                    p: The other VectorE2 used to find the cross product of.
+
+                Returns:
+                    A new VectorE2 where x is the scalar and y is the a place holder (0).
+                """
+        return VectorE2(self.x * p.y - p.x * self.y, 0)
     
     def angleFromXAxis(self):
         normInv = 1.0 / self.norm()
