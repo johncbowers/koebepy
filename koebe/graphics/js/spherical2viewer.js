@@ -9,7 +9,7 @@
 /*** LIBRARIES ***/
 require.config({
     paths: {
-        'p5': 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.min',
+        'p5': 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min',
         'lodash': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min'
     }
 });
@@ -268,8 +268,12 @@ createSketchView('S2Sketch', ['testModule'], (Settings, model) => {
             //p.lights();
             //p.sphereDetail(200);
             //p.sphereDetail(30);
-            if (model.get('showSphere'))
+            if (model.get('showSphere')) {
+                //p.lights();
+                p.fill(220, 220, 220);
                 p.sphere(0.999, 96, 64);
+                //p.noLights()
+            }
             //p.sphereDetail(30);
             p.objs[p.frame].forEach(obj => {
                 p.push();

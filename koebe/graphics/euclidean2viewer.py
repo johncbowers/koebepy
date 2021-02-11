@@ -19,7 +19,7 @@ import json #json.dumps(obj)
 # Packages for drawable objects
 from koebe.geometries.euclidean2 import PointE2, SegmentE2, CircleE2, VectorE2, PolygonE2
 from koebe.geometries.orientedProjective2 import PointOP2, DiskOP2, SegmentOP2, CircleArcOP2
-from koebe.geometries.hyperbolic2 import CircleH2, SegmentH2
+from koebe.geometries.hyperbolic2 import PointH2, CircleH2, SegmentH2, LineH2
 from koebe.datastructures.dcel import DCEL, Face, Edge, Vertex
 
 import math
@@ -158,6 +158,8 @@ def _p5_dict(obj, style):
         obj = obj.data    
     if type(obj) is PointE2:
         result = _p5_pointE2(obj)
+    elif type(obj) is PointH2:
+        result = _p5_pointE2(obj.toPointE2())
     elif type(obj) is PointOP2:
         result = _p5_pointE2(obj.toPointE2())
     elif type(obj) is CircleE2:
@@ -180,6 +182,8 @@ def _p5_dict(obj, style):
         result = _p5_segmentE2(SegmentE2(obj.source.toPointE2(), 
                                          obj.target.toPointE2()), style)
     elif type(obj) is SegmentH2:
+        result = _p5_circleArcOP2(obj.toPoincareCircleArcOP2(), style)
+    elif type(obj) is LineH2:
         result = _p5_circleArcOP2(obj.toPoincareCircleArcOP2(), style)
     elif type(obj) is PolygonE2:
         result = _p5_polygonE2(obj, style)
