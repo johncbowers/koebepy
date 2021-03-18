@@ -532,6 +532,7 @@ def CirclePackedTilingViewer(tiling,
                                 circleStyle = makeStyle(stroke="#007849", strokeWeight=0.5),
                                 showTriangulation = False,
                                 triangulationStyle = makeStyle(stroke="#fece00", strokeWeight=1.0),
+                                showBoundaryEdges = False,
                                 shadedLevel = -1,
                                 style_fn=random_fill,
                                 BaseViewer=PoincareDiskViewer):
@@ -564,12 +565,23 @@ def CirclePackedTilingViewer(tiling,
 
     # Ucomment to view the triangulation vertices
     if showTriangulation:
-        triSegs = [(SegmentE2For(e.aDart), triangulationStyle)
+        if showBoundaryEdges:
+            triSegs = [(SegmentE2For(e.aDart), triangulationStyle)
                    for e in packing.edges if not e.aDart.origin.is_tile_vertex or not e.aDart.dest.is_tile_vertex]
+        else:
+            triSegs = [(SegmentE2For(e.aDart), triangulationStyle)
+                   for e in packing.edges if (not e.aDart.origin.is_tile_vertex or not e.aDart.dest.is_tile_vertex)
+                      and not packing.outerFace in e.incidentFaces()]
         viewer.addAll(triSegs)
 
-    edgeSegs = [(SegmentE2For(e.aDart), edgeStyle)
+    if showBoundaryEdges:
+        edgeSegs = [(SegmentE2For(e.aDart), edgeStyle)
                for e in packing.edges if e.aDart.origin.is_tile_vertex and e.aDart.dest.is_tile_vertex]
+    else:
+        edgeSegs = [(SegmentE2For(e.aDart), edgeStyle)
+               for e in packing.edges 
+                    if e.aDart.origin.is_tile_vertex and e.aDart.dest.is_tile_vertex
+                       and not packing.outerFace in e.incidentFaces()]
     viewer.addAll(edgeSegs)
     
     return viewer
