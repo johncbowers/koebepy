@@ -162,6 +162,10 @@ class VectorE2:
     
     def norm(self):
         return math.sqrt(self.normSq())
+        
+    def normalize(self):
+        invNorm = 1.0 / self.norm()
+        return invNorm * self
 
     def cross(self, p):
         """Finds the cross product for two vectors.

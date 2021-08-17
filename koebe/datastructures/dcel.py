@@ -15,7 +15,16 @@ class DCEL:
         
         self.outerFace = (None if outerFaceData == None 
                                else self.Face(self, data = outerFaceData))
-        
+
+    def markIndices(self):
+        for vIdx in range(len(self.verts)):
+            self.verts[vIdx].idx = vIdx
+        for dIdx in range(len(self.darts)):
+            self.darts[dIdx].idx = dIdx
+        for eIdx in range(len(self.edges)):
+            self.edges[eIdx].idx = eIdx
+        for fIdx in range(len(self.faces)):
+            self.faces[fIdx].idx = fIdx
     
     def eulerCharacteristic(self):
         return len(self.verts) - (len(self.darts) / 2) + len(self.faces)

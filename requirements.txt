@@ -4,5 +4,6 @@ ipyevents
 sympy
 scipy
 numpy
+numpy-stl
 pillow
 matplotlib
