@@ -11,7 +11,7 @@ from .euclidean3 import DirectionE3, VectorE3, least_dominant_VectorE3, PointE3
 
 from .orientedProjective3 import PointOP3, LineOP3, PlaneOP3
 from . import extendedComplex as ec
-from .commonOps import determinant2, determinant3, inner_product31, isZero
+from .commonOps import determinant2, determinant3, inner_product31, isZero, are_dependent4
 
 import math
 from enum import Enum
@@ -242,9 +242,9 @@ class DiskS2:
         return isZero(inner_product(p.x, p.y, p.z, VectorE3(p.x, p.y, p.z).norm(), a, b, c, d))
     
     def __eq__(self, other):
-        return (this is other
+        return (self is other
                 or (isinstance(other, DiskS2)
-                   and are_dependent(self.a, other.a, 
+                   and are_dependent4(self.a, other.a, 
                                      self.b, other.b, 
                                      self.c, other.c, 
                                      self.d, other.d

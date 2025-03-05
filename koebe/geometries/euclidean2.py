@@ -188,6 +188,11 @@ class VectorE2:
     def toPointE2(self):
         return PointE2(self.x, self.y)
     
+    def rotate(self, theta=0, c=None, s=None):
+        if c is None or s is None:
+            c, s = math.cos(theta), math.sin(theta)
+        return VectorE2(c * self.x - s * self.y, s * self.x + c * self.y)
+    
 
 # END VectorE2
 

@@ -53,10 +53,10 @@ class PointE3:
     def toVectorE3(self):
         return self - PointE3.O
     
-    def __eq__(self, other):
-        return not other == None and (self is other or (self.x == other.x 
-                                 and self.y == other.y 
-                                 and self.z == other.z))
+    # def __eq__(self, other):
+    #     return not other == None and (self is other or (self.x == other.x 
+    #                              and self.y == other.y 
+    #                              and self.z == other.z))
     
     def __ne__(self, other):
         return not self == other
@@ -153,10 +153,10 @@ class VectorE3:
     def toPointE3(self):
         return PointE3(self.x, self.y, self.z)
     
-    def __eq__(self, other):
-        return not other == None and (self is other or (self.x == other.x 
-                                 and self.y == other.y 
-                                 and self.z == other.z))
+    # def __eq__(self, other):
+    #     return not other == None and type(self) == type(other) and (self is other or (self.x == other.x 
+    #                              and self.y == other.y 
+    #                              and self.z == other.z))
     
     def __ne__(self, other):
         return not self == other
@@ -210,7 +210,7 @@ class DirectionE3:
         return DirectionE3(self.v.cross(other.v))
     
     def __eq__(self, other):
-        return not other == None and (self is other or self.v == other.v)
+        return not other == None and type(self) == type(other) (self is other or self.v == other.v)
     
     def __ne__(self, other):
         return not self == other
