@@ -23,6 +23,9 @@ class DCEL:
             self.darts[dIdx].idx = dIdx
         for eIdx in range(len(self.edges)):
             self.edges[eIdx].idx = eIdx
+            u, v = self.edges[eIdx].endPoints()
+            self.edges[eIdx].i = u.idx
+            self.edges[eIdx].j = v.idx
         for fIdx in range(len(self.faces)):
             self.faces[fIdx].idx = fIdx
     
@@ -188,7 +191,7 @@ class Vertex:
         self.data  = data
     
     def edges(self):
-        return [dart.edge for dart in self.outDarts()]
+        return [dart.edge for dart in self.inDarts()]
     
     def degree(self):
         return len(self.outDarts())
@@ -448,6 +451,9 @@ class Face:
         if (self.aDart == None):
             raise MalformedDCELException("Face.aDart is None")
         return self.aDart.cycle()
+    
+    def edges(self):
+        return [d.edge for d in self.darts()]
     
     def vertices(self):
         return [dart.origin for dart in self.darts()]

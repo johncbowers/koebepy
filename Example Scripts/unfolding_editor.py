@@ -10,116 +10,16 @@ from koebe.algorithms.tutteEmbeddings import tutteEmbeddingE2
 from math import *
 from random import *
 
+import numpy as np
+from scipy.linalg import null_space
+import scipy.optimize as opt
+import scipy.linalg as la
+
+npoints = 6
 
 blackStyle = makeStyle(stroke=(0,0,0), fill=(255, 255, 255))
 blueStyle = makeStyle(stroke=(0,0,255), fill=(255, 0, 0), strokeWeight=2.0)
 redStyle = makeStyle(stroke=(255,0,0), fill=(255, 0, 0), strokeWeight=2.0)
-
-# def scale_disk(D, scale):
-#     p = D.dualPointOP3.toPointE3()
-#     v = p.toVectorE3()
-#     q = (((v.norm() - 1)*scale + 1)*v.normalize()) + PointE3.O
-#     return DiskS2(q.x, q.y, q.z, 1)
-
-# def random_koebe(n, scale=1):
-#     global blackStyle, redStyle
-
-#     I1 = DiskS2(1, 0, 0, 0.975)
-#     I2 = DiskS2(1, 0, 0, 0.9995)
-
-#     print(f"Generating random convex hull of {n} points and computing a Tutte embedding... ")
-#     poly = randomConvexHullE3(n) # Generate a random polyhedron with 16 vertices. 
-#     poly.outerFace = poly.faces[0] # Arbitrarily select an outer face. 
-#     tutteGraph = tutteEmbeddingE2(poly) # Compute the tutte embedding of the polyhedron. 
-#     print("\tdone.")
-
-#     print("Computing a circle packing... ")
-#     dists = [(v.data - PointE3.O).normSq() for v in tutteGraph.verts]
-#     closestToOriginIdx = dists.index(min(dists))
-#     packing, _ = maximalPacking(
-#         tutteGraph, 
-#         num_passes=1000, 
-#         centerDartIdx = tutteGraph.darts.index(tutteGraph.verts[closestToOriginIdx].aDart)
-#     )
-#     for vIdx in range(len(packing.verts)):
-#         packing.verts[vIdx].idx = vIdx
-
-#     # Store each vertex's index
-#     for i in range(len(packing.verts)):
-#         packing.verts[i].name = i
-#     print("\tdone.")
-
-#     diskSet = [(scale_disk(DiskOP2.fromCircleE2(v.data.toPoincareCircleE2()).toDiskS2().invertThrough(I1).invertThrough(I2), scale), blackStyle)
-#             for v in packing.verts]
-
-#     caps = [d[0].dualPointOP3.toPointE3() for d in diskSet]
-#     segs = [SegmentE3(caps[i], caps[j]) for i, j in [[v.idx for v in edge.endPoints()] for edge in packing.edges]]
-
-#     orthos = [(CPlaneS2.throughThreeDiskS2(*[diskSet[v.idx][0] for v in f.vertices()]), redStyle) for f in packing.faces]
-
-#     return diskSet, caps, segs, orthos
-
-# diskSet, caps, segs, orthos = random_koebe(25)
-
-
-# viewer = S2Viewer()
-
-# viewer.scale = 2
-# viewer.showBox = False
-
-# packing_showing = True
-# orthos_showing = False
-
-# viewer.addAll(diskSet)
-# viewer.addAll([(c, redStyle) for c in caps])
-# viewer.addAll(segs)
-
-# def key_pressed_handler(key):
-#     global packing_showing, orthos_showing, diskSet, caps, segs, orthos
-#     if key == "s":
-#         viewer.toggleSphere()
-#     elif key == "r":
-#         viewer._view_x = 0
-#         viewer._view_y = 0
-#     elif key == "p":
-#         if packing_showing: 
-#             viewer.removeAll(diskSet)
-#             viewer.removeAll(segs)
-#             packing_showing = False
-#         else:
-#             viewer.addAll(diskSet)
-#             viewer.addAll(segs)
-#             packing_showing = True
-#     elif key == "o":
-#         if orthos_showing: 
-#             viewer.removeAll(orthos)
-#             orthos_showing = False
-#         else:
-#             viewer.addAll(orthos)
-#             orthos_showing = True
-#     elif key == "n":
-#         packing_showing = True
-#         orthos_showing = False
-#         viewer.clear()
-#         diskSet, caps, segs, orthos = random_koebe(25)
-#         viewer.addAll(diskSet)
-#         viewer.addAll([(c, redStyle) for c in caps])
-#         viewer.addAll(segs)
-#     elif key == "m":
-#         packing_showing = True
-#         orthos_showing = False
-#         viewer.clear()
-#         diskSet, caps, segs, orthos = random_koebe(25, scale=0.7)
-#         viewer.addAll(diskSet)
-#         viewer.addAll([(c, redStyle) for c in caps])
-#         viewer.addAll(segs)
-        
-
-# viewer._key_pressed_handler = key_pressed_handler
-
-
-# viewer.show()
-
 
 
 mouse_down = False
@@ -127,11 +27,132 @@ selected_idx = -1
 closest_idx = -1
 closest_dist = float('inf')
 
+# def compute_pinned_rigidity_matrix(R, pinned_vertices):
+#     """
+#     Remove the columns corresponding to the pinned vertices from the rigidity matrix.
+#     R: np.array (m x 2n) - Original unpinned rigidity matrix
+#     pinned_vertices: list of 3 integers - Indices of pinned vertices
+#     Returns: np.array (m x (2n-6)) - Pinned rigidity matrix
+#     """
+#     pinned_cols = np.concatenate([[2 * v, 2 * v + 1] for v in pinned_vertices])
+#     return np.delete(R, pinned_cols, axis=1)
 
+# def find_equilibrium_stress(R, pinned_vertices, interior_mask, tol=1e-10):
+#     """
+#     Compute a valid equilibrium stress vector given the unpinned rigidity matrix and pinned vertices.
+#     R: np.array (m x 2n) - Original unpinned rigidity matrix
+#     pinned_vertices: list of 3 integers - Indices of pinned vertices
+#     interior_mask: np.array (m,) - Boolean array where True indicates interior edges
+#     tol: float - Numerical tolerance for zeroing out small values
+#     Returns: np.array (m,) - A normalized equilibrium stress vector
+#     """
+#     R_pinned = compute_pinned_rigidity_matrix(R, pinned_vertices)
+    
+#     # Compute the null space of R_pinned^T
+#     null_space = la.null_space(R_pinned.T, rcond=1e-10)
+    
+#     if null_space.shape[1] == 0:
+#         raise ValueError("No non-trivial equilibrium stress found. Check rigidity matrix and pinning.")
+    
+#     # Solve for an equilibrium stress where interior stresses are positive
+#     num_null_vectors = null_space.shape[1]
+#     c = np.zeros(num_null_vectors)  # Dummy objective function
+    
+#     A_eq = np.ones((1, num_null_vectors))  # Ensure nontrivial solution
+#     b_eq = np.array([1])
+    
+#     bounds = [(None, None) for _ in range(num_null_vectors)]  # Allow positive and negative values
+    
+#     # Enforce positivity on interior edges
+#     A_ub = -null_space[interior_mask, :]
+#     b_ub = np.zeros(A_ub.shape[0])
+    
+#     res = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+    
+#     if not res.success:
+#         raise ValueError("Failed to find a positive equilibrium stress using linear programming.")
+    
+#     # Construct equilibrium stress from the null space basis
+#     stress_vector = null_space @ res.x  # Linear combination of basis vectors
+    
+#     # Zero out very small numerical values
+#     stress_vector[np.abs(stress_vector) < tol] = 0.0
+    
+#     # Normalize the stress vector
+#     max_abs_stress = np.max(np.abs(stress_vector))
+#     if max_abs_stress > 0:
+#         stress_vector /= max_abs_stress
+    
+#     return stress_vector
+
+
+
+def find_equilibrium_stress(R, pinned_vertices, interior_mask, tol=1e-10):
+    """
+    Compute a valid equilibrium stress vector given the unpinned rigidity matrix and pinned vertices.
+    R: np.array (m x 2n) - Original unpinned rigidity matrix
+    pinned_vertices: list of 3 integers - Indices of pinned vertices
+    interior_mask: np.array (m,) - Boolean array where True indicates interior edges
+    tol: float - Numerical tolerance for zeroing out small values
+    Returns: np.array (m,) - A normalized equilibrium stress vector
+    """
+    
+    # Compute the null space of R_pinned^T
+    null_space = la.null_space(R.T, rcond=1e-10)
+    
+    if null_space.shape[1] == 0:
+        raise ValueError("No non-trivial equilibrium stress found. Check rigidity matrix.")
+    
+    # Solve for an equilibrium stress where interior stresses are positive
+    num_null_vectors = null_space.shape[1]
+    c = np.zeros(num_null_vectors)  # Dummy objective function
+    
+    A_eq = np.ones((1, num_null_vectors))  # Ensure nontrivial solution
+    b_eq = np.array([1])
+    
+    bounds = [(None, None) for _ in range(num_null_vectors)]  # Allow positive and negative values
+    
+    # Enforce positivity on interior edges
+    A_ub = -null_space
+    b_ub = np.zeros(A_ub.shape[0])
+    for eIdx in range(len(interior_mask)):
+        if not interior_mask[eIdx]:
+            A_ub[eIdx, :] *= -1
+            #b_ub[eIdx] = -1
+    #A_ub = -null_space[interior_mask, :]
+    
+    res = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+    
+    if not res.success:
+        raise ValueError("Failed to find a positive equilibrium stress using linear programming.")
+    
+    # Construct equilibrium stress from the null space basis
+    stress_vector = null_space @ res.x  # Linear combination of basis vectors
+    
+    # Zero out very small numerical values
+    stress_vector[np.abs(stress_vector) < tol] = 0.0
+    
+    # Normalize the stress vector
+    max_abs_stress = np.max(np.abs(stress_vector))
+    if max_abs_stress > 0:
+        stress_vector /= max_abs_stress
+    
+    return stress_vector
+
+def rigidity_matrix(G, p):
+    return np.array([
+        np.array([
+            tuple(p[e.j] - p[e.i]) if v == e.i 
+            else tuple(p[e.i] - p[e.j]) if v == e.j 
+            else (0, 0)
+            for v in range(len(tutteGraph.verts))
+        ]).flatten() for e in tutteGraph.edges
+    ])
+    
 def create_random_tutte():
-    global points, tutteGraph
+    global points, tutteGraph, npoints
     print("Generating random convex hull of eight points and computing a Tutte embedding... ")
-    poly = randomConvexHullE3(25) # Generate a random polyhedron with 16 vertices. 
+    poly = randomConvexHullE3(npoints) # Generate a random polyhedron with 16 vertices. 
     poly.outerFace = poly.faces[0] # Arbitrarily select an outer face. 
     tutteGraph = tutteEmbeddingE2(poly) # Compute the tutte embedding of the polyhedron. 
     print("\tdone.")
@@ -145,19 +166,71 @@ def create_random_tutte():
 
     points = [PointE2(1400*(v.data.x-minx)/extent + 200, 1400*(v.data.y-miny)/extent + 100) for v in tutteGraph.verts]
 
-    for vIdx in range(len(tutteGraph.verts)):
-        tutteGraph.verts[vIdx].idx = vIdx
-    
+    tutteGraph.markIndices()
     refresh_points(points)
+
 
 def refresh_points(new_points):
     global closest_idx, selected_idx, viewer, points
-    viewer.clear()
-    viewer.addAll([(SegmentE2(*[points[v.idx] for v in e.endPoints()]), blackStyle) for e in tutteGraph.edges])
-    viewer.addAll([
-        (new_points[pIdx], redStyle if pIdx == selected_idx else blackStyle if closest_dist >= 225 or closest_idx != pIdx else blueStyle) for pIdx in range(len(new_points))
-    ])
+
     points = new_points
+
+    R = rigidity_matrix(tutteGraph, points)
+    # print(f"R is {R.shape}")
+    # print(f"rank of R is {np.linalg.matrix_rank(R)}")
+    # # ns = null_space(R.transpose())
+
+    # edge_ids = [e.idx for e in tutteGraph.verts[10].edges()]
+    # nbs = [v.idx for v in tutteGraph.verts[10].neighbors()]
+    # stress_vecs = [(points[nbs[i]]-points[10])*ns[edge_ids[i]][3] for i in range(len(nbs))]
+    # print(edge_ids)
+    # print(nbs)
+    # print(ns[0])
+    # print(sum(stress_vecs, start=VectorE2(0,0)))
+
+    edges = np.array(
+        [
+            [v.idx for v in e.endPoints()]
+            for e in tutteGraph.edges
+        ]
+    )
+
+    i, j, k = [v.idx for v in tutteGraph.outerFace.vertices()]
+    interior_mask = [tutteGraph.outerFace not in e.incidentFaces() for e in tutteGraph.edges]
+    
+    try:
+        stress = find_equilibrium_stress(R, [i, j, k], interior_mask)
+    except Exception as e: 
+        print(e)
+        stress = np.array([0 for _ in tutteGraph.edges])
+    # print((i, j, k))
+    # print([e.idx for e in tutteGraph.outerFace.edges()])
+    print("stress: ")
+    print(stress)
+    print(R.T @ stress)
+    # print(R.T.dot(stress))
+    # ns[i] *= -1
+    # ns[j] *= -1
+    # ns[k] *= -1
+
+    # result = linprog(c = [1 for _ in ns[0]], b_ub=[0 for _ in ns], A_ub=-ns, bounds=(-100, 100))
+    
+    # ns[i] *= -1
+    # ns[j] *= -1
+    # ns[k] *= -1
+
+    # print((i, j, k))
+    # print(ns)
+    # print(result.x)
+    # print(ns.dot(result.x))
+    
+    
+
+    viewer.clear()
+    viewer.addAll([(SegmentE2(*[points[v.idx] for v in e.endPoints()]), blueStyle if stress[e.idx] > 1e-14 else redStyle if stress[e.idx] < -1e-14 else blackStyle) for e in tutteGraph.edges])
+    viewer.addAll([
+        (points[pIdx], redStyle if pIdx == selected_idx else blackStyle if closest_dist >= 225 or closest_idx != pIdx else blueStyle) for pIdx in range(len(new_points))
+    ])
     
 def mouse_pressed_handler(event):
     global mouse_down, closest_idx, closest_dist, selected_idx
