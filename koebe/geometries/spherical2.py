@@ -522,6 +522,17 @@ class CircleArcS2:
                 self.target.sgProjectToPointOP2(), 
                 koebe.geometries.orientedProjective2.DiskOP2.fromPointOP2(*pointsOP2)
         )
+    
+    def toDiskOP2(self):
+        import koebe.geometries.orientedProjective2
+        return koebe.geometries.orientedProjective2.DiskOP2(
+                        0.5 * (self.a - self.d), 
+                        self.c, 
+                        self.b, 
+                        0.5 * (self.d - self.a)
+                     )
+
+    
 # END CircleArcS2
     
 

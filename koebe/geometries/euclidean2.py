@@ -304,6 +304,19 @@ class CircleE2:
     def __rmul__(self, a):
         return CircleE2(PointE2(self.center.x * a, self.center.y * a), self.radius*a)
     
+    def toDiskOP2(self):
+        from .orientedProjective2 import DiskOP2
+        return DiskOP2.fromCircleE2(self)
+
+    def toDiskS2(self):
+        from .orientedProjective2 import DiskOP2
+        from .spherical2 import DiskS2
+        return DiskOP2.fromCircleE2(self).toDiskS2()
+
+    def toThreePointsE2(self):
+        return [PointE2(self.center.x + self.radius, self.center.y),
+                PointE2(self.center.x, self.center.y + self.radius),
+                PointE2(self.center.x - self.radius, self.center.y)]
 # END CircleE2
 
 @dataclass(frozen=True)

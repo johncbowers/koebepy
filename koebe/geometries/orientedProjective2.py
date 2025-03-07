@@ -155,6 +155,10 @@ class DiskOP2:
     def fromCircleE2(cls, circle: "CircleE2") -> "DiskOP2":
         return cls.fromCenterAndRadius(PointOP2.fromPointE2(circle.center), circle.radius)
     
+    @classmethod
+    def orthogonalToDisks(cls, disk1: "DiskOP2", disk2: "DiskOP2", disk3: "DiskOP2") -> "DiskOP2":
+        return joinDiskOP2(disk2, disk2, disk3)
+
     # Returns Orientation.ZERO if p is on the boundary of the disk, Orientation.POSITIVE if it is on the positive side, and ORIENTATION.negative o/w
     def orientationOf(self, p:PointOP2) -> Orientation:
         wSq = p.hw * p.hw
@@ -451,3 +455,24 @@ class SegmentOP2:
         return self.pointAlongAt(t)
 
 # END SegmentOP2
+
+
+def joinDiskOP2(disk1, disk2, disk3):
+    return DiskOP2(
+                    a = + determinant3(
+                            disk1.b, disk1.c, disk1.d,
+                            disk2.b, disk2.c, disk2.d,
+                            disk3.b, disk3.c, disk3.d),
+                    b = - determinant3(
+                            disk1.a, disk1.c, disk1.d,
+                            disk2.a, disk2.c, disk2.d,
+                            disk3.a, disk3.c, disk3.d),
+                    c = + determinant3(
+                            disk1.a, disk1.b, disk1.d,
+                            disk2.a, disk2.b, disk2.d,
+                            disk3.a, disk3.b, disk3.d),
+                    d = - determinant3(
+                            disk1.a, disk1.b, disk1.c,
+                            disk2.a, disk2.b, disk2.c,
+                            disk3.a, disk3.b, disk3.c)
+                   )

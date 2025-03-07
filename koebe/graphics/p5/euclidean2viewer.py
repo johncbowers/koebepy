@@ -63,22 +63,30 @@ class E2Viewer(Viewer):
         self._mouse_dragged_handler = None
         self._mouse_released_handler = None
         self._mouse_moved_handler = None
+        self._frame_update = None
+        self._tx = 0
+        self._ty = 0
 
     def setup(self):
         size(self.width, self.height)
 
-    def drawCircleE2(self, circle):
-        style = self.getStyle(circle)
-        translate(circle.center.x, circle.center.y, -1)
-    
+    def drawCircleE2(self, obj):
+        style = self.getStyle(obj)
         if style:
             if "stroke" in style and style["stroke"]:
                 # print(style["stroke"])
-                fill(*style["stroke"])
+                stroke(*style["stroke"])
+            else:
+                noStroke()
+            if "fill" in style and style["fill"]:
+                fill(*style["fill"])
+            else:
+                noFill()
         else:
-            fill(0, 0, 0)
+            stroke(0, 0, 0)
+            noFill()
         # torus(circle.radius, 0.005, 24, 4)
-        circle(circle.center.x, circle.center.y, circle.radius*2)
+        circle((obj.center.x, obj.center.y), obj.radius*2)
 
     # def drawDiskS2(self, disk, style=None):
     #     if style is None:
@@ -167,6 +175,8 @@ class E2Viewer(Viewer):
             self.drawPointE2(obj)
         elif type(obj) is SegmentE2:
             self.drawSegmentE2(obj)
+        elif type(obj) is CircleE2:
+            self.drawCircleE2(obj)
         # if type(obj) is DiskS2:
         #     self.drawDiskS2(obj)
         # elif type(obj) is PointE3:
@@ -191,7 +201,17 @@ class E2Viewer(Viewer):
         #     result = obj.to_dict()
 
     def draw(self):
+        if self._frame_update:
+            self._frame_update()
+
+        translate(self._tx, self._ty)
+        scale(self.scale)
+
         background(237, 246, 252)
+
+        stroke(0,0,0)
+        strokeWeight(1.0)
+        noFill()
 
         for obj in self._objs:
             self.drawObj(obj)
@@ -209,19 +229,30 @@ class E2Viewer(Viewer):
         # elif key == "LEFT":
         #     self._view_y -= 0.1
 
+    def _reposition_event(self, event):
+        event.x /= self.scale
+        event.y /= self.scale
+        event.x -= (self._tx / self.scale)
+        event.y -= (self._ty / self.scale)
+
+
     def mouse_pressed(self, event):
+        self._reposition_event(event)
         if self._mouse_pressed_handler:
             self._mouse_pressed_handler(event)
 
     def mouse_dragged(self, event):
+        self._reposition_event(event)
         if self._mouse_dragged_handler:
             self._mouse_dragged_handler(event)
     
     def mouse_released(self, event):
+        self._reposition_event(event)
         if self._mouse_released_handler:
             self._mouse_released_handler(event)
 
     def mouse_moved(self, event):
+        self._reposition_event(event)
         if self._mouse_moved_handler:
             self._mouse_moved_handler(event)
 
