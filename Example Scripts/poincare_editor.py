@@ -99,8 +99,14 @@ edit_circle = None
 edit_mode = None
 edit_offset = None
 
+show_internal_orthos = True
+show_external_orthos = True
+
+show_internal_delaunay = True
+show_external_delaunay = False
+
 def refresh_geometry():
-    global edit_circle, closest_idx, selected_idx, viewer, circles, remove_zero_edges, verbose
+    global edit_circle, closest_idx, selected_idx, viewer, circles, remove_zero_edges, verbose, show_internal_orthos, show_external_orthos
     viewer.clear()
     hyperbolic_boundary = CircleE2(PointE2(viewer.width, viewer.height), viewer.width)
     viewer.add(hyperbolic_boundary, blackStyle)
@@ -136,28 +142,50 @@ def refresh_geometry():
         edges_not_flat = [[(i, j), (j, k), (k, i)] for i, j, k in hull.simplices]
         edges = [ij for ijk in edges_not_flat for ij in ijk]
 
-        edge_segs = [SegmentE2(all_circles_orig[i].center, all_circles_orig[j].center) for i, j in edges if i != 0 and j != 0]
-        viewer.addAll([(e, blueStyle) for e in edge_segs])
+        if show_internal_delaunay:
+            edge_segs = [SegmentE2(all_circles_orig[i].center, all_circles_orig[j].center) for i, j in edges if i != 0 and j != 0]
+            viewer.addAll([(e, blueStyle) for e in edge_segs])
+        if show_external_delaunay:
+            edge_segs = [SegmentE2(all_circles_orig[i].center, all_circles_orig[j].center) for i, j in edges if i == 0 or j == 0]
+            viewer.addAll([(e, blueStyle) for e in edge_segs])
 
         edge_segsE3 = [SegmentE3(caps[i], caps[j]) for i, j in edges]
         viewer.addAll(edge_segsE3)
 
-        orthosS2 = [CPlaneS2.throughThreeDiskS2(
-                        sphere_disks[i],
-                        sphere_disks[j],
-                        sphere_disks[k]            
-                    )
-                    for i, j, k in hull.simplices]
-        viewer.addAll([(o, redStyle) for o in orthosS2])
-        orthos = [
-            o.dualDiskS2.toDiskOP2().toCircleE2()
-            for o in orthosS2 if o.dualDiskS2.toDiskOP2().radiusSq > 0
-        ]
-        orthos_moved = [
-            CircleE2(PointE2(C.center.x / scale + viewer.width, C.center.y / scale + viewer.height), C.radius / scale)
-            for C in orthos
-        ]
-        viewer.addAll([(o, redStyle) for o in orthos_moved])
+        if show_internal_orthos:
+            orthosS2 = [CPlaneS2.throughThreeDiskS2(
+                            sphere_disks[i],
+                            sphere_disks[j],
+                            sphere_disks[k]            
+                        )
+                        for i, j, k in hull.simplices if i != 0 and j != 0 and k != 0]
+            viewer.addAll([(o, redStyle) for o in orthosS2])
+            orthos = [
+                o.dualDiskS2.toDiskOP2().toCircleE2()
+                for o in orthosS2 if o.dualDiskS2.toDiskOP2().radiusSq > 0
+            ]
+            orthos_moved = [
+                CircleE2(PointE2(C.center.x / scale + viewer.width, C.center.y / scale + viewer.height), C.radius / scale)
+                for C in orthos
+            ]
+            viewer.addAll([(o, redStyle) for o in orthos_moved])
+        if show_external_orthos:
+            orthosS2 = [CPlaneS2.throughThreeDiskS2(
+                            sphere_disks[i],
+                            sphere_disks[j],
+                            sphere_disks[k]            
+                        )
+                        for i, j, k in hull.simplices if i == 0 or j == 0 or k == 0]
+            viewer.addAll([(o, redStyle) for o in orthosS2])
+            orthos = [
+                o.dualDiskS2.toDiskOP2().toCircleE2()
+                for o in orthosS2 if o.dualDiskS2.toDiskOP2().radiusSq > 0
+            ]
+            orthos_moved = [
+                CircleE2(PointE2(C.center.x / scale + viewer.width, C.center.y / scale + viewer.height), C.radius / scale)
+                for C in orthos
+            ]
+            viewer.addAll([(o, redStyle) for o in orthos_moved])
 
     
 block_poincare = False
@@ -254,7 +282,7 @@ def mouse_released_handler(event):
 #     pass
 
 def key_pressed_handler(event):
-    global remove_zero_edges, circles, in_file, out_file
+    global remove_zero_edges, circles, in_file, out_file, show_external_orthos, show_internal_orthos, show_internal_delaunay, show_external_delaunay
     # if event.key == " ":
     #     create_random_tutte()
     # elif event.key == "z":
@@ -271,8 +299,27 @@ def key_pressed_handler(event):
         print("reloading file")
         load_file()
         refresh_geometry()
+    elif event.key == "c":
+        circles = []
+        refresh_geometry()
     elif event.key == "q":
         sys.exit(0)
+    elif event.key == "i":
+        show_internal_orthos = not show_internal_orthos
+        refresh_geometry()
+    elif event.key == "o":
+        show_external_orthos = not show_external_orthos
+        refresh_geometry()
+    elif event.key == "I":
+        show_internal_delaunay = not show_internal_delaunay
+        refresh_geometry()
+    elif event.key == "O":
+        show_external_delaunay = not show_external_delaunay
+        refresh_geometry()
+    elif event.key == "n":
+        hyperbolic_boundary = DiskOP2.fromCircleE2(CircleE2(PointE2(viewer.width, viewer.height), viewer.width))
+        circles = [DiskOP2.fromCircleE2(C).invertThrough(hyperbolic_boundary).toCircleE2() for C in circles]
+        refresh_geometry()
     elif event.key == "=" or event.key == "+":
         viewer.scale = min(viewer.scale + 0.1, 1.8)
         viewer._tx = -viewer.scale * viewer.width + viewer.width
