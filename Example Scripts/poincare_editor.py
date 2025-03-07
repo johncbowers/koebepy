@@ -183,7 +183,7 @@ def mouse_pressed_handler(event):
         if len(circles) > 0:
             dists = [abs((C.center - evt_pt).norm()-C.radius) for C in circles]
             min_dist = min(dists)
-            if min_dist < 10:
+            if min_dist < 10 / viewer.scale:
                 min_idx = dists.index(min_dist)
                 edit_circle = circles[min_idx]
                 circles = circles[:min_idx] + circles[min_idx+1:]
@@ -273,10 +273,21 @@ def key_pressed_handler(event):
         refresh_geometry()
     elif event.key == "q":
         sys.exit(0)
+    elif event.key == "=" or event.key == "+":
+        viewer.scale = min(viewer.scale + 0.1, 1.8)
+        viewer._tx = -viewer.scale * viewer.width + viewer.width
+        viewer._ty = -viewer.scale * viewer.height + viewer.height
+    elif event.key == "-":
+        viewer.scale = max(viewer.scale - 0.1, 0.2)
+        viewer._tx = -viewer.scale * viewer.width + viewer.width
+        viewer._ty = -viewer.scale * viewer.height + viewer.height
 
 
 if not show_3d:
     viewer = E2Viewer()
+    viewer.scale = 0.8
+    viewer._tx = -viewer.scale * viewer.width + viewer.width
+    viewer._ty = -viewer.scale * viewer.height + viewer.height
 else:
     viewer = S2Viewer()
     viewer.scale = 2
@@ -297,3 +308,4 @@ viewer._key_pressed_handler = key_pressed_handler
 
 refresh_geometry()
 viewer.show()
+print("done")
