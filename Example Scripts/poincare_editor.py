@@ -1,5 +1,61 @@
 
-show_3d = True
+# import optparse
+
+# p = optparse.OptionParser()
+# p.add_option('--outfile', '-o', default="poincare-out.txt")
+# p.add_option('--view', '-v', default='2d')
+# options, arguments = p.parse_args()
+
+import sys
+import getopt
+import pickle
+
+from koebe.geometries.euclidean2 import *
+
+short_options = "i:o:v:"
+long_options = ["in-file", "out-file", "view"]
+
+def print_usage():
+    print(f"Usage: python {sys.argv[0]} [options]")
+    print(f"\toptions:")
+    print(f"\t  -i, --in-file <input file>\tAn input file of circles to load on startup.")
+    print(f"\t  -o, --out-file <output file>\tAn output file of circles to write to when pressing 'w'.")
+    print(f"\t  -v, --view (2d|3d)\tLoad 2D editor view or 3D read-only viewer.")
+    print(f"\t  -h, --help\tPrint this message.")
+
+try:
+    arguments, values = getopt.getopt(sys.argv[1:], short_options, long_options)
+except getopt.error as err:
+    print(str(err))
+    print_usage()
+    sys.exit(2)
+
+show_3d = False
+in_file = None
+out_file = "poincare-out.txt"
+circles = []
+
+def load_file():
+    global in_file, circles
+    with open(in_file, "rb") as f:
+        circles_tuples = pickle.load(f)
+        circles = [
+            CircleE2(PointE2(x, y), r)
+            for x, y, r in circles_tuples
+        ]
+        f.close()
+
+for opt, val in arguments: 
+    if opt == "-i" or opt == "--in-file":
+        in_file = val
+        load_file()
+    elif opt == "-o" or opt == "--out-file":
+        out_file = val
+    elif opt == "-v" or opt == "--view":
+        show_3d = val.lower() == "3d"
+    elif opt == "-h" or opt == "--help":
+        print_usage()
+        sys.exit(0) 
 
 if not show_3d:
     from koebe.graphics.p5.euclidean2viewer import *
@@ -7,7 +63,6 @@ else:
     from koebe.graphics.p5.spherical2viewer import *
 
 from koebe.geometries.spherical2 import *
-from koebe.geometries.euclidean2 import *
 from koebe.geometries.euclidean3 import *
 from koebe.geometries.orientedProjective2 import *
 from koebe.algorithms.incrementalConvexHull import incrConvexHull, orientationPointOP3, orientationPointE3, randomConvexHullE3
@@ -49,7 +104,6 @@ def refresh_geometry():
     viewer.addAll(
         [(C, blackStyle) for C in circles]
     )
-    print(circles)
     if edit_circle:
         viewer.add(edit_circle, blackStyle)
         all_circles = [hyperbolic_boundary, edit_circle] + circles
@@ -91,7 +145,6 @@ def refresh_geometry():
                         sphere_disks[k]            
                     )
                     for i, j, k in hull.simplices]
-        print(orthosS2)
         viewer.addAll([(o, redStyle) for o in orthosS2])
         orthos = [
             o.dualDiskS2.toDiskOP2().toCircleE2()
@@ -198,13 +251,21 @@ def mouse_released_handler(event):
 #     pass
 
 def key_pressed_handler(event):
-    global remove_zero_edges
+    global remove_zero_edges, circles
     # if event.key == " ":
     #     create_random_tutte()
     # elif event.key == "z":
     #     remove_zero_edges = not remove_zero_edges
     #     refresh_points(points)
-    pass
+    if event.key == "w":
+        print(f"Writing current disk set to {out_file}.")
+        with open(out_file, "wb") as f:
+            pickle.dump([(c.center.x, c.center.y, c.radius) for c in circles], f)
+            f.close()
+    elif event.key == "r":
+        print("reloading file")
+        load_file()
+
 
 if not show_3d:
     viewer = E2Viewer()
@@ -220,10 +281,10 @@ viewer._mouse_dragged_handler = mouse_moved_handler
 viewer._key_pressed_handler = key_pressed_handler
 # viewer._frame_update = refresh_geometry
 
-if not show_3d:
-    circles = []
-else: 
-    circles = [CircleE2(center=PointE2(x=578.734375, y=252.5703125), radius=106.1147867237445), CircleE2(center=PointE2(x=396.8984375, y=710.125), radius=340.00244373116504), CircleE2(center=PointE2(x=992.90625, y=1133.6015625), radius=294.4044921615205), CircleE2(center=PointE2(x=1038.578125, y=446.8515625), radius=273.1841504885029), CircleE2(center=PointE2(x=1375.8203125, y=803.296875), radius=171.55777579162745)]
+# if not show_3d:
+#     circles = []
+# else: 
+#     circles = [CircleE2(center=PointE2(x=578.734375, y=252.5703125), radius=106.1147867237445), CircleE2(center=PointE2(x=396.8984375, y=710.125), radius=340.00244373116504), CircleE2(center=PointE2(x=992.90625, y=1133.6015625), radius=294.4044921615205), CircleE2(center=PointE2(x=1038.578125, y=446.8515625), radius=273.1841504885029), CircleE2(center=PointE2(x=1375.8203125, y=803.296875), radius=171.55777579162745)]
 # circles = [CircleE2(center=PointE2(x=330.859375, y=592.2578125), radius=128.22171702102696), CircleE2(center=PointE2(x=812.265625, y=236.5078125), radius=118.34412391428255), CircleE2(center=PointE2(x=1105.6796875, y=722.1484375), radius=189.1829628175068), CircleE2(center=PointE2(x=552.4609375, y=1285.8828125), radius=187.77890226991772), CircleE2(center=PointE2(x=683.9453125, y=807.890625), radius=113.43631412947641)]
 
 refresh_geometry()
