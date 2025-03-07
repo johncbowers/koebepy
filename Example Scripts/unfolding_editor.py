@@ -15,17 +15,19 @@ from scipy.linalg import null_space
 import scipy.optimize as opt
 import scipy.linalg as la
 
-npoints = 6
+npoints = 30
 
 blackStyle = makeStyle(stroke=(0,0,0), fill=(255, 255, 255))
 blueStyle = makeStyle(stroke=(0,0,255), fill=(255, 0, 0), strokeWeight=2.0)
 redStyle = makeStyle(stroke=(255,0,0), fill=(255, 0, 0), strokeWeight=2.0)
 
+verbose = False
 
 mouse_down = False
 selected_idx = -1
 closest_idx = -1
 closest_dist = float('inf')
+remove_zero_edges = False
 
 # def compute_pinned_rigidity_matrix(R, pinned_vertices):
 #     """
@@ -171,7 +173,7 @@ def create_random_tutte():
 
 
 def refresh_points(new_points):
-    global closest_idx, selected_idx, viewer, points
+    global closest_idx, selected_idx, viewer, points, remove_zero_edges, verbose
 
     points = new_points
 
@@ -205,9 +207,11 @@ def refresh_points(new_points):
         stress = np.array([0 for _ in tutteGraph.edges])
     # print((i, j, k))
     # print([e.idx for e in tutteGraph.outerFace.edges()])
-    print("stress: ")
-    print(stress)
-    print(R.T @ stress)
+
+    if verbose:
+        print("stress: ")
+        print(stress)
+        print(R.T @ stress)
     # print(R.T.dot(stress))
     # ns[i] *= -1
     # ns[j] *= -1
@@ -225,9 +229,13 @@ def refresh_points(new_points):
     # print(ns.dot(result.x))
     
     
-
+    segs = [(SegmentE2(*[points[v.idx] for v in e.endPoints()]), 
+             blueStyle if stress[e.idx] > 1e-14 else redStyle if stress[e.idx] < -1e-14 else blackStyle
+             ) for e in tutteGraph.edges
+            if abs(stress[e.idx]) >= 1e-14 or not remove_zero_edges
+            ]
     viewer.clear()
-    viewer.addAll([(SegmentE2(*[points[v.idx] for v in e.endPoints()]), blueStyle if stress[e.idx] > 1e-14 else redStyle if stress[e.idx] < -1e-14 else blackStyle) for e in tutteGraph.edges])
+    viewer.addAll(segs)
     viewer.addAll([
         (points[pIdx], redStyle if pIdx == selected_idx else blackStyle if closest_dist >= 225 or closest_idx != pIdx else blueStyle) for pIdx in range(len(new_points))
     ])
@@ -259,8 +267,12 @@ def mouse_moved_handler(event):
         refresh_points(points)
 
 def key_pressed_handler(event):
+    global remove_zero_edges
     if event.key == " ":
         create_random_tutte()
+    elif event.key == "z":
+        remove_zero_edges = not remove_zero_edges
+        refresh_points(points)
 
 viewer = E2Viewer()
 create_random_tutte()
