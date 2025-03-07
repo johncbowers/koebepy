@@ -37,13 +37,16 @@ circles = []
 
 def load_file():
     global in_file, circles
-    with open(in_file, "rb") as f:
-        circles_tuples = pickle.load(f)
-        circles = [
-            CircleE2(PointE2(x, y), r)
-            for x, y, r in circles_tuples
-        ]
-        f.close()
+    if in_file != None:
+        with open(in_file, "rb") as f:
+            circles_tuples = pickle.load(f)
+            circles = [
+                CircleE2(PointE2(x, y), r)
+                for x, y, r in circles_tuples
+            ]
+            f.close()
+    else:
+        print("No input file has been specified.")
 
 for opt, val in arguments: 
     if opt == "-i" or opt == "--in-file":
@@ -251,7 +254,7 @@ def mouse_released_handler(event):
 #     pass
 
 def key_pressed_handler(event):
-    global remove_zero_edges, circles
+    global remove_zero_edges, circles, in_file, out_file
     # if event.key == " ":
     #     create_random_tutte()
     # elif event.key == "z":
@@ -262,9 +265,14 @@ def key_pressed_handler(event):
         with open(out_file, "wb") as f:
             pickle.dump([(c.center.x, c.center.y, c.radius) for c in circles], f)
             f.close()
+        if in_file == None:
+            in_file = out_file
     elif event.key == "r":
         print("reloading file")
         load_file()
+        refresh_geometry()
+    elif event.key == "q":
+        sys.exit(0)
 
 
 if not show_3d:
