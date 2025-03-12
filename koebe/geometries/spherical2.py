@@ -252,6 +252,10 @@ class DiskS2:
                   )
                )
     
+    def lorentzTo(self, diskS2):
+        return inner_product31(self.a, self.b, self.c, self.d,
+                               diskS2.a, diskS2.b, diskS2.c, diskS2.d)
+
     def inversiveDistTo(self, diskS2):
         ip12 = inner_product31(self.a, self.b, self.c, self.d,
                                diskS2.a, diskS2.b, diskS2.c, diskS2.d)
@@ -316,16 +320,26 @@ class DiskS2:
         return koebe.geometries.orientedProjective2.DiskOP2.fromPointOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
     
     def inversiveNormalize(self):
-        scale = 1.0 / self.inversiveDistTo(self)
+        scale = 1.0 / math.sqrt(self.lorentzTo(self))
         return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
     
-    def normalize(self):
-        scale = 1.0 / math.sqrt(inner_product(self.a, self.b, self.c, self.d, self.a, self.b, self.c, self.d))
-        return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
+    # def normalize(self):
+    #     scale = 1.0 / math.sqrt(inner_product31(self.a, self.b, self.c, self.d, self.a, self.b, self.c, self.d))
+    #     return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
     
     def toDiskOP2(self): 
         import koebe.geometries.orientedProjective2
         return koebe.geometries.orientedProjective2.DiskOP2(0.5 * (self.a - self.d), self.c, self.b, -(self.a + self.d) * 0.5)
+    
+    def __mul__(self, a):
+        return DiskS2(a*self.a, a*self.b, a*self.c, a*self.d)
+    
+    def __rmul__(self, a):
+        return DiskS2(a*self.a, a*self.b, a*self.c, a*self.d)
+    
+    def __add__(self, other: "DiskS2") -> "DiskS2":
+        return DiskS2(self.a + other.a, self.b + other.b, self.c + other.c, self.d + other.d)
+    
 # END DiskS2
 
 class CoaxialFamilyS2Type(Enum):
