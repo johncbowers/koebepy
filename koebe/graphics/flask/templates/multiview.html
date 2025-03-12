@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KoebePy Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
+    <style>
+        .widgets_container {
+            margin:auto;
+            padding: 10px;
+            width: 100%;
+        }
+        .widget {
+            width: 500px;
+            float: left;
+            border: 1px solid gray;
+            padding: 10px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    <section class="widgets_container">
+    {% for scene in scenes: %}
+        <div class="widget">
+            {% if scene["title"] != "": %}
+            <h3>{{scene["title"]}} ({{scene["type"]}})</h3>
+            {% endif %}
+            <div id="scene_{{scene['id']}}">
+            </div>
+        </div>
+    {% endfor %}
+    </section>
+
+    <script>
+
+        window.createSketchViewS2 = (model) => function (p, scene_id) {
+            
+            p.setup = function() {
+                let w = 500;
+                let h = 500;
+                p.createCanvas(w, h, p.WEBGL);
+                p.zoom = 1;
+                p.frame = 0;
+            }
+            
+            p.setStyle = function(style) {
+                
+                if (style == null) return;
+
+                if ("stroke" in style) {
+                    if (style["stroke"] == null) p.noStroke();
+                    else                         p.stroke(style["stroke"]);
+                }
+                
+                if ("strokeWeight" in style) {
+                    if (style["strokeWeight"] != null) p.strokeWeight(style["strokeWeight"]);
+                }
+                
+                if ("fill" in style) {
+                    if (style["fill"] == null) p.noFill();
+                    else                       p.fill(style["fill"]);
+                }
+            }
+            
+            p.hasStyle = function (objData) {
+                return "style" in objData && objData["style"] != null;
+            }
+            
+            p.drawPointE3 = function (pointData) {
+                let pt = pointData["point"];
+                p.translate(pt[0], pt[1], pt[2]);
+                if (!p.hasStyle(pointData)) {
+                    p.noStroke();
+                    p.fill(100, 125, 255);
+                }
+                p.box(0.035);
+            }
+            
+            p.drawDiskS2 = function (diskData) {
+                
+                let disk = diskData["disk"];
+                
+                let b1 = diskData["b1"];
+                let b2 = diskData["b2"];
+                let b3 = diskData["b3"];
+                
+                let centerDist = diskData["centerDist"];
+                let diameter = diskData["diameter"];
+            
+                // This code works in processing 3 but p5.js appears to want the
+                // transpose for some reason: 
+        //             p.applyMatrix(
+        //                 b1[0], b2[0], b3[0], 0,
+        //                 b1[1], b2[1], b3[1], 0,
+        //                 b1[2], b2[2], b3[2], 0,
+        //                 0, 0, 0, 1
+        //             );
+                
+                // THIS HACK MAKES IT WORK IN p5.js
+                // BUT THE CORRECT CODE IS ABOVE.
+                p.applyMatrix(
+                    b1[0], b1[1], b1[2], 0,
+                    b2[0], b2[1], b2[2], 0,
+                    b3[0], b3[1], b3[2], 0,
+                    0, 0, 0, 1
+                );
+                
+                if (disk[3] < 0) {
+                    p.translate(0, 0,  centerDist);
+                } else {
+                    p.translate(0, 0, -centerDist);
+                }
+                
+                if (!p.hasStyle(diskData)) {
+                    p.strokeWeight(4);
+                    p.stroke(0);
+                }
+                p.ellipse(0, 0, diameter, diameter, 48);
+                
+            }
+            
+            p.drawPolygon = function(polygonData) {
+                let polygon = polygonData["vertices"];
+                p.beginShape();
+                polygon.forEach(v => {
+                    p.vertex(v[0], v[1], v[2]);
+                });
+                p.endShape();
+            }
+            
+            p.drawPolygons = function (polygonsData) {
+                let polygons = polygonsData["polygons"];
+                polygons.forEach(polygon => {
+                    p.beginShape();
+                    polygon.forEach(v => {
+                        p.vertex(v[0], v[1], v[2]);
+                    });
+                    p.endShape();
+                });
+            }
+            
+            p.drawVertexColoredTriangle = function(triangleData) {
+                let p1 = triangleData["p1"];
+                let p2 = triangleData["p2"];
+                let p3 = triangleData["p3"];
+                let color1 = triangleData["color1"];
+                let color2 = triangleData["color2"];
+                let color3 = triangleData["color3"];
+                
+                p.beginShape(p.TRIANGLES);
+                p.fill(color1);
+                p.vertex(p1[0], p1[1], p1[2]);
+                p.fill(color2);
+                p.vertex(p2[0], p2[1], p2[2]);
+                p.fill(color3);
+                p.vertex(p3[0], p3[1], p3[2]);
+                p.endShape(p.CLOSE);
+            }
+            
+            p.drawSegmentE3 = function (segData) {
+                let endpoints = segData["endpoints"];
+                p.line(endpoints[0][0],
+                    endpoints[0][1],
+                    endpoints[0][2],
+                    endpoints[1][0],
+                    endpoints[1][1],
+                    endpoints[1][2]);
+            }
+
+            p.draw = function () {
+
+                let show_sphere = model["show_sphere"]
+
+                // if (model.get('objectsDirty')) {
+                //     model.set('objectsDirty', false);
+                    p.objs = model['objects'];//scenes[scene_id];//JSON.parse(model['objects']);
+                // }
+                
+                p.background(255, 254, 235);
+                
+                p.orbitControl(5, 5);
+                
+                p.scale(1.0, -1.0, 1.0);
+                p.scale(200 * p.zoom);
+                p.strokeWeight(0.005 / p.zoom);
+                
+                p.noStroke();
+
+                if (show_sphere) {
+                    p.fill(220, 220, 220);
+                    p.sphere(0.999, 96, 64);
+                }
+
+                p.objs[p.frame].forEach(obj => {
+                    p.push();
+                    if ("style" in obj && obj["style"] != null) {
+                        p.setStyle(obj["style"]);
+                    }
+                    switch (obj["type"]) {
+                        case "DiskS2": p.drawDiskS2(obj); break;
+                        case "PointE3": p.drawPointE3(obj); break;
+                        case "Polygons": p.drawPolygons(obj); break;
+                        case "Polygon": p.drawPolygon(obj); break;
+                        case "SegmentE3": p.drawSegmentE3(obj); break;
+                        case "VertexColoredTriangle": p.drawVertexColoredTriangle(obj); break;
+                        default: console.log(obj["type"] + " is not drawable in this sketch.");
+                    }
+                    p.pop();
+                });
+                
+                if (p.objs.length != 1) {
+                    p.frame = (p.frame + 1) % p.objs.length;
+                }
+            }
+        }
+
+        window.createSketchViewE2 = (model) => function (p, scene_id) {
+            
+            p.setup = function() {
+                let w = 500;
+                let h = 500;
+
+                p.createCanvas(w, h);
+                p.zoom = 1;
+                p.canvasScale = 1;
+                p.frame = 0;
+            }
+            
+            p.setStyle = function(style) {
+                
+                if (style == null) return;
+
+                if ("stroke" in style) {
+                    if (style["stroke"] == null) p.noStroke();
+                    else                         p.stroke(style["stroke"]);
+                }
+                
+                if ("strokeWeight" in style) {
+                    if (style["strokeWeight"] != null) p.strokeWeight(style["strokeWeight"]);
+                }
+                
+                if ("fill" in style) {
+                    if (style["fill"] == null) p.noFill();
+                    else                       p.fill(style["fill"]);
+                }
+            }
+            
+            p.hasStyle = function (objData) {
+                return "style" in objData && objData["style"] != null;
+            }
+            
+            p.drawPointE2 = function (pointData) {
+                let pt = pointData["point"];
+                if (!p.hasStyle(pointData)) {
+                    p.noStroke();
+                    p.fill(100, 125, 255);
+                }
+                p.circle(pt[0], pt[1], 5 * p.canvasScale);
+            }
+            
+            p.drawPolygonE2 = function(polygonData) {
+                let polygon = polygonData["vertices"];
+                p.beginShape();
+                polygon.forEach(v => {
+                    p.vertex(v[0], v[1]);
+                });
+                p.endShape(p.CLOSE);
+            }
+            
+            p.drawPolygons = function (polygonsData) {
+                let polygons = polygonsData["polygons"];
+                polygons.forEach(polygon => {
+                    p.beginShape();
+                    polygon.forEach(v => {
+                        p.vertex(v[0], v[1]);
+                    });
+                    p.endShape();
+                });
+            }
+            
+            p.drawCircleE2 = function (circleData) {
+                let center = circleData["center"];
+                let radius = circleData["radius"];
+                if (!p.hasStyle(circleData)) {
+                    p.stroke(0,0,0);
+                    p.noFill();
+                }
+                p.circle(center[0], center[1], 2*radius);
+            }
+            
+            p.drawSegmentE2 = function (segData) {
+                let endpoints = segData["endpoints"];
+                p.line(endpoints[0][0],
+                    endpoints[0][1],
+                    endpoints[1][0],
+                    endpoints[1][1]);
+            }
+            
+            p.drawCircleArcE2 = function (arcData) {
+                let center = arcData["center"];
+                let radius = arcData["radius"];
+                let srcAngle = arcData["srcAngle"];
+                let targetAngle = arcData["targetAngle"];
+                let diameter = 2 * radius;
+                
+                p.arc(center[0], center[1], diameter, diameter, srcAngle, targetAngle);
+            }
+
+            p.draw = function () {
+
+                p.objs = model['objects'];
+                
+                p.scale(1 / p.canvasScale, -1 / p.canvasScale);
+                p.translate(p.canvasScale * p.width * 0.5, -p.canvasScale * p.height * 0.5);
+                
+                p.background('#fff');
+
+                p.objs[p.frame].forEach(obj => {
+                    p.push();
+                    if ("style" in obj && obj["style"] != null) {
+                        p.setStyle(obj["style"]);
+                    }
+                    
+                    switch (obj["type"]) {
+                        case "PointE2": p.drawPointE2(obj); break;
+                        case "Polygons": p.drawPolygons(obj); break;
+                        case "PolygonE2": p.drawPolygonE2(obj); break;
+                        case "SegmentE2": p.drawSegmentE2(obj); break;
+                        case "CircleE2": p.drawCircleE2(obj); break;
+                        case "CircleArcE2": p.drawCircleArcE2(obj); break;
+                        default: console.log(obj["type"] + " is not drawable in this sketch.");
+                    }
+                    p.pop();
+                });
+                if (p.objs.length == 1) {
+                    p.noLoop();
+                } else {
+                    p.frame = (p.frame + 1) % p.objs.length;
+                }
+                
+            }
+        }
+
+        /*let main_view = document.getElementById("main_view");
+        let model = {"objects":json_str, "show_sphere":true};
+
+        let sketchView = window.createSketchView(model);
+
+        var sketch = new p5(sketchView, main_view)*/
+
+        {% for scene in scenes: %}
+        let div_elem_{{loop.index0}} = document.getElementById('scene_{{loop.index0}}');
+        let model_{{loop.index0}} = {"id": {{loop.index0}}, "objects": JSON.parse('{{scene["objects"]|safe}}'), "show_sphere": true};
+        {% if scene["type"] == "S2Scene": %}
+        let sketch_view_{{loop.index0}} = window.createSketchViewS2(model_{{loop.index0}}, {{loop.index0}});
+        {% else: %}
+        let sketch_view_{{loop.index0}} = window.createSketchViewE2(model_{{loop.index0}}, {{loop.index0}});
+        {% endif %}
+        let sketch_{{loop.index0}} = new p5(sketch_view_{{loop.index0}}, div_elem_{{loop.index0}});
+        {% endfor %}
+    </script>
+
+<!--     
+    
+    <script>
+        function addNumbers() {
+            const num1 = document.getElementById('num1').value;
+            const num2 = document.getElementById('num2').value;
+
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ num1: parseInt(num1), num2: parseInt(num2) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = data.result;
+            });
+        }
+    </script> -->
+</body>
+</html>

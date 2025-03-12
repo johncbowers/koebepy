@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KoebePy E2 Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
+</head>
+<body>
+    <div id="main_view"></div>
+
+    <script>
+
+        let json_str = '{{ objects|safe }}';
+
+        window.createSketchView = (model) => function (p) {
+            
+            p.setup = function() {
+                let w = 500;
+                let h = 500;
+
+                p.createCanvas(w, h);
+                p.zoom = 1;
+                p.canvasScale = 1;
+                p.frame = 0;
+            }
+            
+            p.setStyle = function(style) {
+                
+                if (style == null) return;
+
+                if ("stroke" in style) {
+                    if (style["stroke"] == null) p.noStroke();
+                    else                         p.stroke(style["stroke"]);
+                }
+                
+                if ("strokeWeight" in style) {
+                    if (style["strokeWeight"] != null) p.strokeWeight(style["strokeWeight"]);
+                }
+                
+                if ("fill" in style) {
+                    if (style["fill"] == null) p.noFill();
+                    else                       p.fill(style["fill"]);
+                }
+            }
+            
+            p.hasStyle = function (objData) {
+                return "style" in objData && objData["style"] != null;
+            }
+            
+            p.drawPointE2 = function (pointData) {
+                let pt = pointData["point"];
+                if (!p.hasStyle(pointData)) {
+                    p.noStroke();
+                    p.fill(100, 125, 255);
+                }
+                p.circle(pt[0], pt[1], 5 * p.canvasScale);
+            }
+            
+            p.drawPolygonE2 = function(polygonData) {
+                let polygon = polygonData["vertices"];
+                p.beginShape();
+                polygon.forEach(v => {
+                    p.vertex(v[0], v[1]);
+                });
+                p.endShape(p.CLOSE);
+            }
+            
+            p.drawPolygons = function (polygonsData) {
+                let polygons = polygonsData["polygons"];
+                polygons.forEach(polygon => {
+                    p.beginShape();
+                    polygon.forEach(v => {
+                        p.vertex(v[0], v[1]);
+                    });
+                    p.endShape();
+                });
+            }
+            
+            p.drawCircleE2 = function (circleData) {
+                let center = circleData["center"];
+                let radius = circleData["radius"];
+                if (!p.hasStyle(circleData)) {
+                    p.stroke(0,0,0);
+                    p.noFill();
+                }
+                p.circle(center[0], center[1], 2*radius);
+            }
+            
+            p.drawSegmentE2 = function (segData) {
+                let endpoints = segData["endpoints"];
+                p.line(endpoints[0][0],
+                    endpoints[0][1],
+                    endpoints[1][0],
+                    endpoints[1][1]);
+            }
+            
+            p.drawCircleArcE2 = function (arcData) {
+                let center = arcData["center"];
+                let radius = arcData["radius"];
+                let srcAngle = arcData["srcAngle"];
+                let targetAngle = arcData["targetAngle"];
+                let diameter = 2 * radius;
+                
+                p.arc(center[0], center[1], diameter, diameter, srcAngle, targetAngle);
+            }
+
+            p.draw = function () {
+
+                let show_sphere = model["show_sphere"]
+
+                p.objs = JSON.parse(model['objects']);
+                
+                p.scale(1 / p.canvasScale, -1 / p.canvasScale);
+                p.translate(p.canvasScale * p.width * 0.5, -p.canvasScale * p.height * 0.5);
+                
+                p.background('#fff');
+
+                p.objs[p.frame].forEach(obj => {
+                    p.push();
+                    if ("style" in obj && obj["style"] != null) {
+                        p.setStyle(obj["style"]);
+                    }
+                    
+                    switch (obj["type"]) {
+                        case "PointE2": p.drawPointE2(obj); break;
+                        case "Polygons": p.drawPolygons(obj); break;
+                        case "PolygonE2": p.drawPolygonE2(obj); break;
+                        case "SegmentE2": p.drawSegmentE2(obj); break;
+                        case "CircleE2": p.drawCircleE2(obj); break;
+                        case "CircleArcE2": p.drawCircleArcE2(obj); break;
+                        default: console.log(obj["type"] + " is not drawable in this sketch.");
+                    }
+                    p.pop();
+                });
+                if (p.objs.length == 1) {
+                    p.noLoop();
+                } else {
+                    p.frame = (p.frame + 1) % p.objs.length;
+                }
+                
+            }
+        }
+
+        let main_view = document.getElementById("main_view");
+        let model = {"objects":json_str, "show_sphere":true};
+
+        let sketchView = window.createSketchView(model);
+
+        var sketch = new p5(sketchView, main_view)
+    </script>
+
+<!--     
+    
+    <script>
+        function addNumbers() {
+            const num1 = document.getElementById('num1').value;
+            const num2 = document.getElementById('num2').value;
+
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ num1: parseInt(num1), num2: parseInt(num2) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = data.result;
+            });
+        }
+    </script> -->
+</body>
+</html>
