@@ -31,30 +31,31 @@ def index():
 # browser, back to the server. 
 @viewer.route('/event', methods=['POST'])
 def event():
-    print(f"Received event: {request.get_json()}")
+    
     data = request.get_json()
     event_type = data['type']
     scene_id = data['scene_id']
     scene = viewer._scenes[scene_id]
-    if event_type == "keyPressed":
+    
+    if event_type == "key_pressed":
         scene.key_pressed(data['key'])
-    elif event_type == "keyReleased":
+    elif event_type == "key_released":
         scene.key_released(data['key'])
-    elif event_type == "mouseMoved":
+    elif event_type == "mouse_moved":
         scene.mouse_moved(data)
-    elif event_type == "mouseDragged":
+    elif event_type == "mouse_dragged":
         scene.mouse_dragged(data)
-    elif event_type == "mousePressed":
+    elif event_type == "mouse_pressed":
         scene.mouse_pressed(data)
-    elif event_type == "mouseReleased":
+    elif event_type == "mouse_released":
         scene.mouse_released(data)
-    elif event_type == "mouseClicked":
+    elif event_type == "mouse_clicked":
         scene.mouse_clicked(data)
-    elif event_type == "mouseDoubleClicked":
+    elif event_type == "mouse_double_clicked":
         scene.mouse_double_clicked(data)
     
     scene_updates = [
-        scene.jsonify() if scene.needsRedraw() else None
+        scene.jsonify() if scene.needsRedraw() else ""
         for scene in viewer._scenes
     ]
 

@@ -141,3 +141,6 @@ class Scene:
     
     def clearRedrawFlag(self):
         self._needs_redraw = False
+
+    def clear(self):
+        self._objs = []

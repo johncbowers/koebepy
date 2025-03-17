@@ -10,7 +10,7 @@
             width: 100%;
         }
         .widget {
-            width: 500px;
+            width: 600px;
             float: left;
             border: 1px solid gray;
             padding: 10px;
@@ -38,12 +38,15 @@
         var mouseDraggedSceneId = -1;
 
         var sketch3d = null;
+        var last_scene_data = null;
 
         function update_scenes(data) {
+            last_scene_data = data;
             for (let i = 0; i < data.scene_updates.length; i++) {
                 let scene_update = data.scene_updates[i];
-                if (scene_update.objects != null) {
-                    models[scene_update.scene_id]["objects"] = JSON.parse(scene_update.objects);
+                if (scene_update != "") {
+                    models[i]["objects"] = JSON.parse(scene_update);
+                    sketches[i].redraw();
                 }
             }
         }
@@ -51,8 +54,8 @@
         window.createSketchViewS2 = (model, scene_id) => function (p) {
             
             p.setup = function() {
-                let w = 500;
-                let h = 500;
+                let w = 600;
+                let h = 600;
                 let canvas = p.createCanvas(w, h, p.WEBGL);
                 p.zoom = 1;
                 p.frame = 0;
@@ -233,9 +236,21 @@
 
         window.createSketchViewE2 = (model, scene_id) => function (p) {
             
+
+                // x  = (screenx - p.canvasScale * p.width * 0.5) * p.canvasScale
+                // y = (screeny + p.canvasScale * p.height * 0.5) * (-p.canvasScale)
+
+            p.canvasMouseX = function() {
+                return (p.mouseX - p.canvasScale * p.width * 0.5)*p.canvasScale;
+            }
+
+            p.canvasMouseY = function() {
+                return (p.canvasScale * p.height * 0.5 - p.mouseY)*p.canvasScale;
+            }
+
             p.setup = function() {
-                let w = 500;
-                let h = 500;
+                let w = 600;
+                let h = 600;
 
                 let canvas = p.createCanvas(w, h);
                 the_canvas = canvas;
@@ -243,13 +258,13 @@
 
                     mouseDraggedCanvas = canvas; 
                     mouseDraggedSceneId = scene_id;
-            
+
                     const response = fetch('/event', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ type: 'mouse_pressed', scene_id: scene_id, x: p.mouseX, y: p.mouseY })
+                        body: JSON.stringify({ type: 'mouse_pressed', scene_id: scene_id, x: p.canvasMouseX(), y: p.canvasMouseY(), mouseX: p.mouseX, mouseY: p.mouseY })
                     });
 
                     response.then( response => response.json() )
@@ -264,7 +279,10 @@
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({ type: 'mouse_dragged', scene_id: mouseDraggedSceneId, x: p.mouseX, y: p.mouseY })
+                                body: JSON.stringify({ type: 'mouse_dragged', 
+                                    scene_id: mouseDraggedSceneId, 
+                                    x: sketches[mouseDraggedSceneId].canvasMouseX(), 
+                                    y: sketches[mouseDraggedSceneId].canvasMouseY(), mouseX: p.mouseX, mouseY: p.mouseY })
                             });
 
                             response.then( response => response.json() )
@@ -281,7 +299,10 @@
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({ type: 'mouse_released', scene_id: mouseDraggedSceneId, x: p.mouseX, y: p.mouseY })
+                                body: JSON.stringify({ type: 'mouse_released', 
+                                    scene_id: mouseDraggedSceneId, 
+                                    x: sketches[mouseDraggedSceneId].canvasMouseX(), 
+                                    y: sketches[mouseDraggedSceneId].canvasMouseY(), mouseX: p.mouseX, mouseY: p.mouseY  })
                             });
 
                             response.then( response => response.json() )
@@ -302,8 +323,8 @@
                         },
                         body: JSON.stringify({ type: mouseDraggedCanvas == null ? 'mouse_moved' : 'mouse_dragged', 
                                                 scene_id: mouseDraggedCanvas == null ? scene_id : mouseDraggedSceneId, 
-                                                x: p.mouseX, 
-                                                y: p.mouseY })
+                                                x: sketches[mouseDraggedCanvas == null ? scene_id : mouseDraggedSceneId].canvasMouseX(), 
+                                                y: sketches[mouseDraggedCanvas == null ? scene_id : mouseDraggedSceneId].canvasMouseY(), mouseX: p.mouseX, mouseY: p.mouseY })
                     });
 
                     response.then( response => response.json() )
@@ -403,7 +424,7 @@
                 
                 p.scale(1 / p.canvasScale, -1 / p.canvasScale);
                 p.translate(p.canvasScale * p.width * 0.5, -p.canvasScale * p.height * 0.5);
-                
+
                 p.background('#fff');
 
                 p.objs[p.frame].forEach(obj => {
@@ -424,7 +445,7 @@
                     p.pop();
                 });
                 if (p.objs.length == 1) {
-                    p.noLoop();
+                    //p.noLoop();
                 } else {
                     p.frame = (p.frame + 1) % p.objs.length;
                 }
@@ -443,6 +464,7 @@
     <script>
 
         let models = [];
+        let sketches = [];
 
         {% for scene in scenes: %}
         let div_elem_{{loop.index0}} = document.getElementById('scene_{{loop.index0}}');
@@ -455,6 +477,7 @@
         let sketch_{{loop.index0}} = new p5(sketch_view_{{loop.index0}}, div_elem_{{loop.index0}});
 
         models.push(model_{{loop.index0}});
+        sketches.push(sketch_{{loop.index0}});
         {% endfor %}
 
     </script>
