@@ -27,6 +27,42 @@ def index():
     context = {"scenes":viewer.jsonify_scenes()}
     return render_template('multiview.html', **context)
 
+# A route for getting keyboard and mouse events from p5.js in the
+# browser, back to the server. 
+@viewer.route('/event', methods=['POST'])
+def event():
+    print(f"Received event: {request.get_json()}")
+    data = request.get_json()
+    event_type = data['type']
+    scene_id = data['scene_id']
+    scene = viewer._scenes[scene_id]
+    if event_type == "keyPressed":
+        scene.key_pressed(data['key'])
+    elif event_type == "keyReleased":
+        scene.key_released(data['key'])
+    elif event_type == "mouseMoved":
+        scene.mouse_moved(data)
+    elif event_type == "mouseDragged":
+        scene.mouse_dragged(data)
+    elif event_type == "mousePressed":
+        scene.mouse_pressed(data)
+    elif event_type == "mouseReleased":
+        scene.mouse_released(data)
+    elif event_type == "mouseClicked":
+        scene.mouse_clicked(data)
+    elif event_type == "mouseDoubleClicked":
+        scene.mouse_double_clicked(data)
+    
+    scene_updates = [
+        scene.jsonify() if scene.needsRedraw() else None
+        for scene in viewer._scenes
+    ]
+
+    for scene in viewer._scenes:
+        scene.clearRedrawFlag()
+
+    return jsonify({'result': "success", 'scene_updates': scene_updates})
+
 @viewer.route('/add', methods=['POST'])
 def add():
     data = request.get_json()

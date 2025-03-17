@@ -1,3 +1,10 @@
+
+import pkgutil
+import koebe.graphics.js.js
+import anywidget
+import traitlets
+import marimo as mo
+
 # For sending data to the JavaScript part
 import json #json.dumps(obj)
 
@@ -38,44 +45,14 @@ class VertexColoredTriangle:
     
 class Scene:
     
-    def __init__(self, width, height, scale, obj_json_convert_func, title=None):
+    def __init__(self, width, height, scale, obj_json_convert_func):
         self._objs   = []
         self._anim   = []
         self._styles = {}
-        self._title = title
         self.obj_json_convert_func = obj_json_convert_func
         #self._sketch_class = SketchClass
         #self._sketch = mo.ui.anywidget(SketchClass())
-        self._key_pressed           = lambda evt: None
-        self._key_released          = lambda evt: None
-        self._mouse_moved           = lambda evt: None
-        self._mouse_dragged         = lambda evt: None
-        self._mouse_pressed         = lambda evt: None
-        self._mouse_released        = lambda evt: None
-        self._mouse_clicked         = lambda evt: None
-        self._mouse_double_clicked  = lambda evt: None
-        self._needs_redraw = False
     
-    def getTitle(self): return self._title
-
-    def key_pressed(self, event): self._key_pressed(event)
-    def key_released(self, event): self._key_released(event)
-    def mouse_moved(self, event): self._mouse_moved(event)
-    def mouse_dragged(self, event): self._mouse_dragged(event)
-    def mouse_pressed(self, event): self._mouse_pressed(event)
-    def mouse_released(self, event): self._mouse_released(event)
-    def mouse_clicked(self, event): self._mouse_clicked(event)
-    def mouse_double_clicked(self, event): self._mouse_double_clicked(event)
-    
-    def set_key_pressed(self, handler): self._key_pressed = handler
-    def set_key_released(self, handler): self._key_released = handler
-    def set_mouse_moved(self, handler): self._mouse_moved = handler
-    def set_mouse_dragged(self, handler): self._mouse_dragged = handler
-    def set_mouse_pressed(self, handler): self._mouse_pressed = handler
-    def set_mouse_released(self, handler): self._mouse_released = handler
-    def set_mouse_clicked(self, handler): self._mouse_clicked = handler
-    def set_mouse_double_clicked(self, handler): self._mouse_double_clicked = handler
-
     def _updateJson(self):
         self._json_string = self._toJson()
         #self._sketch.objectsDirty = True
@@ -85,12 +62,10 @@ class Scene:
     
     def setStyle(self, obj, style):
         self._styles[id(obj)] = style
-        self._needs_redraw = True
         
     def setStyles(self, objs, style):
         for obj in objs:
             self.setStyle(obj, style)
-        self._needs_redraw = True
     
     def getStyle(self, obj):
         if id(obj) in self._styles:
@@ -107,7 +82,6 @@ class Scene:
         self._objs.append(obj)
         if (style != None):
             self.setStyle(obj, style)
-        self._needs_redraw = True
     
     def addAll(self, objs):
         for obj in objs:
@@ -116,28 +90,17 @@ class Scene:
                 self.setStyle(obj[0], obj[1])
             else:
                 self._objs.append(obj)
-        self._needs_redraw = True
                 
     def pushAnimFrame(self):
         self._anim.append(self._objs)
         self._objs = []
-        self._needs_redraw = True
         
     def _toJson(self):
+        frames = self._anim + [self._objs]
         return json.dumps(
-            self.get_json_objects_list()
+            [[d for d in [self.obj_json_convert_func(o, self.getStyle(o)) for o in frame] if not d == None] 
+             for frame in frames]
         )
     
-    def get_json_objects_list(self):
-        frames = self._anim + [self._objs]
-        return [[d for d in [self.obj_json_convert_func(o, self.getStyle(o)) for o in frame] if not d == None] 
-                for frame in frames]
-        
     def jsonify(self):
         return self._toJson()
-    
-    def needsRedraw(self):
-        return self._needs_redraw
-    
-    def clearRedrawFlag(self):
-        self._needs_redraw = False

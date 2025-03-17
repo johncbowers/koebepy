@@ -87,13 +87,52 @@ s1.addAll(diskSet1)
 s1.addAll([(c, redStyle) for c in caps1])
 s1.addAll(segs1)
 
-diskSet2, caps2, segs2, orthos2 = random_koebe(24)
+
+
+print(f"Generating random convex hull of {24} points and computing a Tutte embedding... ")
+poly = randomConvexHullE3(24) # Generate a random polyhedron with 16 vertices. 
+poly.outerFace = poly.faces[0] # Arbitrarily select an outer face. 
+tutteGraph = tutteEmbeddingE2(poly) # Compute the tutte embedding of the polyhedron. 
+print("\tdone.")
+
+print("Computing a circle packing... ")
+dists = [(v.data - PointE3.O).normSq() for v in tutteGraph.verts]
+closestToOriginIdx = dists.index(min(dists))
+packing, _ = maximalPacking(
+    tutteGraph, 
+    num_passes=1000, 
+    centerDartIdx = tutteGraph.darts.index(tutteGraph.verts[closestToOriginIdx].aDart)
+)
+for vIdx in range(len(packing.verts)):
+    packing.verts[vIdx].idx = vIdx
+
+# Store each vertex's index
+for i in range(len(packing.verts)):
+    packing.verts[i].name = i
+print("\tdone.")
+
+frames = []
 
 s2 = S2Scene(title="Packing #2")
-# s2.add(diskSet2[0][0])
-s2.addAll(diskSet2)
-s2.addAll([(c, redStyle) for c in caps2])
-s2.addAll(segs2)
+for i in range(1000):
+    I1 = DiskS2(1, 0, 0, 0.975+0.022*(i/500 if i <= 500 else (1000-i)/500))
+    I2 = DiskS2(1, 0, 0, 0.9995)
+    # frames.append([I1, I2])
+    diskSet2 = [(scale_disk(DiskOP2.fromCircleE2(v.data.toPoincareCircleE2()).toDiskS2().invertThrough(I1).invertThrough(I2), 1), blackStyle)
+            for v in packing.verts]
+
+    caps2 = [d[0].dualPointOP3.toPointE3() for d in diskSet2]
+    segs2 = [SegmentE3(caps2[i], caps2[j]) for i, j in [[v.idx for v in edge.endPoints()] for edge in packing.edges]]
+
+    orthos = [(CPlaneS2.throughThreeDiskS2(*[diskSet2[v.idx][0] for v in f.vertices()]), redStyle) for f in packing.faces]
+
+    s2.add(diskSet2[0][0])
+    s2.addAll(diskSet2)
+    s2.addAll([(c, redStyle) for c in caps2])
+    s2.addAll(orthos)
+    s2.addAll(segs2)
+    if i != 999:
+        s2.pushAnimFrame()
 
 points, segments = random_tutte(25)
 s3 = E2Scene(title="A Tutte Embedding")
