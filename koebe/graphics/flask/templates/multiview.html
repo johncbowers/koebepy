@@ -468,7 +468,7 @@
 
         {% for scene in scenes: %}
         let div_elem_{{loop.index0}} = document.getElementById('scene_{{loop.index0}}');
-        let model_{{loop.index0}} = {"id": {{loop.index0}}, "objects": JSON.parse('{{scene["objects"]|safe}}'), "show_sphere": true};
+        let model_{{loop.index0}} = {"id": {{loop.index0}}, "objects": JSON.parse('{{scene["objects"]|safe}}'), "show_sphere": {{scene["show_sphere"]}}};
         {% if scene["type"] == "S2Scene": %}
         let sketch_view_{{loop.index0}} = window.createSketchViewS2(model_{{loop.index0}}, {{loop.index0}});
         {% else: %}

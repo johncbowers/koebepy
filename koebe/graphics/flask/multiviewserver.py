@@ -14,7 +14,8 @@ class ViewerFlask(Flask):
                     "id": scene_idx, 
                     "type": type(self._scenes[scene_idx]).__name__, 
                     "objects": self._scenes[scene_idx].jsonify(), 
-                    "title": "" if self._scenes[scene_idx].getTitle() == None else self._scenes[scene_idx].getTitle()
+                    "title": "" if self._scenes[scene_idx].getTitle() == None else self._scenes[scene_idx].getTitle(),
+                    "show_sphere": str(self._scenes[scene_idx].showSphere()).lower() if hasattr(self._scenes[scene_idx], "showSphere") else "false"
                  } 
                  for scene_idx in range(len(self._scenes))
                  ]

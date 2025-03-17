@@ -152,6 +152,10 @@ class S2Scene(Scene):
                          scale = 1.0, 
                          title = title, 
                          obj_json_convert_func = _p5_dict)
+        self._show_sphere = True
 
     def toggleSphere(self):
-        self._sketch.showSphere = not self._sketch.showSphere
+        self._show_sphere = not self._show_sphere
+    
+    def showSphere(self):
+        return self._show_sphere

@@ -97,7 +97,7 @@ def rigidity_matrix(G, p):
     ])
     
 def create_random_tutte():
-    global points, tutteGraph, npoints
+    global points, unscaled_points, tutteGraph, npoints
     print("Generating random convex hull of eight points and computing a Tutte embedding... ")
     poly = randomConvexHullE3(npoints) # Generate a random polyhedron with 16 vertices. 
     poly.outerFace = poly.faces[0] # Arbitrarily select an outer face. 
@@ -111,6 +111,7 @@ def create_random_tutte():
     miny, maxy = min(ys), max(ys)
     extent = max(maxx-minx, maxy-miny)
 
+    unscaled_points = [PointE2(v.data.x, v.data.y) for v in tutteGraph.verts]
     points = [PointE2(500*(v.data.x-minx)/extent -200, 500*(v.data.y-miny)/extent - 250) for v in tutteGraph.verts]
 
     tutteGraph.markIndices()
@@ -118,7 +119,7 @@ def create_random_tutte():
 
 
 def refresh_points(new_points):
-    global closest_idx, selected_idx, editor_scene, points, remove_zero_edges, verbose
+    global closest_idx, selected_idx, editor_scene, lifting_scene, points, unscaled_points, remove_zero_edges, verbose
 
     points = new_points
 
@@ -179,13 +180,22 @@ def refresh_points(new_points):
              ) for e in tutteGraph.edges
             if abs(stress[e.idx]) >= 1e-14 or not remove_zero_edges
             ]
+            
     editor_scene.clear()
     editor_scene.addAll(segs)
     editor_scene.addAll([
         (points[pIdx], redStyle if pIdx == selected_idx else blackStyle if closest_dist >= 225 or closest_idx != pIdx else blueStyle) for pIdx in range(len(new_points))
     ])
 
-    editor_scene.add(PointE2(200, 200), redStyle)
+    pointsE3 = [PointE3(p.x, p.y, random()) for p in unscaled_points]
+
+    segsE3 = [(SegmentE3(*[pointsE3[v.idx] for v in e.endPoints()]), blackStyle) for e in tutteGraph.edges
+            if abs(stress[e.idx]) >= 1e-14 or not remove_zero_edges
+            ]
+
+#PointE2(500*(v.data.x-minx)/extent -200, 500*(v.data.y-miny)/extent - 250)
+    lifting_scene.clear()
+    lifting_scene.addAll(segsE3)
     
 def mouse_pressed_handler(event):
     global mouse_down, closest_idx, closest_dist, selected_idx
@@ -223,6 +233,8 @@ def key_pressed_handler(event):
 
 
 editor_scene = E2Scene(title="Tutte Embedding Editor")
+lifting_scene = S2Scene(title="Polyhedral Lifting")
+lifting_scene.toggleSphere()
 
 create_random_tutte()
 
@@ -232,5 +244,6 @@ editor_scene.set_mouse_moved(mouse_moved_handler)
 editor_scene.set_mouse_dragged(mouse_moved_handler)
 
 viewer.add_scene(editor_scene)
+viewer.add_scene(lifting_scene)
 
 viewer.run()
