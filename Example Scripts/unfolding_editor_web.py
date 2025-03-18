@@ -9,6 +9,7 @@ from koebe.algorithms.tutteEmbeddings import tutteEmbeddingE2
 
 from math import *
 from random import *
+from collections import deque
 
 import numpy as np
 from scipy.linalg import null_space
@@ -31,7 +32,7 @@ mouse_down = False
 selected_idx = -1
 closest_idx = -1
 closest_dist = float('inf')
-remove_zero_edges = False
+remove_zero_edges = True
 
 
 def find_equilibrium_stress(R, pinned_vertices, interior_mask, tol=1e-10):
@@ -97,7 +98,7 @@ def rigidity_matrix(G, p):
     ])
     
 def create_random_tutte():
-    global points, unscaled_points, tutteGraph, npoints
+    global points, unscaled_points, tutteGraph, npoints, extent, scale, xshift, yshift, minx, miny
     print("Generating random convex hull of eight points and computing a Tutte embedding... ")
     poly = randomConvexHullE3(npoints) # Generate a random polyhedron with 16 vertices. 
     poly.outerFace = poly.faces[0] # Arbitrarily select an outer face. 
@@ -111,15 +112,19 @@ def create_random_tutte():
     miny, maxy = min(ys), max(ys)
     extent = max(maxx-minx, maxy-miny)
 
+    scale = 500
+    xshift = 200
+    yshift = 250
+
     unscaled_points = [PointE2(v.data.x, v.data.y) for v in tutteGraph.verts]
-    points = [PointE2(500*(v.data.x-minx)/extent -200, 500*(v.data.y-miny)/extent - 250) for v in tutteGraph.verts]
+    points = [PointE2(scale*(v.data.x-minx)/extent - xshift, scale*(v.data.y-miny)/extent - yshift) for v in tutteGraph.verts]
 
     tutteGraph.markIndices()
     refresh_points(points)
 
 
 def refresh_points(new_points):
-    global closest_idx, selected_idx, editor_scene, lifting_scene, points, unscaled_points, remove_zero_edges, verbose
+    global closest_idx, selected_idx, editor_scene, lifting_scene, points, unscaled_points, remove_zero_edges, verbose, scale, xshift, yshift, extent, minx, miny
 
     points = new_points
 
@@ -173,8 +178,43 @@ def refresh_points(new_points):
     # print(ns)
     # print(result.x)
     # print(ns.dot(result.x))
+
+    # Now that we've got an equilibrium stress, compute a polyhedral lift of the graph.
+
+    visited_faces = set()
+    tutteGraph.outerFace.r = VectorE2(0, 0)
+    tutteGraph.outerFace.d = 0
     
+    def rot90(p):
+        return VectorE2(-p.y, p.x)
     
+    def screen_to_world(p):
+        return PointE2((p.x + xshift) * extent/scale + minx, (p.y + yshift) * extent/scale + miny)
+    #(p.x + xshift) * extent/scale + minx, (p.y + yshift) * extent/scale + miny
+
+    queue = deque([tutteGraph.outerFace])
+    while len(queue) > 0:
+        face = queue.popleft()
+        if face not in visited_faces:
+            visited_faces.add(face)
+            for dart in face.darts():
+                twin = dart.twin
+                if twin.face not in visited_faces:
+                    queue.append(twin.face)
+                    pi = VectorE2(*screen_to_world(points[dart.origin.idx]))
+                    pj = VectorE2(*screen_to_world(points[dart.dest.idx]))
+                    twin.face.r = face.r + rot90(pi - pj) * stress[dart.edge.idx]
+                    twin.face.d = face.d + pi.dot(rot90(pj)) * stress[dart.edge.idx]
+    
+    # compute the lifting for each point:
+    for v in tutteGraph.verts:
+        v.screenPos = screen_to_world(points[v.idx])
+        incident_face = v.aDart.face
+        r = incident_face.r
+        d = incident_face.d
+        p = v.screenPos
+        v.liftedPos = PointE3(p.x, p.y, (r.x * p.x + r.y * p.y + d) * (-10))
+
     segs = [(SegmentE2(*[points[v.idx] for v in e.endPoints()]), 
              blueStyle if stress[e.idx] > 1e-14 else redStyle if stress[e.idx] < -1e-14 else blackStyle
              ) for e in tutteGraph.edges
@@ -187,8 +227,10 @@ def refresh_points(new_points):
         (points[pIdx], redStyle if pIdx == selected_idx else blackStyle if closest_dist >= 225 or closest_idx != pIdx else blueStyle) for pIdx in range(len(new_points))
     ])
 
-    pointsE3 = [PointE3(p.x, p.y, random()) for p in unscaled_points]
-
+    #scale*(v.data.x-minx)/extent - xshift, scale*(v.data.y-miny)/extent - yshift
+    #pointsE3 = [PointE3((p.x + xshift) * extent/scale + minx, (p.y + yshift) * extent/scale + miny, random()/10.0) for p in points]
+#    pointsE3 = [PointE3(p.x, p.y, random()) for p in points]
+    pointsE3 = [v.liftedPos for v in tutteGraph.verts]
     segsE3 = [(SegmentE3(*[pointsE3[v.idx] for v in e.endPoints()]), blackStyle) for e in tutteGraph.edges
             if abs(stress[e.idx]) >= 1e-14 or not remove_zero_edges
             ]
