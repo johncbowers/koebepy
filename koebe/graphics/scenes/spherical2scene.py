@@ -146,13 +146,13 @@ class DefaultStyles:
 ### THE ACTUAL VIEWER CLASSES
     
 class S2Scene(Scene):
-    def __init__(self, width=500, height=500, title=None):
+    def __init__(self, width=500, height=500, title=None, show_sphere = True):
         super().__init__(width = width, 
                          height = height, 
                          scale = 1.0, 
                          title = title, 
                          obj_json_convert_func = _p5_dict)
-        self._show_sphere = True
+        self._show_sphere = show_sphere
 
     def toggleSphere(self):
         self._show_sphere = not self._show_sphere

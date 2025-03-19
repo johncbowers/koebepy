@@ -55,8 +55,14 @@ class Scene:
         self._mouse_clicked         = lambda evt: None
         self._mouse_double_clicked  = lambda evt: None
         self._needs_redraw = False
+        self._scale = scale
+        self._width = width
+        self._height = height
     
     def getTitle(self): return self._title
+    def getScale(self): return self._scale
+    def getWidth(self): return self._width
+    def getHeight(self): return self._height
 
     def key_pressed(self, event): self._key_pressed(event)
     def key_released(self, event): self._key_released(event)
