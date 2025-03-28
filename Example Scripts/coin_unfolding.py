@@ -1,5 +1,5 @@
-
 # Import geometries
+from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
 from koebe.geometries.spherical2 import *
 from koebe.geometries.euclidean2 import *
 from koebe.geometries.euclidean3 import *
@@ -21,6 +21,7 @@ from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
 
 n_points = 100
+n_iterations = 10000
 
 print(f"Generating random convex hull of {n_points} points and computing a Tutte embedding... ")
 poly = randomConvexHullE3(n_points) # Generate a random polyhedron with 16 vertices. 
@@ -29,29 +30,20 @@ tutteGraph = tutteEmbeddingE2(poly) # Compute the tutte embedding of the polyhed
 print("\tdone.")
 
 print("Computing a circle packing... ")
-I1 = DiskS2(1, 0, 0, 0.975)
-I2 = DiskS2(1, 0, 0, 0.9995)
+I1 = DiskS2(1, 0, 0, 0)
 
 dists = [(v.data - PointE3.O).normSq() for v in tutteGraph.verts]
 closestToOriginIdx = dists.index(min(dists))
 hyp_packing, _ = maximalPacking(
     tutteGraph, 
-    num_passes=1000, 
+    num_passes=n_iterations, 
     centerDartIdx = tutteGraph.darts.index(tutteGraph.verts[closestToOriginIdx].aDart)
 )
-packing = hyp_packing.duplicate(
-    vdata_transform=lambda d: DiskOP2.fromCircleE2(d.toPoincareCircleE2()).toDiskS2().invertThrough(I1).invertThrough(I2)
-)
+packing = canonical_spherical_projection(hyp_packing)
 packing.markIndices()
 print("\tdone.")
 
-def tangency_point(D1, D2):
-    D12 = D1 + (-1) * D2
-    t = D1.lorentzTo(D12) / D12.lorentzTo(D12)
-    return ((1 - t) * D1 + t * D2).dualPointOP3.toPointE3()
-
-for e in packing.edges:
-    e.data = tangency_point(*[v.data for v in e.endPoints()])
+compute_tangencies(packing)
 
 # Compute an unfolding
 unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
@@ -119,8 +111,8 @@ while len(pq) > 0:
         parent_idx = v0.neighbors().index(v0.parent)
         parent_dirE2 = (v0.parent.data.center - v0.data.center).normalize()
         
-        parent_dirS2 = tangency_point(packing.verts[v0_idx].data, packing.verts[v0.parent.idx].data).toVectorE3() - packing.verts[v0_idx].data.centerE3
-        v1_dirS2 = tangency_point(packing.verts[v0_idx].data, packing.verts[v1_idx].data).toVectorE3() - packing.verts[v0_idx].data.centerE3
+        parent_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v0.parent.idx].data).toVectorE3() - packing.verts[v0_idx].data.centerE3
+        v1_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v1_idx].data).toVectorE3() - packing.verts[v0_idx].data.centerE3
         n = packing.verts[v0_idx].data.basis3.normalize()
         theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
         
@@ -169,15 +161,16 @@ blueStyle = makeStyle(stroke=(0,0,255), strokeWeight=2, fill=None)
 grayStyle = makeStyle(stroke=(128,128,128), strokeWeight=0.5, fill=None)
 
 sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
-sceneE2 = E2Scene(title="Proposed unfolding", scale=150.0, height=800, width=800, pan_and_zoom=True)
+sceneE2 = E2Scene(title="Proposed unfolding", scale=1.5, height=800, width=800, pan_and_zoom=True)
 
 sceneS2.addAll([(v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in packing.verts])
-#sceneS2.addAll([e.data for e in packing.edges])
 sceneS2.addAll([(s, grayStyle) for s in segsE3])
 
-sceneE2.addAll([(v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in unfolding.verts if v.data is not None])
+
+scale = 100
+sceneE2.addAll([(scale * v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in unfolding.verts if v.data is not None])
 #sceneE2.addAll([e.data for e in unfolding.edges if e.data is not None])
-sceneE2.addAll([(s, grayStyle) for s in segsE2])
+sceneE2.addAll([(scale * s, grayStyle) for s in segsE2])
 
 viewer.add_scene(sceneS2)
 viewer.add_scene(sceneE2)
