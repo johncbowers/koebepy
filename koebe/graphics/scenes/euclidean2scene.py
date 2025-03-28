@@ -175,25 +175,28 @@ def _p5_dict(obj, style):
 ### THE ACTUAL VIEWER CLASSES
     
 class E2Scene(Scene):
-    def __init__(self, width=500, height=500, scale=1.0, title=None):
+    def __init__(self, width=500, height=500, scale=1.0, title=None, pan_and_zoom=False):
         super().__init__(width = width, 
                          height = height, 
                          scale = scale, 
                          title = title,
-                         obj_json_convert_func = _p5_dict)
+                         obj_json_convert_func = _p5_dict, 
+                         pan_and_zoom = pan_and_zoom)
     
 class PoincareDiskScene(Scene):
-    def __init__(self, width=500, height=500, title=None):
+    def __init__(self, width=500, height=500, title=None, pan_and_zoom=False):
         super().__init__(width  = width, 
                          height = height, 
                          title = title,
-                         scale  = 1.0 / (min(width, height)*0.5-10))
+                         scale  = 1.0 / (min(width, height)*0.5-10),
+                         pan_and_zoom = pan_and_zoom)
         self.unitDisk = CircleE2(PointE2(0,0), 1.0)
         self.add(self.unitDisk)
         
 class UnitScaleE2Scene(E2Scene):
-    def __init__(self, width=500, height=500, title=None):
+    def __init__(self, width=500, height=500, title=None, pan_and_zoom=False):
         super().__init__(width  = width, 
                          height = height, 
                          title = title, 
-                         scale  = 1.0 / (min(width, height)*0.5-10))
+                         scale  = 1.0 / (min(width, height)*0.5-10), 
+                         pan_and_zoom = pan_and_zoom)

@@ -38,7 +38,7 @@ class VertexColoredTriangle:
     
 class Scene:
     
-    def __init__(self, width, height, scale, obj_json_convert_func, title=None):
+    def __init__(self, width, height, scale, obj_json_convert_func, title=None, pan_and_zoom=False):
         self._objs   = []
         self._anim   = []
         self._styles = {}
@@ -58,11 +58,13 @@ class Scene:
         self._scale = scale
         self._width = width
         self._height = height
+        self._pan_and_zoom = pan_and_zoom
     
     def getTitle(self): return self._title
     def getScale(self): return self._scale
     def getWidth(self): return self._width
     def getHeight(self): return self._height
+    def getPanAndZoom(self): return self._pan_and_zoom
 
     def key_pressed(self, event): self._key_pressed(event)
     def key_released(self, event): self._key_released(event)

@@ -236,7 +236,7 @@
             }
         }
 
-        window.createSketchViewE2 = (model, scene_id, scale, width, height) => function (p) {
+        window.createSketchViewE2 = (model, scene_id, scale, width, height, pan_and_zoom) => function (p) {
             
 
                 // x  = (screenx - p.canvasScale * p.width * 0.5) * p.canvasScale
@@ -250,12 +250,23 @@
                 return (p.canvasScale * p.height * 0.5 - p.mouseY)*p.canvasScale;
             }
 
+            p.pan = function() {
+                p.final_tx += (p.mouseX - p.pmouseX)*2;
+                p.final_ty += (p.mouseY - p.pmouseY)*2;
+            }
+
             p.setup = function() {
                 let w = width;
                 let h = height;
 
+                p.w = w;
+                p.h = h;
+
+                p.pan_and_zoom = pan_and_zoom;
+
                 let canvas = p.createCanvas(w, h);
                 the_canvas = canvas;
+
                 canvas.mousePressed(function() {
 
                     mouseDraggedCanvas = canvas; 
@@ -276,6 +287,11 @@
 
                     p.mouseMoved = function() {
                         if (mouseDraggedCanvas != null) {
+
+                            if (sketches[mouseDraggedSceneId].pan_and_zoom) {
+                                sketches[mouseDraggedSceneId].pan();
+                            }
+
                             const response = fetch('/event', {
                                 method: 'POST',
                                 headers: {
@@ -318,6 +334,13 @@
                 });
 
                 canvas.mouseMoved(function() {
+
+                    if (mouseDraggedCanvas != null) {
+                        if (sketches[mouseDraggedSceneId].pan_and_zoom) {
+                            sketches[mouseDraggedSceneId].pan();
+                        }
+                    }
+
                     const response = fetch('/event', {
                         method: 'POST',
                         headers: {
@@ -335,10 +358,34 @@
                     });
                 });
 
+
                 p.zoom = 1;
                 p.canvasScale = 1 / scale;
+                p.desired_canvasScale = p.canvasScale;
                 p.frame = 0;
+
+                p.final_tx = 0;
+                p.final_ty = 0;
+                p.tx = 0;
+                p.ty = 0;
+
+                canvas.mouseWheel(function(event) {
+                    if (p.pan_and_zoom) {
+                        p.desired_canvasScale += event.deltaY * 0.0001;
+                        // p.desired_canvasScale += event.delta * -0.0001;
+                        p.desired_canvasScale = p.constrain(p.desired_canvasScale, 1/10000.0, 10);
+                    }
+                    //return false; // prevent default
+                });
             }
+
+            // p.mouseWheel = function(event) {
+            //     if (p.pan_and_zoom) {
+            //         p.desired_canvasScale += event.delta * -0.0001;
+            //         p.desired_canvasScale = p.constrain(p.desired_canvasScale, 1/100000.0, 10);
+            //     }
+            //     return false; // prevent default
+            // }
             
             p.setStyle = function(style) {
                 
@@ -422,6 +469,13 @@
 
             p.draw = function () {
 
+                p.tx = p.lerp(p.tx, p.final_tx, 0.1);
+                p.ty = p.lerp(p.ty, p.final_ty, 0.1);
+
+                p.canvasScale = p.lerp(p.canvasScale, p.desired_canvasScale, 0.1);
+                
+                p.translate(p.tx, p.ty)
+
                 p.objs = model['objects'];
                 
                 p.scale(1 / p.canvasScale, -1 / p.canvasScale);
@@ -474,7 +528,9 @@
         {% if scene["type"] == "S2Scene": %}
         let sketch_view_{{loop.index0}} = window.createSketchViewS2(model_{{loop.index0}}, {{loop.index0}}, {{scene["width"]}}, {{scene["height"]}});
         {% else: %}
-        let sketch_view_{{loop.index0}} = window.createSketchViewE2(model_{{loop.index0}}, {{loop.index0}}, {{scene["scale"]}}, {{scene["width"]}}, {{scene["height"]}});
+        let sketch_view_{{loop.index0}} = window.createSketchViewE2(model_{{loop.index0}}, {{loop.index0}}, {{scene["scale"]}}, {{scene["width"]}}, {{scene["height"]}}, {{scene["pan_and_zoom"]}});
+        {% endif %}
+        {% if scene["type"] == "S2Scene": %}
         {% endif %}
         let sketch_{{loop.index0}} = new p5(sketch_view_{{loop.index0}}, div_elem_{{loop.index0}});
 

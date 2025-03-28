@@ -18,7 +18,8 @@ class ViewerFlask(Flask):
                     "show_sphere": str(self._scenes[scene_idx].showSphere()).lower() if hasattr(self._scenes[scene_idx], "showSphere") else "false",
                     "scale": self._scenes[scene_idx].getScale(), 
                     "width": self._scenes[scene_idx].getWidth(),
-                    "height": self._scenes[scene_idx].getHeight()
+                    "height": self._scenes[scene_idx].getHeight(), 
+                    "pan_and_zoom": str(self._scenes[scene_idx].getPanAndZoom()).lower()
                  } 
                  for scene_idx in range(len(self._scenes))
                  ]
