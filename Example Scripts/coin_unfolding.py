@@ -131,13 +131,22 @@ while len(pq) > 0:
         )
         v1.parent = v0
 
-inversive_distances = []
+inversive_distances_sphere = []
+inversive_distances_plane = []
 for i in range(len(unfolding.verts)-1):
     for j in range(i+1, len(unfolding.verts)):
         if unfolding.verts[j].parent != unfolding.verts[i] and unfolding.verts[i].parent != unfolding.verts[j] and unfolding.verts[i].data != None and unfolding.verts[j].data != None:
-            inversive_distances.append(unfolding.verts[i].data.inversiveDistTo(unfolding.verts[j].data))
+            inversive_distances_sphere.append(packing.verts[i].data.inversiveDistTo(packing.verts[j].data))
+            inversive_distances_plane.append(unfolding.verts[i].data.inversiveDistTo(unfolding.verts[j].data))
 
-print(f"Minimum inversive distance detected: {min(inversive_distances)}")
+for i in range(len(inversive_distances_plane)):
+    if inversive_distances_plane[i] < inversive_distances_sphere[i]:
+        print(f"{i} {inversive_distances_plane[i]} {inversive_distances_sphere[i]} {inversive_distances_plane[i] - inversive_distances_sphere[i]} {inversive_distances_plane[i] > inversive_distances_sphere[i]}")
+
+
+print(f"Passes inversive distance test: {not (False in [inversive_distances_plane[i] > inversive_distances_sphere[i] for i in range(len(inversive_distances_plane))])}")
+print(f"Minimum inversive distance detected in the sphere: {min(inversive_distances_sphere)}")
+print(f"Minimum inversive distance detected in the plane: {min(inversive_distances_plane)}")
 
 # Create segments for the child-parent relationships: 
 segsE2 = []
@@ -160,7 +169,7 @@ blueStyle = makeStyle(stroke=(0,0,255), strokeWeight=2, fill=None)
 grayStyle = makeStyle(stroke=(128,128,128), strokeWeight=0.5, fill=None)
 
 sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
-sceneE2 = E2Scene(title="Proposed unfolding", scale=150.0, height=800, width=800)
+sceneE2 = E2Scene(title="Proposed unfolding", scale=150.0, height=800, width=800, pan_and_zoom=True)
 
 sceneS2.addAll([(v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in packing.verts])
 #sceneS2.addAll([e.data for e in packing.edges])

@@ -184,7 +184,6 @@ class DiskS2:
                     d = 0.0
                   )
 
-    
     @property
     def basis1(self):
         return least_dominant_VectorE3(VectorE3(self.a, self.b, self.c)).value.cross(VectorE3(self.a, self.b, self.c))
@@ -268,8 +267,8 @@ class DiskS2:
     def bisectorWith(self, diskS2):
         
         # First we normalize our vectors with respect to the Minkowski 3,1 inner product:
-        minNorm1 = math.sqrt(inner_product31(self.a, self.b, self.c, self.d, self.a, self.b, self.c, self.d))
-        minNorm2 = math.sqrt(inner_product31(diskS2.a, diskS2.b, diskS2.c, diskS2.d, diskS2.a, diskS2.b, diskS2.c, diskS2.d))
+        minNorm1 = math.sqrt(abs(inner_product31(self.a, self.b, self.c, self.d, self.a, self.b, self.c, self.d)))
+        minNorm2 = math.sqrt(abs(inner_product31(diskS2.a, diskS2.b, diskS2.c, diskS2.d, diskS2.a, diskS2.b, diskS2.c, diskS2.d)))
 
         # Now find the coefficients (a, b, c, d) of the plane of equal Minkowski 3,1 inner product from
         # the normalized vectors of this and disk:
@@ -323,6 +322,16 @@ class DiskS2:
         scale = 1.0 / math.sqrt(self.lorentzTo(self))
         return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
     
+    def tangentPointWith(self, other):
+        """
+        Computes the point of tangency between self and other, if one exists. I *believe*, but have not checked
+        that if self and other are not tangent, this will compute the point on the line through their conical caps
+        that is closest to the origin. 
+        """
+        D12 = self + (-1) * other
+        t = self.lorentzTo(D12) / D12.lorentzTo(D12)
+        return ((1 - t) * self + t * other).dualPointOP3.toPointE3()
+
     # def normalize(self):
     #     scale = 1.0 / math.sqrt(inner_product31(self.a, self.b, self.c, self.d, self.a, self.b, self.c, self.d))
     #     return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
