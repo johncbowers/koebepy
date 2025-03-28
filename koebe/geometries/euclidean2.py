@@ -236,6 +236,12 @@ class SegmentE2:
             self.target.x, self.target.y, 1,
                       p.x,           p.y, 1
         )
+    
+    def __mul__(self, a):
+        return SegmentE2(self.source * a, self.target * a)
+    
+    def __rmul__(self, a):
+        return SegmentE2(self.source * a, self.target * a)
 
 # END SegmentE2
 
