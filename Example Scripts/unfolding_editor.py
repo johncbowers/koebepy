@@ -29,65 +29,6 @@ closest_idx = -1
 closest_dist = float('inf')
 remove_zero_edges = False
 
-# def compute_pinned_rigidity_matrix(R, pinned_vertices):
-#     """
-#     Remove the columns corresponding to the pinned vertices from the rigidity matrix.
-#     R: np.array (m x 2n) - Original unpinned rigidity matrix
-#     pinned_vertices: list of 3 integers - Indices of pinned vertices
-#     Returns: np.array (m x (2n-6)) - Pinned rigidity matrix
-#     """
-#     pinned_cols = np.concatenate([[2 * v, 2 * v + 1] for v in pinned_vertices])
-#     return np.delete(R, pinned_cols, axis=1)
-
-# def find_equilibrium_stress(R, pinned_vertices, interior_mask, tol=1e-10):
-#     """
-#     Compute a valid equilibrium stress vector given the unpinned rigidity matrix and pinned vertices.
-#     R: np.array (m x 2n) - Original unpinned rigidity matrix
-#     pinned_vertices: list of 3 integers - Indices of pinned vertices
-#     interior_mask: np.array (m,) - Boolean array where True indicates interior edges
-#     tol: float - Numerical tolerance for zeroing out small values
-#     Returns: np.array (m,) - A normalized equilibrium stress vector
-#     """
-#     R_pinned = compute_pinned_rigidity_matrix(R, pinned_vertices)
-    
-#     # Compute the null space of R_pinned^T
-#     null_space = la.null_space(R_pinned.T, rcond=1e-10)
-    
-#     if null_space.shape[1] == 0:
-#         raise ValueError("No non-trivial equilibrium stress found. Check rigidity matrix and pinning.")
-    
-#     # Solve for an equilibrium stress where interior stresses are positive
-#     num_null_vectors = null_space.shape[1]
-#     c = np.zeros(num_null_vectors)  # Dummy objective function
-    
-#     A_eq = np.ones((1, num_null_vectors))  # Ensure nontrivial solution
-#     b_eq = np.array([1])
-    
-#     bounds = [(None, None) for _ in range(num_null_vectors)]  # Allow positive and negative values
-    
-#     # Enforce positivity on interior edges
-#     A_ub = -null_space[interior_mask, :]
-#     b_ub = np.zeros(A_ub.shape[0])
-    
-#     res = opt.linprog(c, A_eq=A_eq, b_eq=b_eq, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
-    
-#     if not res.success:
-#         raise ValueError("Failed to find a positive equilibrium stress using linear programming.")
-    
-#     # Construct equilibrium stress from the null space basis
-#     stress_vector = null_space @ res.x  # Linear combination of basis vectors
-    
-#     # Zero out very small numerical values
-#     stress_vector[np.abs(stress_vector) < tol] = 0.0
-    
-#     # Normalize the stress vector
-#     max_abs_stress = np.max(np.abs(stress_vector))
-#     if max_abs_stress > 0:
-#         stress_vector /= max_abs_stress
-    
-#     return stress_vector
-
-
 
 def find_equilibrium_stress(R, pinned_vertices, interior_mask, tol=1e-10):
     """

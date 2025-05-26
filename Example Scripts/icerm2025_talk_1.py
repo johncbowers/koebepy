@@ -1,4 +1,6 @@
 from koebe.graphics.p5.spherical2viewer import *
+import koebe.graphics.marimo.spherical2viewer as s2v
+
 from koebe.geometries.spherical2 import *
 from koebe.geometries.euclidean2 import *
 from koebe.geometries.euclidean3 import *
@@ -58,7 +60,7 @@ def random_koebe(n, scale=1):
 
     return diskSet, caps, segs, orthos
 
-diskSet, caps, segs, orthos = random_koebe(25)
+diskSet, caps, segs, orthos = random_koebe(12)
 
 
 viewer = S2Viewer()
@@ -112,6 +114,10 @@ def key_pressed_handler(key):
         viewer.addAll(diskSet)
         viewer.addAll([(c, redStyle) for c in caps])
         viewer.addAll(segs)
+    elif key == "j":
+        viewer2 = s2v.S2Viewer()
+        viewer2._objs = viewer._objs
+        print(viewer2._toJson())
         
 
 viewer._key_pressed_handler = key_pressed_handler

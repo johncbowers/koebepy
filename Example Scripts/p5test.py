@@ -7,8 +7,9 @@ def draw():
     background(205, 102, 94)
     rotate_x(frame_count * 0.02)
     rotate_y(frame_count * 0.01)
+    
     blinn_phong_material()
-    cone(200, 400)
+
     locX = mouse_x - width/2
     locY = mouse_y - height/2
     light_specular(0, 0, 255)
