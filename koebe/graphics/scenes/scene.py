@@ -40,8 +40,10 @@ class Scene:
     
     def __init__(self, width, height, scale, obj_json_convert_func, title=None, pan_and_zoom=False):
         self._objs   = []
+        self._background_objs = []
         self._anim   = []
         self._styles = {}
+        self._background_styles = {}
         self._title = title
         self.obj_json_convert_func = obj_json_convert_func
         #self._sketch_class = SketchClass
@@ -55,6 +57,7 @@ class Scene:
         self._mouse_clicked         = lambda evt: None
         self._mouse_double_clicked  = lambda evt: None
         self._needs_redraw = False
+        self._needs_background_redraw = False
         self._scale = scale
         self._width = width
         self._height = height
@@ -94,15 +97,30 @@ class Scene:
     def setStyle(self, obj, style):
         self._styles[id(obj)] = style
         self._needs_redraw = True
+    
+    def setBackgroundStyle(self, obj, style):
+        self._background_styles[id(obj)] = style
+        self._needs_background_redraw = True
         
     def setStyles(self, objs, style):
         for obj in objs:
             self.setStyle(obj, style)
         self._needs_redraw = True
     
+    def setBackgroundStyles(self, objs, style):
+        for obj in objs:
+            self.setBackgroundStyle(obj, style)
+        self._needs_background_redraw = True
+    
     def getStyle(self, obj):
         if id(obj) in self._styles:
             return self._styles[id(obj)]
+        else:
+            return None
+    
+    def getBackgroundStyle(self, obj):
+        if id(obj) in self._background_styles:
+            return self._background_styles[id(obj)]
         else:
             return None
     
@@ -117,6 +135,12 @@ class Scene:
             self.setStyle(obj, style)
         self._needs_redraw = True
     
+    def addToBackground(self, obj, style = None):
+        self._background_objs.append(obj)
+        if (style != None):
+            self.setStyle(obj, style)
+        self._needs_background_redraw = True
+    
     def addAll(self, objs):
         for obj in objs:
             if isinstance(obj, tuple):
@@ -125,7 +149,16 @@ class Scene:
             else:
                 self._objs.append(obj)
         self._needs_redraw = True
-                
+
+    def addAllToBackground(self, objs):
+        for obj in objs:
+            if isinstance(obj, tuple):
+                self._background_objs.append(obj[0])
+                self.setStyle(obj[0], obj[1])
+            else:
+                self._background_objs.append(obj)
+        self._needs_background_redraw = True          
+    
     def pushAnimFrame(self):
         self._anim.append(self._objs)
         self._objs = []
@@ -136,19 +169,36 @@ class Scene:
             self.get_json_objects_list()
         )
     
+    def _toJsonBackground(self):
+        return json.dumps(
+            self.get_json_background_objects_list()
+        )
+
     def get_json_objects_list(self):
         frames = self._anim + [self._objs]
         return [[d for d in [self.obj_json_convert_func(o, self.getStyle(o)) for o in frame] if not d == None] 
                 for frame in frames]
-        
+
+    def get_json_background_objects_list(self):
+        return [d for d in [self.obj_json_convert_func(o, self.getBackgroundStyle(o)) for o in self._background_objs] if not d == None]
+    
     def jsonify(self):
         return self._toJson()
+    
+    def jsonifyBackground(self, needs_background_redraw=True):
+        self._needs_background_redraw = needs_background_redraw
+        return self._toJsonBackground()
     
     def needsRedraw(self):
         return self._needs_redraw
     
     def clearRedrawFlag(self):
         self._needs_redraw = False
+    
+    def clearBackgroundRedrawFlag(self):
+        self._needs_background_redraw = False
 
     def clear(self):
         self._objs = []
+        self._styles = {}
+        self._needs_redraw = True

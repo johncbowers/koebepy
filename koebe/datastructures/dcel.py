@@ -80,13 +80,14 @@ class DCEL:
     #
     def duplicate(self, vdata_transform = (lambda vData : vData), 
                         edata_transform = (lambda eData : eData), 
-                        fdata_transform = (lambda fData : fData)):
+                        fdata_transform = (lambda fData : fData),
+                        ddata_transform = (lambda dData : dData)):
         
         new_dcel = self.__class__()        
         
         # create new versions for each object
         new_verts = [self.Vertex(new_dcel, data = vdata_transform(v.data)) for v in self.verts]
-        new_darts = [self.Dart(new_dcel)                                   for _ in self.darts]
+        new_darts = [self.Dart(new_dcel, data = ddata_transform(d.data))   for d in self.darts]
         new_edges = [self.Edge(new_dcel, data = edata_transform(e.data))   for e in self.edges]
         new_faces = [self.Face(new_dcel, data = fdata_transform(f.data))   for f in self.faces]
         
@@ -412,12 +413,28 @@ class Edge:
     def endPoints(self):
         return [self.aDart.origin, self.aDart.dest]
     
+    @property
+    def u(self):
+        return self.aDart.origin
+    
+    @property
+    def v(self):
+        return self.aDart.dest
+    
     def incidentFaces(self):
         return [self.aDart.face, self.aDart.twin.face]
     
     def darts(self):
         return [self.aDart, self.aDart.twin]
-        
+    
+    @property
+    def dart1(self):
+        return self.aDart
+    
+    @property
+    def dart2(self):
+        return self.aDart.twin
+    
     # Cuts this edge into two by introducing a zero-area face. 
     # The new edge's data is set to the eData parameter and 
     # the new face is set to the fData parameter. 

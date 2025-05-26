@@ -14,8 +14,10 @@ class ViewerFlask(Flask):
                     "id": scene_idx, 
                     "type": type(self._scenes[scene_idx]).__name__, 
                     "objects": self._scenes[scene_idx].jsonify(), 
+                    "background_objects": self._scenes[scene_idx].jsonifyBackground(needs_background_redraw=False) if self._scenes[scene_idx]._needs_background_redraw else "[]",
                     "title": "" if self._scenes[scene_idx].getTitle() == None else self._scenes[scene_idx].getTitle(),
                     "show_sphere": str(self._scenes[scene_idx].showSphere()).lower() if hasattr(self._scenes[scene_idx], "showSphere") else "false",
+                    "show_light_cone": str(self._scenes[scene_idx].showLightCone()).lower() if hasattr(self._scenes[scene_idx], "showLightCone") else "false",
                     "scale": self._scenes[scene_idx].getScale(), 
                     "width": self._scenes[scene_idx].getWidth(),
                     "height": self._scenes[scene_idx].getHeight(), 
@@ -39,25 +41,29 @@ def event():
     
     data = request.get_json()
     event_type = data['type']
-    scene_id = data['scene_id']
-    scene = viewer._scenes[scene_id]
-    
+
     if event_type == "key_pressed":
-        scene.key_pressed(data['key'])
+        if _key_pressed_handler is not None:
+            _key_pressed_handler(data['key'])
     elif event_type == "key_released":
-        scene.key_released(data['key'])
-    elif event_type == "mouse_moved":
-        scene.mouse_moved(data)
-    elif event_type == "mouse_dragged":
-        scene.mouse_dragged(data)
-    elif event_type == "mouse_pressed":
-        scene.mouse_pressed(data)
-    elif event_type == "mouse_released":
-        scene.mouse_released(data)
-    elif event_type == "mouse_clicked":
-        scene.mouse_clicked(data)
-    elif event_type == "mouse_double_clicked":
-        scene.mouse_double_clicked(data)
+        if _key_released_handler is not None:
+            _key_released_handler(data['key'])
+    else:
+        scene_id = data['scene_id']
+        scene = viewer._scenes[scene_id]
+        
+        if event_type == "mouse_moved":
+            scene.mouse_moved(data)
+        elif event_type == "mouse_dragged":
+            scene.mouse_dragged(data)
+        elif event_type == "mouse_pressed":
+            scene.mouse_pressed(data)
+        elif event_type == "mouse_released":
+            scene.mouse_released(data)
+        elif event_type == "mouse_clicked":
+            scene.mouse_clicked(data)
+        elif event_type == "mouse_double_clicked":
+            scene.mouse_double_clicked(data)
     
     scene_updates = [
         scene.jsonify() if scene.needsRedraw() else ""
@@ -80,3 +86,13 @@ def add():
 if __name__ == '__main__':
     viewer.run(debug=True)
 
+_key_pressed_handler = None
+_key_released_handler = None
+
+def set_key_pressed_handler(handler):
+    global _key_pressed_handler
+    _key_pressed_handler = handler
+
+def set_key_released_handler(handler):
+    global _key_released_handler
+    _key_released_handler = handler

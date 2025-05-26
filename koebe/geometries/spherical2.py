@@ -230,7 +230,7 @@ class DiskS2:
     
     @property
     def radiusE3(self):
-        return math.sqrt(1.0 - (self.centerE3 - PointE3.O).normSq())
+        return (1.0 - (self.centerE3 - PointE3.O).normSq())**(0.5)
     
     @property
     def radiusS2(self):
@@ -272,10 +272,10 @@ class DiskS2:
 
         # Now find the coefficients (a, b, c, d) of the plane of equal Minkowski 3,1 inner product from
         # the normalized vectors of this and disk:
-        a = diskS2.a / minNorm2 - self.a / minNorm1
-        b = diskS2.b / minNorm2 - self.b / minNorm1
-        c = diskS2.c / minNorm2 - self.c / minNorm1
-        d = self.d / minNorm1 - diskS2.d / minNorm2
+        a = diskS2.a * minNorm1 - self.a * minNorm2
+        b = diskS2.b * minNorm1 - self.b * minNorm2
+        c = diskS2.c * minNorm1 - self.c * minNorm2
+        d = self.d * minNorm2 - diskS2.d * minNorm1
 
         # Return the resulting bisector plane
         return CPlaneS2(a, b, c, d)
@@ -303,34 +303,47 @@ class DiskS2:
             return [PointS2(*newBasis4), PointS2(*newBasis1), PointS2(*newBasis2)]
         
     def invertThrough(self, diskS2):
-        fact = (inner_product31(self.a, self.b, self.c, self.d, diskS2.a, diskS2.b, diskS2.c, diskS2.d) /
-                inner_product31(diskS2.a, diskS2.b, diskS2.c, diskS2.d, diskS2.a, diskS2.b, diskS2.c, diskS2.d)
-               )
-
-        return DiskS2(
-                self.a - 2 * fact * diskS2.a,
-                self.b - 2 * fact * diskS2.b,
-                self.c - 2 * fact * diskS2.c,
-                self.d - 2 * fact * diskS2.d
-        )
+        n = inner_product31(self.a, self.b, self.c, self.d, diskS2.a, diskS2.b, diskS2.c, diskS2.d)
+        d = inner_product31(diskS2.a, diskS2.b, diskS2.c, diskS2.d, diskS2.a, diskS2.b, diskS2.c, diskS2.d)
+        if d == 0:
+            return DiskS2(
+                    d * self.a - 2 * n * diskS2.a,
+                    d * self.b - 2 * n * diskS2.b,
+                    d * self.c - 2 * n * diskS2.c,
+                    d * self.d - 2 * n * diskS2.d
+            )
+        else:
+            fact = n / d
+            return DiskS2(
+                    self.a - 2 * fact * diskS2.a,
+                    self.b - 2 * fact * diskS2.b,
+                    self.c - 2 * fact * diskS2.c,
+                    self.d - 2 * fact * diskS2.d
+            )
     
     def sgProjectToOP2(self):
         import koebe.geometries.orientedProjective2
         return koebe.geometries.orientedProjective2.DiskOP2.fromPointOP2(*[p.sgProjectToPointOP2() for p in self.get3PointsOnDisk()])
     
     def inversiveNormalize(self):
-        scale = 1.0 / math.sqrt(self.lorentzTo(self))
+        scale = 1.0 / math.sqrt(abs(self.lorentzTo(self)))
         return DiskS2(self.a * scale, self.b * scale, self.c * scale, self.d * scale)
     
+    # def inversiveMidpoint(self, other):
+    #     return (0.5 * self.inversiveNormalize() + 0.5 * other.inversiveNormalize())
+
+    def inversiveMidpointTo(self, other):
+        D12 = (self + (-1) * other)
+        t = self.lorentzTo(D12) / D12.lorentzTo(D12) # if self and other are normalized this is 0.5
+        return ((1-t) * self + t * other)
+
     def tangentPointWith(self, other):
         """
         Computes the point of tangency between self and other, if one exists. I *believe*, but have not checked
         that if self and other are not tangent, this will compute the point on the line through their conical caps
         that is closest to the origin. 
         """
-        D12 = self + (-1) * other
-        t = self.lorentzTo(D12) / D12.lorentzTo(D12)
-        return ((1 - t) * self + t * other).dualPointOP3.toPointE3()
+        return self.inversiveMidpointTo(other).dualPointOP3.toPointE3()
 
     # def normalize(self):
     #     scale = 1.0 / math.sqrt(inner_product31(self.a, self.b, self.c, self.d, self.a, self.b, self.c, self.d))

@@ -36,6 +36,9 @@
 
     <script>
 
+        var objs; 
+        var backgroundObjs;
+
         var mouseDraggedCanvas = null;
         var mouseDraggedSceneId = -1;
 
@@ -192,12 +195,17 @@
             p.draw = function () {
 
                 let show_sphere = model["show_sphere"]
+                let show_light_cone = model["show_light_cone"]
 
                 // if (model.get('objectsDirty')) {
                 //     model.set('objectsDirty', false);
                     p.objs = model['objects'];//scenes[scene_id];//JSON.parse(model['objects']);
                 // }
                 
+                if (show_light_cone) {
+                    p.drawingContext.disable(p.drawingContext.DEPTH_TEST);
+                }
+
                 p.background(255, 254, 235);
                 
                 p.orbitControl(5, 5);
@@ -211,6 +219,19 @@
                 if (show_sphere) {
                     p.fill(220, 220, 220);
                     p.sphere(0.999, 96, 64);
+                }
+
+                if (show_light_cone) {
+                    p.push();
+                    p.fill(200, 200, 255, 48);
+                    p.stroke(128, 128, 128);
+                    p.translate(0, 0, -0.5);
+                    p.rotate(p.HALF_PI, [1,0,0]);
+                    p.cone(1, 1, 24, 1, false);
+                    p.rotate(p.PI, [1,0,0]);
+                    p.translate(0, -1.0, 0);
+                    p.cone(1, 1, 24, 1, false);
+                    p.pop();
                 }
 
                 p.objs[p.frame].forEach(obj => {
@@ -416,7 +437,7 @@
                     p.noStroke();
                     p.fill(100, 125, 255);
                 }
-                p.circle(pt[0], pt[1], 5 * p.canvasScale);
+                p.circle(pt[0], pt[1], 7.5 * p.canvasScale);
             }
             
             p.drawPolygonE2 = function(polygonData) {
@@ -477,13 +498,17 @@
                 p.translate(p.tx, p.ty)
 
                 p.objs = model['objects'];
-                
+                p.backgroundObjs = model['background_objects'];
+
+                objs = p.objs;
+                backgroundObjs = p.backgroundObjs;
+
                 p.scale(1 / p.canvasScale, -1 / p.canvasScale);
                 p.translate(p.canvasScale * p.width * 0.5, -p.canvasScale * p.height * 0.5);
 
                 p.background('#fff');
-
-                p.objs[p.frame].forEach(obj => {
+                
+                ([...p.backgroundObjs, ...p.objs[p.frame]]).forEach(obj => {
                     p.push();
                     if ("style" in obj && obj["style"] != null) {
                         p.setStyle(obj["style"]);
@@ -510,6 +535,40 @@
 
         }
 
+        window.addEventListener('keydown', (e) => {
+            
+            const response = fetch('/event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({type: 'key_pressed', key: e.key})
+            });
+
+            response.then( response => response.json() )
+            .then( data => {
+                update_scenes(data);
+            });
+            
+        });
+
+        window.addEventListener('keyup', (e) => {
+            
+            const response = fetch('/event', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({type: 'key_released', key: e.key})
+            });
+
+            response.then( response => response.json() )
+            .then( data => {
+                update_scenes(data);
+            });
+            
+        });
+
         /*let main_view = document.getElementById("main_view");
         let model = {"objects":json_str, "show_sphere":true};
 
@@ -524,7 +583,7 @@
 
         {% for scene in scenes: %}
         let div_elem_{{loop.index0}} = document.getElementById('scene_{{loop.index0}}');
-        let model_{{loop.index0}} = {"id": {{loop.index0}}, "objects": JSON.parse('{{scene["objects"]|safe}}'), "show_sphere": {{scene["show_sphere"]}}};
+        let model_{{loop.index0}} = {"id": {{loop.index0}}, "objects": JSON.parse('{{scene["objects"]|safe}}'), "background_objects": JSON.parse('{{scene["background_objects"]|safe}}'),  "show_sphere": {{scene["show_sphere"]}}, "show_light_cone": {{scene["show_light_cone"]}} };
         {% if scene["type"] == "S2Scene": %}
         let sketch_view_{{loop.index0}} = window.createSketchViewS2(model_{{loop.index0}}, {{loop.index0}}, {{scene["width"]}}, {{scene["height"]}});
         {% else: %}

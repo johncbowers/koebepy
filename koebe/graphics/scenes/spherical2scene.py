@@ -40,7 +40,7 @@ def _p5_diskS2(disk):
             "b2":         tuple(disk.normedBasis2.v),
             "b3":         tuple(disk.normedBasis3.v),
             "centerDist": disk.centerE3.distTo(PointE3.O),
-            "diameter":   disk.radiusE3 * 2.0}
+            "diameter":   disk.radiusE3.real * 2.0}
 
 def _p5_cPlaneS2(cplane, style):
     result = _p5_diskS2(cplane.dualDiskS2)
@@ -146,16 +146,23 @@ class DefaultStyles:
 ### THE ACTUAL VIEWER CLASSES
     
 class S2Scene(Scene):
-    def __init__(self, width=500, height=500, title=None, show_sphere = True):
+    def __init__(self, width=500, height=500, title=None, show_sphere = True, show_light_cone = False):
         super().__init__(width = width, 
                          height = height, 
                          scale = 1.0, 
                          title = title, 
                          obj_json_convert_func = _p5_dict)
         self._show_sphere = show_sphere
+        self._show_light_cone = show_light_cone
 
     def toggleSphere(self):
         self._show_sphere = not self._show_sphere
     
+    def toggleLightCone(self):
+        self._show_light_cone = not self._show_light_cone
+    
     def showSphere(self):
         return self._show_sphere
+    
+    def showLightCone(self):
+        return self._show_light_cone

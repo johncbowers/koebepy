@@ -370,6 +370,13 @@ class LineOP2:
         detw =  determinant2(self.a, self.b, line2.a, line2.b)
         return PointOP2(detx, dety, detw)
     
+    @classmethod
+    def lineThrough(cls, P1, P2):
+        L1 = LineOP2(P1.hx, P1.hy, P1.hw)
+        L2 = LineOP2(P2.hx, P2.hy, P2.hw)
+        P = L1.intersectWithLineOP2(L2)
+        return LineOP2(P.hx, P.hy, P.hw)
+    
     def intersectWithDiskOP2(self, disk):
         return disk.intersectWith(self)
     

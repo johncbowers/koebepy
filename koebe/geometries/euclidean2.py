@@ -36,6 +36,10 @@ class PointE2:
         yield self.x
         yield self.y
     
+    @classmethod
+    def fromPolarCoordinates(cls, r, theta):
+        return PointE2(r * math.cos(theta), r * math.sin(theta))
+
     def __mul__(self, a):
         return PointE2(self.x * a, self.y * a)
     
@@ -242,6 +246,33 @@ class SegmentE2:
     
     def __rmul__(self, a):
         return SegmentE2(self.source * a, self.target * a)
+    
+    def intersects(self, other) -> bool:
+        """Tests if this segment intersects another segment.
+        
+        Args:
+            other: The other segment to test for intersection with this one.
+        
+        Returns:
+            True if the two segments intersect.
+            False otherwise.
+        """
+        # if the type of other is a SegmentE2, then we can use the orientation test
+        if isinstance(other, SegmentE2):
+            return (self.orientationTo(other.source) * self.orientationTo(other.target) < 0 and
+                    other.orientationTo(self.source) * other.orientationTo(self.target) < 0)
+        elif isinstance(other, CircleE2):
+            # if the type of other is a CircleE2, then we can use the distance test
+            return self.distSqTo(other.center) <= other.radius * other.radius
+        elif isinstance(other, PolygonE2):
+            # if the type of other is a PolygonE2, then we can use the segment intersection test
+            # first check if segment is in the bounding box of the polygon
+            for seg in other.segments():
+                if self.intersects(seg):
+                    return True
+            return False
+        else:
+            raise TypeError("Cannot test intersection with type: " + str(type(other)))
 
 # END SegmentE2
 
@@ -363,6 +394,14 @@ class PolygonE2:
     def vertexCount(self):
         return len(self.vertices)
     
+    @property
+    def boundingBox(self):
+        minX = min([v.x for v in self.vertices])
+        maxX = max([v.x for v in self.vertices])
+        minY = min([v.y for v in self.vertices])
+        maxY = max([v.y for v in self.vertices])
+        return (PointE2(minX, minY), PointE2(maxX, maxY))
+    
     def __getitem__(self, idx):
         return self.vertices[idx % self.vertexCount]
     
@@ -421,5 +460,27 @@ class PolygonE2:
             edges[i].aDart    = ccwDarts[i]
 
         return pDCEL
+    
+    def intersects(self, other: "PolygonE2") -> bool:
+        """Tests if the bounary of this polygon intersects the boundary of another polygon.
+        Args:
+            other: The other polygon to test for intersection with this one.
+        Returns:
+            True if the two polygons intersect.
+            False otherwise.
+        """
+        if self.boundingBox[0].x > other.boundingBox[1].x or \
+           self.boundingBox[1].x < other.boundingBox[0].x or \
+           self.boundingBox[0].y > other.boundingBox[1].y or \
+           self.boundingBox[1].y < other.boundingBox[0].y:
+            return False
+
+        for seg in self.segments():
+            for otherSeg in other.segments():
+                if seg.intersects(otherSeg):
+                    return True
+        return False
+    
+
                 
 # END PolygonE2

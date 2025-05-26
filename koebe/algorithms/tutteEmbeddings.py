@@ -5,7 +5,7 @@ from scipy.sparse.linalg import inv
 import numpy as np
 import math
 
-def sparse_laplacian(self, verbose=False):
+def sparse_laplacian(self, weighted=False, verbose=False):
     if verbose: print("Creating vertToIdx array...")
     vertToIdx = dict((v, k) for k, v in enumerate(self.verts))
     if verbose: print("Creating vertToDeg array...")
@@ -20,22 +20,30 @@ def sparse_laplacian(self, verbose=False):
     if verbose: print("Done.")
     for i in range(len(self.verts)):
         u = self.verts[i]
-        neighbors = u.neighbors()
+        #neighbors = u.neighbors()
+        outDarts = u.outDarts()
         
+
         #mat[i][i] = len(neighbors)
         row_array.append(i)
         col_array.append(i)
-        dat_array.append(len(neighbors))
+        if weighted: 
+            dat_array.append(sum([dart.data for dart in outDarts]))
+        else:       
+            dat_array.append(len(outDarts))
         
-        for v in neighbors:
+        for dart in outDarts:
             row_array.append(i)
-            col_array.append(vertToIdx[v])
-            dat_array.append(-1)
+            col_array.append(vertToIdx[dart.dest])
+            if weighted: 
+                dat_array.append(-dart.data)
+            else:
+                dat_array.append(-1)
     
     if verbose: print(f"Returning coo_matrix with shape ({len(self.verts)}, {len(self.verts)})")
     return coo_matrix((np.array(dat_array), (np.array(row_array), np.array(col_array))), shape=(len(self.verts), len(self.verts))).tocsc()
 
-def tutteEmbeddingE2(graphDCEL, in_place = False, verbose = False):
+def tutteEmbeddingE2(graphDCEL, in_place=False, weighted=False, verbose=False):
     """Computes a Tutte embedding of a graph. The vertices incident to graphDCEL.outerFace
     are evenly spaced along the unit circle. The locations of the vertices are given as PointE2 objects.
     
@@ -71,7 +79,7 @@ def tutteEmbeddingE2(graphDCEL, in_place = False, verbose = False):
     if verbose: print("done.")
     
     if verbose: print("Computing graph laplacian...")
-    L = sparse_laplacian(graph, verbose)
+    L = sparse_laplacian(graph, weighted, verbose)
     if verbose: print("done.")
 
     if verbose: print("Computing Tutte embedding...")

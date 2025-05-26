@@ -65,6 +65,11 @@ def inner_product4(x1, y1, z1, w1,
     return x1*x2 + y1*y2 + z1*z2 + w1*w2
 
 # Minkowski-(3,1) inner product
+def inner_product21(x1, y1, t1,
+                    x2, y2, t2): 
+    return x1*x2 + y1*y2 + - t1*t2
+
+# Minkowski-(3,1) inner product
 def inner_product31(x1, y1, z1, w1,
                     x2, y2, z2, w2): 
     return x1*x2 + y1*y2 + z1*z2 - w1*w2
