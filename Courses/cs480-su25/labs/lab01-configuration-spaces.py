@@ -116,8 +116,12 @@ def key_released_handler(key):
     if key == "a":
         global ship_rotation
         ship_rotation += 0.3
+        if ship_rotation >= 2 * pi:
+            ship_rotation -= 2 * pi
     elif key == "d":
         ship_rotation -= 0.3
+        if ship_rotation < 0:
+            ship_rotation += 2 * pi
     elif key == "w":
         global ship_position
         forward_vector = VectorE2(cos(ship_rotation), sin(ship_rotation))
