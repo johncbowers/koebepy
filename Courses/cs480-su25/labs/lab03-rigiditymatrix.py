@@ -8,6 +8,7 @@ from koebe.graphics.flask.multiviewserver import viewer, set_key_pressed_handler
 from koebe.graphics.scenes.euclidean2scene import E2Scene, makeStyle
 
 import numpy as np
+from scipy.linalg import null_space
 
 blackStyle = makeStyle(stroke=(0,0,0), fill=(255, 255, 255))
 redStyle = makeStyle(stroke=(255,0,0), fill=(255, 0, 0), strokeWeight=2.0)
@@ -24,13 +25,12 @@ pin_edge_idx = 0
 #    2D rigidity matrix called rigidity_matrix_row(i, j).
 #
 # 2. Write a function that takes a vertex index i and returns a pinning
-#    row of the rigidity matrix called pinning_row(i).
+#    rows of the rigidity matrix called pinning_rows(i).
 #
 # 3. Write a function that computes the rigdity matrix for the entire graph
 #    as a numpy array called rigidity_matrix().
 #
-# 4. Write a function that computes the rank of the rigidity matrix. 
-#    You can use numpy's `np.linalg.matrix_rank` function.
+# 4. Write a function that prints the degrees of freedom of the mechanism given the rigidity matrix. 
 #
 # 5. In the draw function compute a null space for the rigidity matrix and visualize
 #    its basis vectors as red line segments in the scene.
