@@ -14,8 +14,8 @@ blackStyle = makeStyle(stroke=(0,0,0), fill=(255, 255, 255))
 redStyle = makeStyle(stroke=(255,0,0), fill=(255, 0, 0), strokeWeight=2.0)
 purpleStyle = makeStyle(stroke=(128,0,128), fill=(128, 0, 128), strokeWeight=4.0)
 
-vertices = [PointE2(0, 0), PointE2(100, 0), PointE2(100, 100)]
-edges = [[0,1]]
+vertices = [PointE2(0, 0), PointE2(100, 0), PointE2(100, 100), PointE2(0, 100)]
+edges = [[0,1], [1, 2], [2, 3], [3, 0]]
 pin_edge_idx = 0
 
 #
@@ -24,6 +24,7 @@ pin_edge_idx = 0
 # 1. Write a function that takes an edge index i, j and returns a row of the
 #    2D rigidity matrix called rigidity_matrix_row(i, j).
 #
+
 # 2. Write a function that takes a vertex index i and returns a pinning
 #    rows of the rigidity matrix called pinning_rows(i).
 #
