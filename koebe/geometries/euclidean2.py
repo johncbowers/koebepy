@@ -273,6 +273,34 @@ class SegmentE2:
             return False
         else:
             raise TypeError("Cannot test intersection with type: " + str(type(other)))
+    
+    def reflect(self, p: PointE2) -> "PointE2":
+        """Reflects a point across this segment.
+        
+        Args:
+            p: The PointE2 to reflect across this segment.
+        
+        Returns:
+            A new PointE2 that is the reflection of p across this segment.
+        """
+        # reflect p across the line passing through the PointE2 objects source and target
+        v = (self.target - self.source).normalize()
+        w = p - self.source
+        proj = w.dot(v) * v
+        return p + (2 * (proj - w))
+
+        # # compute the unit vector in the direction of the segment
+        # u = v.normalize()
+        # # compute the vector from the source to the point
+        # w = p - self.source
+        # # compute the projection of w onto u
+        # proj = w.dot(u) * u
+        # # compute the vector from the source to the reflection point
+        # reflectionVector = w - 2 * proj
+        # # compute the reflection point
+        # reflectionPoint = self.source + reflectionVector
+        # # return the reflection point
+        # return PointE2(reflectionPoint.x, reflectionPoint.y)
 
 # END SegmentE2
 
@@ -370,6 +398,7 @@ class PolygonE2:
         return [SegmentE2(self.vertices[i-1], self.vertices[i]) 
                 for i in range(len(self.vertices))]
 
+    @property
     def signedArea(self):
         return 0.5 * sum([s.source.x * s.target.y - s.target.x * s.source.y
          for s in self.segments()])
@@ -377,6 +406,7 @@ class PolygonE2:
     def area(self):
         return abs(self.signedArea)
     
+    @property
     def orientation(self):
         return (
             1 if self.signedArea > 0 
