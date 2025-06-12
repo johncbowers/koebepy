@@ -289,19 +289,6 @@ class SegmentE2:
         proj = w.dot(v) * v
         return p + (2 * (proj - w))
 
-        # # compute the unit vector in the direction of the segment
-        # u = v.normalize()
-        # # compute the vector from the source to the point
-        # w = p - self.source
-        # # compute the projection of w onto u
-        # proj = w.dot(u) * u
-        # # compute the vector from the source to the reflection point
-        # reflectionVector = w - 2 * proj
-        # # compute the reflection point
-        # reflectionPoint = self.source + reflectionVector
-        # # return the reflection point
-        # return PointE2(reflectionPoint.x, reflectionPoint.y)
-
 # END SegmentE2
 
 @dataclass(frozen=True)
