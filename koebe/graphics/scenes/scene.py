@@ -164,6 +164,10 @@ class Scene:
         self._objs = []
         self._needs_redraw = True
         
+    def clearAnimFrames(self):
+        self._anim = []
+        self._needs_redraw = True
+    
     def _toJson(self):
         return json.dumps(
             self.get_json_objects_list()
