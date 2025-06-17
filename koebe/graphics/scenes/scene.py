@@ -163,10 +163,11 @@ class Scene:
         self._anim.append(self._objs)
         self._objs = []
         self._needs_redraw = True
-        
+
     def clearAnimFrames(self):
-        self._anim = []
-        self._needs_redraw = True
+        self._objs.clear()
+        self._anim.clear()
+        #self._needs_redraw = True
     
     def _toJson(self):
         return json.dumps(
