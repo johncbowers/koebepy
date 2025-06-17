@@ -45,13 +45,28 @@
         var sketch3d = null;
         var last_scene_data = null;
 
+        // For debugging purposes. 
+        var last_error = null; 
+        var last_scene_update = null;
+
+        var last_p_objs = null; 
+        var last_p_frame = null;
+        var last_p = null;
+
         function update_scenes(data) {
             last_scene_data = data;
             for (let i = 0; i < data.scene_updates.length; i++) {
                 let scene_update = data.scene_updates[i];
                 if (scene_update != "") {
-                    models[i]["objects"] = JSON.parse(scene_update);
-                    sketches[i].redraw();
+                    try {
+                        models[i]["objects"] = JSON.parse(scene_update);
+                        sketches[i].redraw();
+                    } catch (e) {
+
+                        last_error = e;
+                        console.error(e);
+                        last_scene_update = scene_update; 
+                    }
                 }
             }
         }
@@ -203,6 +218,10 @@
                     p.objs = model['objects'];//scenes[scene_id];//JSON.parse(model['objects']);
                 // }
                 
+                last_p = p; 
+                last_p_objs = p.objs;
+                last_p_frame = p.frame;
+
                 if (show_light_cone) {
                     p.drawingContext.disable(p.drawingContext.DEPTH_TEST);
                 }
@@ -502,6 +521,10 @@
                 p.objs = model['objects'];
                 p.backgroundObjs = model['background_objects'];
 
+                last_p = p; 
+                last_p_objs = p.objs;
+                last_p_frame = p.frame;
+
                 objs = p.objs;
                 backgroundObjs = p.backgroundObjs;
 
@@ -510,23 +533,26 @@
 
                 p.background('#fff');
                 
-                ([...p.backgroundObjs, ...p.objs[p.frame]]).forEach(obj => {
-                    p.push();
-                    if ("style" in obj && obj["style"] != null) {
-                        p.setStyle(obj["style"]);
-                    }
-                    
-                    switch (obj["type"]) {
-                        case "PointE2": p.drawPointE2(obj); break;
-                        case "Polygons": p.drawPolygons(obj); break;
-                        case "PolygonE2": p.drawPolygonE2(obj); break;
-                        case "SegmentE2": p.drawSegmentE2(obj); break;
-                        case "CircleE2": p.drawCircleE2(obj); break;
-                        case "CircleArcE2": p.drawCircleArcE2(obj); break;
-                        default: console.log(obj["type"] + " is not drawable in this sketch.");
-                    }
-                    p.pop();
-                });
+                if (p.backgroundObjs && p.objs) {
+                    ([...p.backgroundObjs, ...p.objs[p.frame % p.objs.length]]).forEach(obj => {
+                        p.push();
+                        if ("style" in obj && obj["style"] != null) {
+                            p.setStyle(obj["style"]);
+                        }
+                        
+                        switch (obj["type"]) {
+                            case "PointE2": p.drawPointE2(obj); break;
+                            case "Polygons": p.drawPolygons(obj); break;
+                            case "PolygonE2": p.drawPolygonE2(obj); break;
+                            case "SegmentE2": p.drawSegmentE2(obj); break;
+                            case "CircleE2": p.drawCircleE2(obj); break;
+                            case "CircleArcE2": p.drawCircleArcE2(obj); break;
+                            default: console.log(obj["type"] + " is not drawable in this sketch.");
+                        }
+                        p.pop();
+                    });
+                }
+                
                 if (p.objs.length == 1) {
                     //p.noLoop();
                 } else {
