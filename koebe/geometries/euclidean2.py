@@ -407,6 +407,23 @@ class PolygonE2:
         else:
             return PolygonE2(self.vertices[::-1])
     
+    def isConvex(self) -> bool:
+        """Tests if the polygon is convex.
+        
+        Returns:
+            True if the polygon is convex.
+            False otherwise.
+        """
+        if len(self.vertices) <= 3:
+            return True
+        else:
+            oPoly = self.ccwOrientation()
+            for i in range(len(oPoly.vertices)):
+                u, v, w, x = oPoly.vertices[i], oPoly.vertices[(i+1)%len(oPoly.vertices)], oPoly.vertices[(i+2)%len(oPoly.vertices)], oPoly.vertices[(i+3)%len(oPoly.vertices)]
+                if orientation2(u.x, u.y, v.x, v.y, w.x, w.y) != orientation2(v.x, v.y, w.x, w.y, x.x, x.y):
+                    return False
+            return True
+
     @property
     def vertexCount(self):
         return len(self.vertices)
@@ -501,3 +518,35 @@ class PolygonE2:
 
                 
 # END PolygonE2
+
+@dataclass(frozen=True)
+class LineE2:
+
+    __slots__ = ["p1", "p2"]
+
+    p1: PointE2
+    p2: PointE2
+
+    def intersectWithLineE2(self, line2):
+        from koebe.geometries.orientedProjective2 import PointOP2, LineOP2
+        l1 = LineOP2.lineThrough(
+            PointOP2.fromPointE2(self.p1), 
+            PointOP2.fromPointE2(self.p2)
+        )
+        l2 = LineOP2.lineThrough(
+            PointOP2.fromPointE2(line2.p1), 
+            PointOP2.fromPointE2(line2.p2)
+        )
+        p = l1.intersectWithLineOP2(l2)
+        if p.hw == 0:
+            return None
+        else:
+            return p.toPointE2()
+    
+    def toSegmentE2(self, scale=1.0):
+        """Converts this line to a SegmentE2.
+        
+        Returns:
+            A SegmentE2 that is the segment between p1 and p2.
+        """
+        return SegmentE2(self.p1, self.p1 + scale * (self.p2 - self.p1))
