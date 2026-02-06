@@ -26,18 +26,13 @@ n_iterations = 10000
 print(f"Generating random convex hull of {n_points} points and computing a Tutte embedding... ")
 poly = randomConvexHullE3(n_points) # Generate a random polyhedron with 16 vertices. 
 poly.outerFace = poly.faces[0] # Arbitrarily select an outer face. 
-tutteGraph = tutteEmbeddingE2(poly) # Compute the tutte embedding of the polyhedron. 
 print("\tdone.")
 
 print("Computing a circle packing... ")
-I1 = DiskS2(1, 0, 0, 0)
 
-dists = [(v.data - PointE3.O).normSq() for v in tutteGraph.verts]
-closestToOriginIdx = dists.index(min(dists))
 hyp_packing, _ = maximalPacking(
-    tutteGraph, 
-    num_passes=n_iterations, 
-    centerDartIdx = tutteGraph.darts.index(tutteGraph.verts[closestToOriginIdx].aDart)
+    poly, 
+    num_passes=n_iterations 
 )
 packing = canonical_spherical_projection(hyp_packing)
 packing.markIndices()
