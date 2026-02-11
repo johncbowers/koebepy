@@ -1,4 +1,6 @@
 # Import geometries
+from argparse import ArgumentError
+
 from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
 from koebe.geometries.spherical2 import *
 from koebe.geometries.euclidean2 import *
@@ -45,7 +47,37 @@ def generate_coin_polygon(n_points, n_iterations):
     return packing
 
 
-def depth_first_search_unfolding(packing):
+def place(v0, v1):
+    v0_idx = v0.idx
+    v1_idx = v1.idx
+
+    parent_dirE2 = (v0.parent.data.center - v0.data.center).normalize()
+
+    parent_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v0.parent.idx].data).toVectorE3() - \
+                   packing.verts[v0_idx].data.centerE3
+    v1_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v1_idx].data).toVectorE3() - \
+               packing.verts[v0_idx].data.centerE3
+    n = packing.verts[v0_idx].data.basis3.normalize()
+    theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
+
+    vec = parent_dirE2.rotate(theta).normalize()
+    v1.data = CircleE2(
+        v0.data.center + (packing.verts[v0_idx].data.radiusE3 + packing.verts[v1_idx].data.radiusE3) * vec,
+        packing.verts[v1_idx].data.radiusE3
+    )
+    v1.parent = v0
+
+
+def whatever_first_search_unfolding(packing, search_type, left_first=False):
+    #TODO switch to using deque instead of list for vertices
+
+    if search_type == "depth":
+        pop_idx = -1
+    elif search_type == "breadth":
+        pop_idx = 0
+    else:
+        raise ArgumentError(f"Parameter search_type must be either 'depth' or 'breadth', got {search_type}")
+
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()
 
@@ -59,6 +91,7 @@ def depth_first_search_unfolding(packing):
         v.parent = None
 
     visited = {unfolding.verts[0]}
+    tree_set = {unfolding.verts[0]}
     vertices = []
 
     # Place the first neighbor
@@ -67,6 +100,7 @@ def depth_first_search_unfolding(packing):
     nbsE2[0].parent = unfolding.verts[0]
 
     vertices.append(nbsE2[0])
+    tree_set.add(nbsE2[0])
 
     n = packing.verts[0].data.basis3.normalize()
     # Place the rest of the neighbors
@@ -83,51 +117,51 @@ def depth_first_search_unfolding(packing):
             nbsS2[i].data.radiusE3
         )
         nbsE2[i].parent = unfolding.verts[0]
+        tree_set.add(nbsE2[i])
         vertices.append(nbsE2[i])
 
-    for vertex in vertices:
-        if not isinstance(vertex, Vertex):
-            exit(-1)
+
+    def left_first_sort(edges, packing_edges):
+        if 'packing_center' not in locals():
+            packing_center = sum(map(lambda vertex: vertex.data.centerE3, packing.verts),
+                                 start=PointE3(0.0, 0.0, 0.0)) * (1/len(packing.verts))
+        midpoints = map(lambda edge: (edge.u.data.centerE3+edge.v.data.centerE3)*0.5, packing_edges)
+        vectors = list(map(lambda midpoint: midpoint - packing_center, midpoints))
+        vector0 = vectors[0]
+        angles = list(map(lambda vector: vector0.dot(vector)/(vector0.norm()*vector.norm()), vectors))
+        sorted_pairs = sorted(zip(angles, edges))
+        _, sorted_edges = zip(*sorted_pairs)
+        return sorted_edges
+
+
+
 
     while vertices:
-        v = vertices.pop()
+        v: Vertex = vertices.pop(pop_idx)
 
-        edges = v.edges()
-        visited.add(v)
-        for edge in edges:
-            v0, v1 = edge.endPoints()
-
-            if v0 not in visited or v1 not in visited:
-                if not isinstance(v, Vertex):
-                    print(f"Endpoint {v} should be an instance of Vertex, is {v.__class__.__name__}")
-
-                if not isinstance(v1, Vertex):
-                    print(f"Endpoint {v1} should be an instance of Vertex, is {v1.__class__.__name__}")
+        if v not in visited:
+            visited.add(v)
+            edges = v.edges()
+            if left_first:
+                edges = left_first_sort(edges, packing.verts[v.idx].edges())
+            for edge in edges:
+                v0, v1 = edge.endPoints()
 
                 if v1 == v:
                     v0, v1 = v1, v0
-
-                vertices.append(v1)
-
-                v0_idx = v0.idx
-                v1_idx = v1.idx
-
-                parent_dirE2 = (v0.parent.data.center - v0.data.center).normalize()
-
-                parent_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v0.parent.idx].data).toVectorE3() - \
-                               packing.verts[v0_idx].data.centerE3
-                v1_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v1_idx].data).toVectorE3() - \
-                           packing.verts[v0_idx].data.centerE3
-                n = packing.verts[v0_idx].data.basis3.normalize()
-                theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
-
-                v = parent_dirE2.rotate(theta).normalize()
-                v1.data = CircleE2(
-                    v0.data.center + (packing.verts[v0_idx].data.radiusE3 + packing.verts[v1_idx].data.radiusE3) * v,
-                    packing.verts[v1_idx].data.radiusE3
-                )
-                v1.parent = v0
+                if v1 not in tree_set:
+                    vertices.append(v1)
+                    tree_set.add(v1)
+                    place(v0, v1)
     return unfolding, nbsE2
+
+def depth_first_search_unfolding(packing):
+    return whatever_first_search_unfolding(packing, "depth")
+
+def breadth_first_search_unfolding(packing):
+    return whatever_first_search_unfolding(packing, "breadth")
+
+
 
 
 def coin_unfolding(packing):
@@ -214,6 +248,19 @@ def coin_unfolding(packing):
     return unfolding, nbsE2
 
 
+def check_for_intersections(unfolding, tol=1e-10) -> bool:
+    for i in range(len(unfolding.verts)):
+        for j in range(i+1, len(unfolding.verts)):
+            v_i = unfolding.verts[i]
+            v_j = unfolding.verts[j]
+            point_i = v_i.data.center
+            point_j = v_j.data.center
+
+            distance = point_i.distTo(point_j)
+            sum_radii = v_i.data.radius + v_j.data.radius
+            if sum_radii-tol > distance:
+                print(f"Overlap between {point_i} and {point_j} at tolerance {tol}"
+                      f"distance {distance} less than the sum of their radii {sum_radii}")
 
 def verify_unfolding(unfolding, packing):
 
@@ -259,7 +306,8 @@ def visualize_unfolding(unfolding, packing, nbsE2):
     grayStyle = makeStyle(stroke=(128, 128, 128), strokeWeight=0.5, fill=None)
 
     sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
-    sceneE2 = E2Scene(title="Proposed unfolding", scale=1.5, height=800, width=800, pan_and_zoom=True)
+    size = 800
+    sceneE2 = E2Scene(title="Proposed unfolding", scale=1.5, height=size, width=size, pan_and_zoom=True)
 
     sceneS2.addAll([(v.data,
                      redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[
@@ -280,7 +328,8 @@ def visualize_unfolding(unfolding, packing, nbsE2):
 
 
 packing = generate_coin_polygon(n_points, n_iterations)
-unfolding, nbsE2 = depth_first_search_unfolding(packing)
+unfolding, nbsE2 = whatever_first_search_unfolding(packing, "depth", True)
 verify_unfolding(unfolding, packing)
+check_for_intersections(unfolding)
 visualize_unfolding(unfolding, packing, nbsE2)
 
