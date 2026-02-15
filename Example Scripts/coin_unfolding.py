@@ -20,8 +20,8 @@ from koebe.graphics.flask.multiviewserver import viewer
 from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
 
-n_points = 100
-n_iterations = 10000
+n_points = 20
+n_iterations = 100
 
 print(f"Generating random convex hull of {n_points} points and computing a Tutte embedding... ")
 poly = randomConvexHullE3(n_points) # Generate a random polyhedron with 16 vertices. 

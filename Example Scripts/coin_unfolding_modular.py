@@ -1,5 +1,6 @@
 # Import geometries
 from argparse import ArgumentError
+from collections import defaultdict
 
 from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
 from koebe.geometries.spherical2 import *
@@ -21,6 +22,7 @@ import heapq
 from koebe.graphics.flask.multiviewserver import viewer
 from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
+from visualize2d import _build_parent_map
 
 
 n_points = 50
@@ -28,6 +30,12 @@ n_iterations = 1000
 
 
 def generate_coin_polygon(n_points, n_iterations):
+    """
+    Generates a coin polygon.
+    :param n_points:
+    :param n_iterations:
+    :return:
+    """
     print(f"Generating random convex hull of {n_points} points and computing a Tutte embedding... ")
     poly = randomConvexHullE3(n_points)  # Generate a random polyhedron with 16 vertices.
     poly.outerFace = poly.faces[0]  # Arbitrarily select an outer face.
@@ -47,118 +55,166 @@ def generate_coin_polygon(n_points, n_iterations):
     return packing
 
 
-def place(v0, v1):
-    v0_idx = v0.idx
-    v1_idx = v1.idx
+def place(packing: DCEL, unfolding: DCEL, parent: Vertex, child: Vertex) -> None:
+    """
+    Places the child vertex on the 2D plane for the unfolding based on its
+    parent vertex.
 
-    parent_dirE2 = (v0.parent.data.center - v0.data.center).normalize()
-
-    parent_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v0.parent.idx].data).toVectorE3() - \
-                   packing.verts[v0_idx].data.centerE3
-    v1_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v1_idx].data).toVectorE3() - \
-               packing.verts[v0_idx].data.centerE3
-    n = packing.verts[v0_idx].data.basis3.normalize()
-    theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
-
-    vec = parent_dirE2.rotate(theta).normalize()
-    v1.data = CircleE2(
-        v0.data.center + (packing.verts[v0_idx].data.radiusE3 + packing.verts[v1_idx].data.radiusE3) * vec,
-        packing.verts[v1_idx].data.radiusE3
-    )
-    v1.parent = v0
+    :param packing: The circle packing in 3D space.
+    :param unfolding: The derived unfolding.
+    :param parent: The parent vertex, from the unfolding, should have geometrical information.
+    :param child: The child vertex, from the folding, does not have geometrical information.
+    :return:
+    """
+    parent_idx = parent.idx
+    child_idx = child.idx
 
 
-def whatever_first_search_unfolding(packing, search_type, left_first=False):
-    #TODO switch to using deque instead of list for vertices
+    # General case: parent is not vertex 0, so grandparents exist
+    if parent_idx != 0:
+        parent_dirE2 = (parent.parent.data.center - parent.data.center).normalize()
 
+        parent_dirS2 = packing.verts[parent_idx].data.tangentPointWith(packing.verts[parent.parent.idx].data).toVectorE3() - \
+                       packing.verts[parent_idx].data.centerE3
+        v1_dirS2 = packing.verts[parent_idx].data.tangentPointWith(packing.verts[child_idx].data).toVectorE3() - \
+                   packing.verts[parent_idx].data.centerE3
+        n = packing.verts[parent_idx].data.basis3.normalize()
+        theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
+
+        vec = parent_dirE2.rotate(theta).normalize()
+        child.data = CircleE2(
+            parent.data.center + (packing.verts[parent_idx].data.radiusE3 + packing.verts[child_idx].data.radiusE3) * vec,
+            packing.verts[child_idx].data.radiusE3
+        )
+    # Special case: the parent is vertex 0, so it has no parent
+    else:
+        n = packing.verts[0].data.basis3.normalize()
+        packing_edges = packing.verts[parent_idx].edges()
+        packing_vertices = packing.verts[parent_idx].neighbors()
+
+
+        neighbor_index = next(
+            (i for i, vertex in enumerate(packing_vertices) if vertex.idx == child_idx),
+            float("inf") # Should never occur
+        )
+
+        if neighbor_index == float("inf"):
+            raise ArgumentError(f"Vertex {child_idx} should share an edge with vertex 0, but it does not.")
+
+        # Special Case for the 0th neighbor
+        if neighbor_index == 0:
+            child.data = CircleE2(PointE2(unfolding.verts[0].data.radius
+                         + packing_vertices[0].data.radiusE3, 0), packing_vertices[0].data.radiusE3)
+        else:
+            # Angle of ith neighbor is based off of the position of the 0th neighbor
+            v0 = packing_edges[0].data.toVectorE3() - packing.verts[0].data.centerE3
+            vi = packing_edges[neighbor_index].data.toVectorE3() - packing.verts[0].data.centerE3
+
+            theta = math.atan2(v0.cross(vi).dot(n), v0.dot(vi))
+            child.data = CircleE2(
+                PointE2(
+                    (packing.verts[0].data.radiusE3 + packing_vertices[neighbor_index].data.radiusE3) * math.cos(theta),
+                    (packing.verts[0].data.radiusE3 + packing_vertices[neighbor_index].data.radiusE3) * math.sin(theta)
+                ),
+                packing_vertices[neighbor_index].data.radiusE3
+            )
+
+
+def unfolding_geometry_from_tree(packing: DCEL, unfolding: DCEL, join_tree: dict[Vertex, list[Vertex]]) -> None:
+    """
+    Computes the geometry of a coin unfolding given the join tree.
+
+    :param packing: Circle packing in 3D space.
+    :param unfolding: The derived unfolding.
+    :param join_tree: Represents how circles are joined together to form the unfolding.
+    :return:
+    """
+
+    # Create geometrical data for vertex 0
+    unfolding.verts[0].data = CircleE2(PointE2(0, 0), packing.verts[0].data.radiusE3)
+    nbsE2 = unfolding.verts[0].neighbors()
+    # Initialize graph search data structures
+
+    visited = set()
+    fringe = deque([unfolding.verts[0]])
+
+    # Use depth first search to place the circles
+    while len(fringe) > 0:
+        parent = fringe.popleft()
+        if parent not in visited:
+            visited.add(parent)
+            for child in join_tree[parent]:
+                place(packing, unfolding, parent, child)
+                fringe.append(child)
+    return
+
+
+def whatever_first_search_unfolding(packing, search_type) -> DCEL:
     if search_type == "depth":
-        pop_idx = -1
+        pop_fn = "popleft"
     elif search_type == "breadth":
-        pop_idx = 0
+        pop_fn = "popright"
     else:
         raise ArgumentError(f"Parameter search_type must be either 'depth' or 'breadth', got {search_type}")
 
+
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()
-
-    unfolding.verts[0].data = CircleE2(PointE2(0, 0), packing.verts[0].data.radiusE3)
-    nbsS2 = packing.verts[0].neighbors()
-    edgesS2 = packing.verts[0].edges()
-    nbsE2 = unfolding.verts[0].neighbors()
 
     # initialize the unfolding parent for each vertex to None
     for v in unfolding.verts:
         v.parent = None
 
-    visited = {unfolding.verts[0]}
-    tree_set = {unfolding.verts[0]}
-    vertices = []
-
-    # Place the first neighbor
-    nbsE2[0].data = CircleE2(PointE2(unfolding.verts[0].data.radius + nbsS2[0].data.radiusE3, 0),
-                             nbsS2[0].data.radiusE3)
-    nbsE2[0].parent = unfolding.verts[0]
-
-    vertices.append(nbsE2[0])
-    tree_set.add(nbsE2[0])
-
-    n = packing.verts[0].data.basis3.normalize()
-    # Place the rest of the neighbors
-    for i in range(1, len(nbsE2)):
-        v0 = edgesS2[0].data.toVectorE3() - packing.verts[0].data.centerE3
-        vi = edgesS2[i].data.toVectorE3() - packing.verts[0].data.centerE3
-        print(f"Placing vertex {nbsS2[i].idx} with parent 0")
-        theta = math.atan2(v0.cross(vi).dot(n), v0.dot(vi))
-        nbsE2[i].data = CircleE2(
-            PointE2(
-                (packing.verts[0].data.radiusE3 + nbsS2[i].data.radiusE3) * math.cos(theta),
-                (packing.verts[0].data.radiusE3 + nbsS2[i].data.radiusE3) * math.sin(theta)
-            ),
-            nbsS2[i].data.radiusE3
-        )
-        nbsE2[i].parent = unfolding.verts[0]
-        tree_set.add(nbsE2[i])
-        vertices.append(nbsE2[i])
+    # initialize graph data structures
+    visited = set()
+    tree_set = set()
+    fringe = deque([unfolding.verts[0]])
 
 
     def left_first_sort(edges, packing_edges):
+        """
+        Sort edges in the left-first manner as described on Wolfram 43.
+
+        :param edges:
+        :param packing_edges:
+        :return:
+        """
         if 'packing_center' not in locals():
             packing_center = sum(map(lambda vertex: vertex.data.centerE3, packing.verts),
                                  start=PointE3(0.0, 0.0, 0.0)) * (1/len(packing.verts))
         midpoints = map(lambda edge: (edge.u.data.centerE3+edge.v.data.centerE3)*0.5, packing_edges)
         vectors = list(map(lambda midpoint: midpoint - packing_center, midpoints))
         vector0 = vectors[0]
+        # TODO make this actually compute the angle between vectors
         angles = list(map(lambda vector: vector0.dot(vector)/(vector0.norm()*vector.norm()), vectors))
         sorted_pairs = sorted(zip(angles, edges))
         _, sorted_edges = zip(*sorted_pairs)
         return sorted_edges
 
 
-
-
-    while vertices:
-        v: Vertex = vertices.pop(pop_idx)
+    # Use whatever first search to construct the spanning tree
+    while fringe:
+        v: Vertex = getattr(fringe, pop_fn)()
 
         if v not in visited:
             visited.add(v)
             edges = v.edges()
-            if left_first:
-                edges = left_first_sort(edges, packing.verts[v.idx].edges())
             for edge in edges:
                 v0, v1 = edge.endPoints()
-
+                # v1 should be the child
                 if v1 == v:
                     v0, v1 = v1, v0
+                # Only add edge to v1 if the tree does not already connect to v1
                 if v1 not in tree_set:
-                    vertices.append(v1)
+                    fringe.append(v1)
                     tree_set.add(v1)
-                    place(v0, v1)
-    return unfolding, nbsE2
+                    v1.parent = v0
+    return unfolding
 
-def depth_first_search_unfolding(packing):
+def depth_first_search_unfolding(packing) -> DCEL:
     return whatever_first_search_unfolding(packing, "depth")
 
-def breadth_first_search_unfolding(packing):
+def breadth_first_search_unfolding(packing) -> DCEL:
     return whatever_first_search_unfolding(packing, "breadth")
 
 
@@ -328,8 +384,15 @@ def visualize_unfolding(unfolding, packing, nbsE2):
 
 
 packing = generate_coin_polygon(n_points, n_iterations)
-unfolding, nbsE2 = whatever_first_search_unfolding(packing, "depth", True)
-verify_unfolding(unfolding, packing)
-check_for_intersections(unfolding)
+unfolding = whatever_first_search_unfolding(packing, "depth")
+parent_dict = _build_parent_map(unfolding, unfolding.verts[0], None)
+
+# Invert the child->parent dictionary to get the parent->child one
+child_dict = defaultdict(list)
+for key, value in parent_dict.items():
+    child_dict[value].append(key)
+
+nbsE2 = unfolding_geometry_from_tree(packing, unfolding, child_dict)
+
 visualize_unfolding(unfolding, packing, nbsE2)
 
