@@ -3,6 +3,8 @@ import bisect
 from argparse import ArgumentError, ArgumentTypeError
 from collections import defaultdict
 
+import numpy as np
+
 from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
 from koebe.geometries.spherical2 import *
 from koebe.geometries.euclidean2 import *
@@ -23,11 +25,43 @@ import heapq
 from koebe.graphics.flask.multiviewserver import viewer
 from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
-from visualize2d import _build_parent_map
+
+def _build_parent_map(dcel: DCEL, root: Optional[Vertex], parent_of):
+    """Build a parent map from explicit parents or a BFS spanning tree."""
+    if parent_of is not None:
+        return parent_of
+
+    parent_map = {}
+    has_explicit_parent = False
+    for v in dcel.verts:
+        if hasattr(v, "parent") and v.parent is not None:
+            parent_map[v] = v.parent
+            has_explicit_parent = True
+
+    if has_explicit_parent:
+        return parent_map
+
+    if not dcel.verts:
+        return parent_map
+
+    start = root or dcel.verts[0]
+    queue = deque([start])
+    visited = {start}
+    parent_map[start] = None
+    while queue:
+        v = queue.popleft()
+        for nb in v.neighbors():
+            if nb in visited:
+                continue
+            visited.add(nb)
+            parent_map[nb] = v
+            queue.append(nb)
+
+    return parent_map
 
 
 n_points = 60
-n_iterations = 1000
+n_iterations = 10
 
 
 def generate_coin_polygon(n_points, n_iterations):
@@ -209,28 +243,118 @@ def create_cut_graph_from_packing(packing: DCEL) -> DCEL:
 
     created_darts: dict[(int, int): Dart] = {}
 
-    def fix_edge(idx0, idx1, dart):
+    def make_dart(face, vertex, neighbor):
+        dart = Dart(cut_graph, face=face)
+        face.aDart = dart
+        dart.data = (vertex.idx, neighbor.idx)
+        return dart
+
+    def fix_edge(dart_idx):
+        dart = darts[dart_idx]
+        idx0, idx1 = dart.data
         if idx0 > idx1:
             idx0, idx1 = idx1, idx0
         twin = created_darts.get((idx0, idx1), None)
         if twin is None:
             created_darts[(idx0, idx1)] = dart
-            Edge(cut_graph, dart)
+            edge = Edge(cut_graph, dart)
+            dart.edge = edge
         else:
             dart.makeTwin(twin)
+            dart.edge = twin.edge
+
+        dart.makePrev(darts[dart_idx-1])
+        dart.makeNext(darts[(dart_idx+1) % len(darts)])
 
     for vertex in packing.verts:
         # Build a new face
         face = Face(cut_graph)
         face.data = vertex.idx
-        for neighbor in vertex.neighbors():
-            dart = Dart(cut_graph, face=face)
-            face.aDart = dart
-            dart.data = (vertex.idx, neighbor.idx)
-            fix_edge(vertex.idx, neighbor.idx, dart)
+        darts = list(map(lambda neighbor: make_dart(face, vertex, neighbor), vertex.neighbors()))
+
+        for i in range(len(darts)):
+            fix_edge(i)
     return cut_graph
 
+def validate_cut_graph(cut_graph: DCEL, packing: DCEL) -> None:
+    assert len(cut_graph.faces) == len(packing.verts)
+    assert len(cut_graph.edges) == len(packing.edges)
 
+    for vertex in packing.verts:
+        assert any(map(lambda face: face.data == vertex.idx, cut_graph.faces))
+        for neighbor in vertex.neighbors():
+            assert any(map(lambda dart: dart.data[0] == vertex.idx
+                                        and dart.data[1] == neighbor.idx, cut_graph.darts))
+    return
+
+
+def compute_hinge_direction(cut_graph: DCEL, packing: DCEL) -> None:
+    # First phase: construct a map from faces of the cut graph to the adjacent faces
+
+    adjacent_faces: dict[int: set[int]] = {}
+    for i in range(len(cut_graph.faces)):
+        adjacent_faces[i] = set()
+
+    for face in cut_graph.faces:
+        for edge in face.edges():
+            face0, face1 = edge.incidentFaces()
+            idx0, idx1 = face0.data, face1.data
+            adjacent_faces[idx0].add(idx1)
+            adjacent_faces[idx1].add(idx0)
+
+    # Second phase: Compute the hinge direction
+
+    def compute_interstice(vert0_idx, vert1_idx, vert2_idx):
+        """
+        Compute the intersection point of three planes in point-normal form.
+
+        Parameters:
+            normals: list of 3 tuples/lists (a, b, c) - normal vectors
+            points: list of 3 tuples/lists (x0, y0, z0) - points on each plane
+
+        Returns:
+            numpy array (x, y, z) - intersection point
+        Raises:
+            ValueError if planes do not intersect at a single point
+        """
+        vert0, vert1, vert2 = packing.verts[vert0_idx], packing.verts[vert1_idx], packing.verts[vert2_idx]
+        center0, center1, center2 = vert0.data.centerE3, vert1.data.centerE3, vert2.data.centerE3
+        center0 = list(center0.__iter__())
+        center1 = list(center1.__iter__())
+        center2 = list(center2.__iter__())
+        # Assume center of sphere is 0, 0, 0, normals and points are the same!
+        normals = [center0, center1, center2]
+        points = [center0, center1, center2]
+
+        # Convert to numpy arrays
+        normals = np.array(normals, dtype=float)
+        points = np.array(points, dtype=float)
+
+        # Build coefficient matrix A and RHS vector d
+        A = normals
+        d = np.einsum('ij,ij->i', normals, points)  # dot product for each plane
+
+        # Check if normals are linearly independent
+        if np.linalg.matrix_rank(A) < 3:
+            raise ValueError("The planes do not intersect at a unique point (normals are dependent).")
+
+        # Solve the system A * [x, y, z] = d
+        intersection_point = np.linalg.solve(A, d)
+        return intersection_point
+
+    for edge in cut_graph.edges:
+        face0, face1 = edge.incidentFaces()
+        f0_idx, f1_idx = face0.data, face1.data
+        mutually_incident_faces = adjacent_faces[f0_idx] & adjacent_faces[f1_idx]
+        assert len(mutually_incident_faces) == 2
+        incident_idx0, incident_idx1 = mutually_incident_faces
+
+        interstice0 = compute_interstice(f0_idx, f1_idx, incident_idx0)
+        interstice1 = compute_interstice(f0_idx, f1_idx, incident_idx1)
+
+        hinge_direction = interstice1 - interstice0
+        edge.data = VectorE3(*hinge_direction)
+    return
 
 
 
@@ -702,7 +826,10 @@ def visualize_unfolding(unfolding, packing, nbsE2, root_idx):
 
 packing = generate_coin_polygon(n_points, n_iterations)
 cut_graph = create_cut_graph_from_packing(packing)
+validate_cut_graph(cut_graph, packing)
+compute_hinge_direction(cut_graph, packing)
 print(cut_graph)
+
 # unfolding, root_idx = normal_order_unfolding(packing, "flat")
 # parent_dict = _build_parent_map(unfolding, unfolding.verts[root_idx], None)
 #

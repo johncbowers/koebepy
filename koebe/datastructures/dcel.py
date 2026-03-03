@@ -342,7 +342,7 @@ class Dart:
         if not newTwin == None:
             newTwin.twin = self
     
-    def makePrev(self, prev):
+    def makePrev(self, newPrev):
         self.prev = newPrev
         newPrev.next = self
         
