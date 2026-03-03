@@ -203,6 +203,101 @@ def whatever_first_search_unfolding(packing: DCEL, search_type: str) -> (DCEL, i
                     v1.parent = v0
     return unfolding, root_idx
 
+
+def create_cut_graph_from_packing(packing: DCEL) -> DCEL:
+    cut_graph = DCEL()
+
+    created_darts: dict[(int, int): Dart] = {}
+
+    def fix_edge(idx0, idx1, dart):
+        if idx0 > idx1:
+            idx0, idx1 = idx1, idx0
+        twin = created_darts.get((idx0, idx1), None)
+        if twin is None:
+            created_darts[(idx0, idx1)] = dart
+            Edge(cut_graph, dart)
+        else:
+            dart.makeTwin(twin)
+
+    for vertex in packing.verts:
+        # Build a new face
+        face = Face(cut_graph)
+        face.data = vertex.idx
+        for neighbor in vertex.neighbors():
+            dart = Dart(cut_graph, face=face)
+            face.aDart = dart
+            dart.data = (vertex.idx, neighbor.idx)
+            fix_edge(vertex.idx, neighbor.idx, dart)
+    return cut_graph
+
+
+
+
+
+
+
+
+
+def depth_first_search_cut_tree(packing: DCEL) -> (set[Edge], int):
+
+    # initialize graph data structures
+    visited = set()
+    tree_set = set()
+    cut_set = set()
+    root_idx = 13
+    fringe = deque([packing.verts[root_idx]])
+
+    # Use whatever first search to construct the spanning tree
+    while fringe:
+        v: Vertex = fringe.pop()
+
+        if v not in visited:
+            visited.add(v)
+            edges = v.edges()
+            for edge in edges:
+                v0, v1 = edge.endPoints()
+                # v1 should be the child
+                if v1 == v:
+                    v0, v1 = v1, v0
+                # Only add edge to v1 if the tree does not already connect to v1
+                if v1 not in tree_set:
+                    cut_set.add(edge)
+                    fringe.append(v1)
+                    tree_set.add(v1)
+    return cut_set, root_idx
+
+def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[Edge], root_idx: int) -> (DCEL, int):
+    unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
+    unfolding.markIndices()
+
+    for v in unfolding.verts:
+        v.parent = None
+
+    visited = set()
+    tree_set = set()
+    fringe = deque([unfolding.verts[root_idx]])
+
+    while fringe:
+        v: Vertex = fringe.pop()
+
+        if v not in visited:
+            visited.add(v)
+            edges = v.edges()
+            for edge in edges:
+                if edge not in cut_set:
+                    v0, v1 = edge.endPoints()
+                    # v1 should be the child
+                    if v1 == v:
+                        v0, v1 = v1, v0
+                    # Only add edge to v1 if the tree does not already connect to v1
+                    if v1 not in tree_set:
+                        fringe.append(v1)
+                        tree_set.add(v1)
+                        v1.parent = v0
+    return unfolding, root_idx
+
+
+
 def depth_first_search_unfolding(packing) -> (DCEL, int):
     return whatever_first_search_unfolding(packing, "depth")
 
@@ -606,21 +701,23 @@ def visualize_unfolding(unfolding, packing, nbsE2, root_idx):
 
 
 packing = generate_coin_polygon(n_points, n_iterations)
-unfolding, root_idx = breadth_first_search_unfolding(packing)
-parent_dict = _build_parent_map(unfolding, unfolding.verts[root_idx], None)
-
-# Invert the child->parent dictionary to get the parent->child one
-child_dict = defaultdict(list)
-for key, value in parent_dict.items():
-    child_dict[value].append(key)
-
-unfolding_geometry_from_tree(packing, unfolding, child_dict, root_idx)
-
-print(verify_unfolding(unfolding, packing))
-
-# print(check_for_intersections(unfolding))
-
-nbsE2 = unfolding.verts[root_idx].neighbors()
-
-visualize_unfolding(unfolding, packing, nbsE2, root_idx)
+cut_graph = create_cut_graph_from_packing(packing)
+print(cut_graph)
+# unfolding, root_idx = normal_order_unfolding(packing, "flat")
+# parent_dict = _build_parent_map(unfolding, unfolding.verts[root_idx], None)
+#
+# # Invert the child->parent dictionary to get the parent->child one
+# child_dict = defaultdict(list)
+# for key, value in parent_dict.items():
+#     child_dict[value].append(key)
+#
+# unfolding_geometry_from_tree(packing, unfolding, child_dict, root_idx)
+#
+# print(verify_unfolding(unfolding, packing))
+#
+# # print(check_for_intersections(unfolding))
+#
+# nbsE2 = unfolding.verts[root_idx].neighbors()
+#
+# visualize_unfolding(unfolding, packing, nbsE2, root_idx)
 
