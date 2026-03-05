@@ -1,0 +1,35 @@
+
+def check_for_intersections(unfolding, tol=1e-10) -> bool:
+    for i in range(len(unfolding.verts)):
+        for j in range(i+1, len(unfolding.verts)):
+            v_i = unfolding.verts[i]
+            v_j = unfolding.verts[j]
+            point_i = v_i.data.center
+            point_j = v_j.data.center
+
+            distance = point_i.distTo(point_j)
+            sum_radii = v_i.data.radius + v_j.data.radius
+            if sum_radii-tol > distance:
+                print(f"Overlap between {point_i} and {point_j} at tolerance {tol}"
+                      f"distance {distance} less than the sum of their radii {sum_radii}")
+
+def verify_unfolding(unfolding, packing):
+
+    inversive_distances_sphere = []
+    inversive_distances_plane = []
+    for i in range(len(unfolding.verts) - 1):
+        for j in range(i + 1, len(unfolding.verts)):
+            if unfolding.verts[j].parent != unfolding.verts[i] and unfolding.verts[i].parent != unfolding.verts[j] and \
+                    unfolding.verts[i].data != None and unfolding.verts[j].data != None:
+                inversive_distances_sphere.append(packing.verts[i].data.inversiveDistTo(packing.verts[j].data))
+                inversive_distances_plane.append(unfolding.verts[i].data.inversiveDistTo(unfolding.verts[j].data))
+
+    for i in range(len(inversive_distances_plane)):
+        if inversive_distances_plane[i] < inversive_distances_sphere[i]:
+            print(
+                f"{i} {inversive_distances_plane[i]} {inversive_distances_sphere[i]} {inversive_distances_plane[i] - inversive_distances_sphere[i]} {inversive_distances_plane[i] > inversive_distances_sphere[i]}")
+
+    print(
+        f"Passes inversive distance test: {not (False in [inversive_distances_plane[i] > inversive_distances_sphere[i] for i in range(len(inversive_distances_plane))])}")
+    print(f"Minimum inversive distance detected in the sphere: {min(inversive_distances_sphere)}")
+    print(f"Minimum inversive distance detected in the plane: {min(inversive_distances_plane)}")
