@@ -51,38 +51,17 @@ def generate_coin_polygon(n_points, n_iterations):
     compute_tangencies(packing)
     return packing
 
+def visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts=None):
+    """
+    Visualizes a coin polyhedron unfolding.
 
-def visualize(cut_graph, cut_set):
-    remaining_segments = []
-    cut_segments = []
-
-    grayStyle = makeStyle(stroke=(180, 180, 180))
-    greenStyle = makeStyle(stroke=(0, 255, 0), strokeWeight=2, fill=None)
-    redStyle = makeStyle(stroke=(255, 0, 0), strokeWeight=2, fill=None)
-
-    sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
-    size = 800
-    for edge in cut_graph.edges:
-        dart = edge.dart1
-        segment = SegmentE3(dart.origin.data, dart.dest.data)
-        print(segment)
-        if edge.idx in cut_set:
-            cut_segments.append(segment)
-        else:
-            remaining_segments.append(segment)
-
-
-
-    direction_segment = SegmentE3(PointE3(0, 0, 0), PointE3(0, 0, 1))
-    sceneS2.addAll([(direction_segment, redStyle)])
-
-    sceneS2.addAll([(s, grayStyle) for s in remaining_segments])
-    sceneS2.addAll([(s, greenStyle) for s in cut_segments])
-    viewer.add_scene(sceneS2)
-
-    viewer.run()
-
-def visualize_unfolding(unfolding, packing, nbsE2, root_idx):
+    :param unfolding:
+    :param packing:
+    :param nbsE2: Neighbors of the root vertex.
+    :param root_idx:
+    :param cuts: Either None or a (cut_graph, cut_tree) tuple
+    :return:
+    """
     # Create segments for the child-parent relationships:
     segsE2 = []
     for v in unfolding.verts:
@@ -112,6 +91,24 @@ def visualize_unfolding(unfolding, packing, nbsE2, root_idx):
                          1].idx else blackStyle) for v in packing.verts])
     sceneS2.addAll([(s, grayStyle) for s in segsE3])
 
+    if cuts is not None:
+        cut_graph, cut_tree = cuts
+        cut_segments = []
+        remaining_segments = []
+        for edge in cut_graph.edges:
+            dart = edge.dart1
+            segment = SegmentE3(dart.origin.data, dart.dest.data)
+            if edge.idx in cut_tree:
+                cut_segments.append(segment)
+            else:
+                remaining_segments.append(segment)
+
+        direction_segment = SegmentE3(PointE3(0, 0, 0), PointE3(0, 0, 1))
+        sceneS2.addAll([(direction_segment, redStyle)])
+
+        sceneS2.addAll([(s, grayStyle) for s in remaining_segments])
+        sceneS2.addAll([(s, greenStyle) for s in cut_segments])
+
     scale = 100
     sceneE2.addAll([(scale * v.data,
                      redStyle if v.idx == root_idx else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[
@@ -138,6 +135,6 @@ unfolding_geometry_from_tree(packing, unfolding, root_idx)
 
 nbsE2 = unfolding.verts[root_idx].neighbors()
 
-visualize(cut_graph, cut_tree)
-#visualize_unfolding(unfolding, packing, nbsE2, root_idx)
+#visualize(cut_graph, cut_tree)
+visualize_unfolding(unfolding, packing, nbsE2, root_idx)
 

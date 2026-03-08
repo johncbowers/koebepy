@@ -11,6 +11,8 @@ A file for functions that help build the geometry of the unfolding from
 an unfolding tree.
 """
 
+# Disabled inspection since we know these DCEL objects have idx fields.
+# noinspection PyUnresolvedReferences
 def place(packing: DCEL, unfolding: DCEL, parent: Vertex, child: Vertex, root_idx: int) -> None:
     """
     Places the child vertex on the 2D plane for the unfolding based on its
@@ -29,6 +31,8 @@ def place(packing: DCEL, unfolding: DCEL, parent: Vertex, child: Vertex, root_id
 
     # General case: parent is not the root, so grandparents exist
     if parent_idx != root_idx:
+        # Compute angle between grandparent -> parent and parent->child on the packing
+
         parent_dirE2 = (parent.parent.data.center - parent.data.center).normalize()
 
         parent_dirS2 = packing.verts[parent_idx].data.tangentPointWith(packing.verts[parent.parent.idx].data).toVectorE3() - \
@@ -38,6 +42,7 @@ def place(packing: DCEL, unfolding: DCEL, parent: Vertex, child: Vertex, root_id
         n = packing.verts[parent_idx].data.basis3.normalize()
         theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
 
+        # Now place child on the plane based on the angle
         vec = parent_dirE2.rotate(theta).normalize()
         child.data = CircleE2(
             parent.data.center + (packing.verts[parent_idx].data.radiusE3 + packing.verts[child_idx].data.radiusE3) * vec,
@@ -126,14 +131,6 @@ def unfolding_geometry_from_tree(packing: DCEL, unfolding: DCEL,
     join_tree = defaultdict(list)
     for key, value in parent_dict.items():
         join_tree[value].append(key)
-    """
-    Computes the geometry of a coin unfolding given the join tree.
-
-    :param packing: Circle packing in 3D space.
-    :param unfolding: The derived unfolding.
-    :param join_tree: Represents how circles are joined together to form the unfolding.
-    :return:
-    """
 
     """ Phase 2: Create geometrical data"""
     # Create geometrical data for vertex 0

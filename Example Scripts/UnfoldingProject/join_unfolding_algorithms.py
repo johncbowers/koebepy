@@ -10,6 +10,11 @@ from koebe.datastructures.dcel import DCEL, Vertex
 from koebe.geometries.euclidean2 import CircleE2, PointE2
 from koebe.geometries.euclidean3 import VectorE3, PointE3
 
+"""
+A file for unfolding algorithms based on the join graph. These algorithms return the
+unfolding DCEL and the index of the root vertex.
+"""
+
 
 def whatever_first_search_unfolding(packing: DCEL, search_type: str) -> (DCEL, int):
     """
@@ -41,6 +46,7 @@ def whatever_first_search_unfolding(packing: DCEL, search_type: str) -> (DCEL, i
 
 
     def left_first_sort(edges, packing_edges):
+        # TODO: Implement left first search as described in wolfram
         pass
 
 
@@ -74,7 +80,7 @@ def shortest_paths_unfolding(packing, root_idx=0) -> (DCEL, int):
     """
     Computes the shortest paths spanning tree starting at a certain vertex.
     :param packing:
-    :return:
+    :return: A tuple of the generated unfolding and the index of the root vertex.
     """
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()
@@ -114,14 +120,30 @@ def shortest_paths_unfolding(packing, root_idx=0) -> (DCEL, int):
 
 
 def min_degree_shortest_paths_unfolding(packing) -> (DCEL, int):
+    """
+    Computes the shortest path tree starting at a min degree vertex.
+    :param packing:
+    :return:
+    """
     min_degree_idx = min(packing.verts, key= lambda v: len(v.neighbors())).idx
     return shortest_paths_unfolding(packing, min_degree_idx)
 
 def max_degree_shortest_paths_unfolding(packing) -> (DCEL, int):
+    """
+    Computes the shortest path tree starting at a max degree vertex.
+    :param packing:
+    :return:
+    """
     max_degree_idx = max(packing.verts, key= lambda v: len(v.neighbors())).idx
     return shortest_paths_unfolding(packing, max_degree_idx)
 
 def calc_unfolding_tree_length(packing: DCEL, unfolding: DCEL) -> float:
+    """
+    Computes the total length of the unfolding tree.
+    :param packing:
+    :param unfolding:
+    :return:
+    """
     total = 0.0
     for u in unfolding.verts:
         if u.parent is not None:
@@ -137,6 +159,8 @@ def shortest_shortest_paths_unfolding(packing) -> (DCEL, int):
     (as produced by `shortest_paths_unfolding`) for that root, and return
     the unfolding whose tree has the smallest total edge length in the
     original packing.
+    :param packing:
+    :return:
     """
 
     unfolding, root = min(map(lambda v: shortest_paths_unfolding(packing, v.idx), packing.verts),
@@ -148,8 +172,10 @@ def longest_shortest_paths_unfolding(packing) -> (DCEL, int):
     """
     Try every possible starting vertex, compute the shortest-paths tree
     (as produced by `shortest_paths_unfolding`) for that root, and return
-    the unfolding whose tree has the smallest total edge length in the
+    the unfolding whose tree has the largest total edge length in the
     original packing.
+    :param packing:
+    :return:
     """
 
     unfolding, root = max(map(lambda v: shortest_paths_unfolding(packing, v.idx), packing.verts),
@@ -158,6 +184,18 @@ def longest_shortest_paths_unfolding(packing) -> (DCEL, int):
     return unfolding, root
 
 def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
+    """
+    Computes the normal order unfolding as described in Wolfram 63-65. The normal order
+    unfolding computes an angle a between some direct c and the normal vector
+    of each face. It sorts vertices into a list L based on this angle. At each
+    step, it finds the first vertex v_i in L not already added to the join tree
+    and adjacent to an vertex v_j in the join tree. If there are multiple adjcanent
+    vertices, it picks one based on a criterion.
+
+    :param packing:
+    :param mode: May be 'min', 'max', 'flat', or 'longest'.
+    :return:
+    """
     def find_first_adjacent(j: int):
         j_neighbors = unfolding.verts[j].neighbors()
         for i in L:
@@ -166,6 +204,11 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
         return None
 
     def min_adjacent(T):
+        """
+        Finds the adjacent vertex in the join tree T with minimal index.
+        :param T:
+        :return:
+        """
         return next(
             filter(lambda pair: pair[1] is not None,
                 map(lambda k: (k, find_first_adjacent(k)), T)
@@ -173,6 +216,11 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
             None)
 
     def max_adjacent(T):
+        """
+        Finds the adjacent vertex in the join tree T with maximal index.
+        :param T:
+        :return:
+        """
         for j in reversed(T):
             i = find_first_adjacent(j)
             if i is not None:
@@ -180,6 +228,7 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
         return None
 
     def flat_adjacent(T):
+        # TODO implement correctly according to Wolfram 63
         flattest_j, flattest_i = None, None
         flattest_angle = -float('inf')
         for j in T:
@@ -197,6 +246,7 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
 
 
     def longest_adjacent(T):
+        # TODO implement correctly according to WOlfram 64
         longest_j, longest_i = None, None
         longest_distance = -float("inf")
         for j in T:
@@ -244,6 +294,7 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
     # TODO replaced with balanced BST
     T = [root_idx]
 
+    # Pseudo code on page 65
     while L:
         edge = choose_adjacent_tree_facet(T)
         if edge is None:
@@ -257,6 +308,13 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
     return unfolding, root_idx
 
 def coin_unfolding(packing):
+    """
+    Unfolds a packing using Bower's algorithm. This algorithm uses a sweep-line approach. It defines a vertex
+    as the north direction, then adds vertices from north to south.
+
+    :param packing:
+    :return:
+    """
     # Compute an unfolding
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()

@@ -1,5 +1,12 @@
 
 def check_for_intersections(unfolding, tol=1e-10) -> bool:
+    """
+    Checks for intersections through a brute force search of every pair
+    of vertices.
+    :param unfolding:
+    :param tol:
+    :return:
+    """
     for i in range(len(unfolding.verts)):
         for j in range(i+1, len(unfolding.verts)):
             v_i = unfolding.verts[i]
@@ -14,6 +21,12 @@ def check_for_intersections(unfolding, tol=1e-10) -> bool:
                       f"distance {distance} less than the sum of their radii {sum_radii}")
 
 def verify_unfolding(unfolding, packing):
+    """
+    Verifies an unfolding using the inversive distances test.
+    :param unfolding:
+    :param packing:
+    :return:
+    """
 
     inversive_distances_sphere = []
     inversive_distances_plane = []

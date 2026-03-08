@@ -4,12 +4,29 @@ import numpy as np
 
 from koebe.datastructures.dcel import DCEL, Dart, Edge, Face, Vertex
 
+"""
+A file for functions used to construct the cut graph based on the packing, and to
+transform the cut tree into a join tree that we can use to build the unfolding 
+geometry. 
+"""
 
 def create_cut_graph_from_packing(packing: DCEL) -> DCEL:
+    """
+    Builds DCEL structure of the cut graph based on the join graph. Each edge's
+    index matches with the corresponding edge in the join graph. Each vertex stores
+    a sorted tuple of indices of the faces that meet to form the vertex. Each
+    face has the same index as the corresponding vertex in the join graph.
+
+    :param packing:
+    :return: DCEL structure of the cut graph.
+    """
     cut_graph = DCEL()
 
+
+    # Map of sorted tuples of face indices to the corresponding dart
     created_darts: dict[(int, int): Dart] = {}
-    parents_to_vertices: dict[(int, int, int): Dart] = {}
+    # Map of sorted tuples of parent faces to the corresponding vertex
+    parents_to_vertices: dict[(int, int, int): Vertex] = {}
 
     def make_dart(face, vertex, neighbor):
         dart = Dart(cut_graph, face=face)
@@ -17,12 +34,11 @@ def create_cut_graph_from_packing(packing: DCEL) -> DCEL:
         dart.data = (vertex.idx, neighbor.idx)
         return dart
 
-    def fix_edge(dart_idx):
+    def fix_dart(dart_idx):
         dart = darts[dart_idx]
         idx0, idx1 = dart.data
-        if idx0 > idx1:
-            idx0, idx1 = idx1, idx0
 
+        # Set origin point based on parents of origin
         prev_idx = vertex.neighbors()[dart_idx-1].idx
         parents = tuple(sorted([idx0, idx1, prev_idx]))
         if parents not in parents_to_vertices:
@@ -30,6 +46,7 @@ def create_cut_graph_from_packing(packing: DCEL) -> DCEL:
             parents_to_vertices[parents] = origin
         dart.origin = parents_to_vertices[parents]
 
+        # Connect to twin if it exists, and create corresponding edge
         twin = created_darts.get((idx0, idx1), None)
         if twin is None:
             created_darts[(idx0, idx1)] = dart
@@ -42,102 +59,51 @@ def create_cut_graph_from_packing(packing: DCEL) -> DCEL:
 
         dart.makePrev(darts[dart_idx-1])
 
+    # Construct DCEL by traversing counterclockwise across each face, building darts as go you
     for vertex in packing.verts:
         # Build a new face
         face = Face(cut_graph)
         face.data = vertex.idx
+
+        # Make darts
         darts = list(map(lambda neighbor: make_dart(face, vertex, neighbor), vertex.neighbors()))
 
+        # Fix darts to have proper DCEL structure
         for i in range(len(darts)):
-            fix_edge(i)
+            fix_dart(i)
     # Ensures that edge indices match the corresponding edge the join graph
     cut_graph.edges.sort(key=lambda edge: edge.data)
     cut_graph.markIndices()
-
-
-    # adjacent_faces: dict[int: set[int]] = {}
-    # for i in range(len(cut_graph.faces)):
-    #     adjacent_faces[i] = set()
-    #
-    # for face in cut_graph.faces:
-    #     for edge in face.edges():
-    #         face0, face1 = edge.incidentFaces()
-    #         idx0, idx1 = face0.data, face1.data
-    #         adjacent_faces[idx0].add(idx1)
-    #         adjacent_faces[idx1].add(idx0)
-    #
-    # faces_to_vertices: dict[Tuple[int, int, int]: Vertex] = set()
-    #
-    # for face in cut_graph.faces:
-    #     for edge in face.edges():
-    #         face0, face1 = edge.incidentFaces()
-    #         f0_idx, f1_idx = face0.data, face1.data
-    #         mutually_incident_faces = adjacent_faces[f0_idx] & adjacent_faces[f1_idx]
-    #         # TODO may fall for small numbers of points!
-    #         assert len(mutually_incident_faces) == 2
-    #         incident_idx0, incident_idx1 = mutually_incident_faces
-    #         vertex_identifer0 = tuple(sorted([f0_idx, f1_idx, incident_idx0]))
-    #         vertex_identifer1 = tuple(sorted([f0_idx, f1_idx, incident_idx0]))
-    #         dart0, dart1 = edge.darts()
-    #         if vertex_identifer0 not in faces_to_vertices:
-    #             origin = Vertex(dart0, vertex_identifer0)
-    #             faces_to_vertices[vertex_identifer0] = origin
-    #             dart0.origin = origin
-    #         if vertex_identifer1 not in faces_to_vertices:
-    #             dest = Vertex(dart1, vertex_identifer1)
-    #             faces_to_vertices[vertex_identifer1] = dest
-    #             dart1.origin = dest
-
-
     return cut_graph
 
-def validate_cut_graph(cut_graph: DCEL, packing: DCEL) -> None:
-    assert len(cut_graph.faces) == len(packing.verts)
-    assert len(cut_graph.edges) == len(packing.edges)
 
-    for vertex in packing.verts:
-        assert any(map(lambda face: face.data == vertex.idx, cut_graph.faces))
-        for neighbor in vertex.neighbors():
-            assert any(map(lambda dart: dart.data[0] == vertex.idx
-                                        and dart.data[1] == neighbor.idx, cut_graph.darts))
-    return
+def compute_interstices(cut_graph: DCEL, packing: DCEL) -> None:
+    """
+    Populates data of cut_graph vertices with the location of the vertex in the
+    3D packing. This overwrites an existing data. Computes these locations by computing
+    the intersection of the three planes that correspond the three parent faces of the vertices.
 
+    :param cut_graph:
+    :param packing:
+    :return:
+    """
 
-def compute_hinge_direction(cut_graph: DCEL, packing: DCEL) -> None:
-    # # First phase: construct a map from faces of the cut graph to the adjacent faces
-    #
-    # adjacent_faces: dict[int: set[int]] = {}
-    # for i in range(len(cut_graph.faces)):
-    #     adjacent_faces[i] = set()
-    #
-    # for face in cut_graph.faces:
-    #     for edge in face.edges():
-    #         face0, face1 = edge.incidentFaces()
-    #         idx0, idx1 = face0.data, face1.data
-    #         adjacent_faces[idx0].add(idx1)
-    #         adjacent_faces[idx1].add(idx0)
-
-    # Second phase: Compute the hinge direction
-
-    def compute_interstice(vert0_idx, vert1_idx, vert2_idx):
+    def compute_interstice(face0_idx, face1_idx, face2_idx) -> np.array:
         """
-        Compute the intersection point of three planes in point-normal form.
+        Compute the location of the interstice between three faces by
+        solving a linear system.
 
-        Parameters:
-            normals: list of 3 tuples/lists (a, b, c) - normal vectors
-            points: list of 3 tuples/lists (x0, y0, z0) - points on each plane
-
-        Returns:
-            numpy array (x, y, z) - intersection point
-        Raises:
-            ValueError if planes do not intersect at a single point
+        :param face0_idx:
+        :param face1_idx:
+        :param face2_idx:
+        :return:
         """
-        vert0, vert1, vert2 = packing.verts[vert0_idx], packing.verts[vert1_idx], packing.verts[vert2_idx]
+        vert0, vert1, vert2 = packing.verts[face0_idx], packing.verts[face1_idx], packing.verts[face2_idx]
         center0, center1, center2 = vert0.data.centerE3, vert1.data.centerE3, vert2.data.centerE3
         center0 = list(center0.__iter__())
         center1 = list(center1.__iter__())
         center2 = list(center2.__iter__())
-        # Assume center of sphere is 0, 0, 0, normals and points are the same!
+        # Since the center of the sphere is 0, 0, 0, normals and points are the same!
         normals = [center0, center1, center2]
         points = [center0, center1, center2]
 
@@ -157,20 +123,20 @@ def compute_hinge_direction(cut_graph: DCEL, packing: DCEL) -> None:
         intersection_point = np.linalg.solve(A, d)
         return intersection_point
 
-    # for edge in cut_graph.edges:
-    #     origin, dest = edge.endPoints()
-    #
-    #     interstice0 = compute_interstice(*(origin.data))
-    #     interstice1 = compute_interstice(*(dest.data))
-    #
-    #     hinge_direction = interstice1-interstice0
-    #     edge.data = VectorE3(*hinge_direction)
-
     for vertex in cut_graph.verts:
         vertex.data = compute_interstice(*(vertex.data))
     return
 
 def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[int], root_idx: int) -> (DCEL, int):
+    """
+    Constructs a join tree from a cut tree, starting at root_idx. Returns the unfolding
+    along with the root index.
+
+    :param packing: DCEL structure of the cut graph.
+    :param cut_set: A set of the indices of edges in the cut tree.
+    :param root_idx: Index of the vertex in the join graph to start from.
+    :return: Unfolding DCEL and root index.
+    """
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()
 
@@ -181,6 +147,7 @@ def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[int], root_idx: i
     tree_set = set()
     fringe = deque([unfolding.verts[root_idx]])
 
+    # Build using DFS
     while fringe:
         v: Vertex = fringe.pop()
 

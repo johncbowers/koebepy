@@ -2,11 +2,24 @@ from collections import deque
 
 from koebe.datastructures.dcel import DCEL, Dart, Edge, Vertex
 from koebe.geometries.euclidean3 import VectorE3
-from cut_graph_construction import compute_hinge_direction
+from cut_graph_construction import compute_interstices
+
+"""
+A file for unfolding algorithms based on the cut graph. These algorithms return a
+cut set of edge indices and the index of the root vertex.
+"""
 
 
 def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0, 0, 1)) -> set[int]:
-    compute_hinge_direction(cut_graph, packing)
+    """
+    Steepest edge unfolding as described in Wolfram 54-57.
+
+    :param cut_graph:
+    :param packing:
+    :param direction: Direction used to determine edge steepness.
+    :return: Cut set of edge indices.
+    """
+    compute_interstices(cut_graph, packing)
 
     def hinge_direction(dart: Dart) -> VectorE3:
         origin, dest = dart.origin, dart.dest
@@ -28,10 +41,17 @@ def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0
                                     key=lambda pair: pair[1])[0]
             edge_idx = vertex.edges()[steepest_edge_idx].idx
             cut_set.add(edge_idx)
+    # TODO determine an appropriate root vertex as well
     return cut_set
 
 
 def depth_first_search_cut_tree(packing: DCEL) -> (set[Edge], int):
+    """
+    A simple depth-first computation of a cut tree, made to test other code.
+
+    :param packing:
+    :return: Cut set of edge indices and the root vertex in the join tree.
+    """
     # initialize graph data structures
     visited = set()
     tree_set = set()
