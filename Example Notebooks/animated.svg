@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="200" height="200" viewBox="-100.0 -100.0 200 200">
+<defs>
+<path d="M-90,0 A90,40,360,1,1,90,0 A90,40,360,1,1,-90,0 Z" id="d0" />
+</defs>
+<circle cx="0" cy="0" r="20" fill="red">
+<animate attributeName="cy" dur="6s" values="-80;80;-80" repeatCount="indefinite" />
+<animate attributeName="cx" dur="6s" values="0;80;0;-80;0" repeatCount="indefinite" />
+<animate attributeName="fill" dur="6s" values="red;green;blue;yellow" calc-mode="discrete" repeatCount="indefinite" />
+</circle>
+<circle cx="0" cy="0" r="10">
+<animateMotion dur="3s" repeatCount="indefinite">
+<mpath xlink:href="#d0" />
+</animateMotion>
+<animateTransform attributeName="transform" dur="3s" values="1,2;2,1;1,2;2,1;1,2" type="scale" repeatCount="indefinite" />
+</circle>
+</svg>

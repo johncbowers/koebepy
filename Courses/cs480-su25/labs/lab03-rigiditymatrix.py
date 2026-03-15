@@ -25,14 +25,39 @@ pin_edge_idx = 0
 #    2D rigidity matrix called rigidity_matrix_row(i, j).
 #
 
+def rigidity_matrix_row(i, j):
+    global vertices
+    row = [(0, 0) for _ in vertices]
+    row[i] = tuple(vertices[j]-vertices[i])
+    row[j] = tuple(vertices[i]-vertices[j])
+    return row
+
 # 2. Write a function that takes a vertex index i and returns a pinning
 #    rows of the rigidity matrix called pinning_rows(i).
-#
+def pinning_rows(i):
+    global vertices
+    row1 = [(0, 0) for _ in vertices]
+    row2 = [(0, 0) for _ in vertices]
+    row1[i] = (1, 0)
+    row2[i] = (0, 1)
+    return [row1, row2]
+
 # 3. Write a function that computes the rigdity matrix for the entire graph
 #    as a numpy array called rigidity_matrix().
-#
+def rigidity_matrix():
+    global edges, pin_edge_idx
+    edge_rows = [rigidity_matrix_row(i, j) for i, j in edges]
+    i, j = edges[pin_edge_idx]
+    R = edge_rows + pinning_rows(i)+pinning_rows(j)
+    return np.array(
+        [np.array(row).flatten() for row in R]
+    )
+
 # 4. Write a function that prints the degrees of freedom of the mechanism given the rigidity matrix. 
-#
+def print_dof(R):
+    ns = null_space(R)
+    print(f"This mechanism has {ns.shape[1]} degrees of freedom.")
+
 # 5. In the draw function compute a null space for the rigidity matrix and visualize
 #    its basis vectors as red line segments in the scene.
 #
@@ -41,10 +66,33 @@ pin_edge_idx = 0
 # Drawing Code
 #
 
+prev_v = None
+
 def redraw():
-    global graph_editor_scene, vertices, edges
+    global graph_editor_scene, vertices, edges, prev_v
     graph_editor_scene.clear()
     
+    print(vertices)
+    print(edges)
+
+    R = rigidity_matrix()
+    print_dof(R)
+    ns = null_space(R)
+
+    if ns.shape[1] > 0:
+        v = (ns.T)[0]
+        
+        # if prev_v is not None and prev_v.dot(v) < 0:
+        #     v = -v
+        prev_v = v
+        
+        vs = [VectorE2(float(v[i]), float(v[i+1])) for i in range(0, v.shape[0], 2)]
+        graph_editor_scene.addAll([
+            (SegmentE2(vertices[i], vertices[i] + 100 * vs[i]), redStyle)
+            for i in range(len(vs))
+        ])
+
+
     # Draw edges
     graph_editor_scene.addAll([(SegmentE2(vertices[e[0]], vertices[e[1]]), purpleStyle if i == pin_edge_idx else blackStyle) for i, e in enumerate(edges)])
     
@@ -91,11 +139,12 @@ def nearest_vertex_idx_of(x, y, thresh=10):
 #
 
 def mouse_pressed(event):
-    global graph_editor_scene, vertices, edges, mode, option_key_down, selected_vertex_idx, nearest_vertex, selected_vertex_idx, mouse_position
+    global graph_editor_scene, vertices, edges, mode, option_key_down, selected_vertex_idx, nearest_vertex, selected_vertex_idx, mouse_position, prev_v
 
     if mode == "vertex":
         # if the option key is down, add a vertex at the mouse position
         if option_key_down:
+            prev_v = None
             vertices.append(PointE2(event["x"], event["y"]))
             selected_vertex_idx = len(vertices) - 1  # Select the newly added vertex
             redraw()

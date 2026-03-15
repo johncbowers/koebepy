@@ -53,7 +53,6 @@ def draw():
 
     mech_scene.clear()
     configuration_space_scene.clear()
-
     
     # Draw obstacles
     mech_scene.add(obstacle1, blackStyle)

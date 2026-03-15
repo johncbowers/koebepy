@@ -17,7 +17,7 @@ theta1 = 0
 theta2 = 0
 mouse_down = False
 selected = False
-arm1_length = 100
+arm1_length = 200
 arm2_length = 100
 
 obstacle1 = CircleE2(PointE2(130, 130), 20)

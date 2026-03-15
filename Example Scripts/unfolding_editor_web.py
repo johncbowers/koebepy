@@ -273,7 +273,6 @@ def key_pressed_handler(event):
         remove_zero_edges = not remove_zero_edges
         refresh_points(points)
 
-
 editor_scene = E2Scene(title="Tutte Embedding Editor")
 lifting_scene = S2Scene(title="Polyhedral Lifting")
 lifting_scene.toggleSphere()
