@@ -69,7 +69,16 @@ class DCEL:
         if self.outerFace == None:
             return []
         return list(reversed(self.outerFace.vertices()))
-        
+    
+    def duplicate_combinatorics(self):
+        clear = lambda x: None
+        return self.duplicate(
+            vdata_transform=clear,
+            edata_transform=clear,
+            fdata_transform=clear,
+            ddata_transform=clear
+        )
+
     # WARNING: NOT THOROUGHLY TESTED, MAY CONTAIN BUGS
     # Duplicates this DCEL
     # optional parameters: 
@@ -129,6 +138,22 @@ class DCEL:
         
         return new_dcel
     
+    def vertexPairToEdgeMap(self):
+        vertPairToEdge = dict()
+        for edge in self.edges:
+            u, v = edge.endPoints()
+            vertPairToEdge[(u, v)] = edge
+            vertPairToEdge[(v, u)] = edge
+        return vertPairToEdge
+
+    def facePairToEdgeMap(self):
+        facePairToEdge = dict()
+        for edge in self.edges:
+            f1, f2 = edge.incidentFaces()
+            facePairToEdge[(f1, f2)] = edge
+            facePairToEdge[(f2, f1)] = edge
+        return facePairToEdge
+
     @classmethod
     def generateCycle(cls, n = None, vdata = None):
 
