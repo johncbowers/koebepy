@@ -148,4 +148,5 @@ def unfolding_geometry_from_tree(packing: DCEL, unfolding: DCEL,
             for child in join_tree[parent]:
                 place(packing, unfolding, parent, child, root_idx)
                 fringe.append(child)
+    # assert(len(visited) == len(packing.verts))
     return

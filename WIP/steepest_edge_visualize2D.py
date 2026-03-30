@@ -12,8 +12,8 @@ from visualize2D import display_dcel_2d
 
 import math
 
-n_points = 100
-n_iterations = 10000
+n_points = 200
+n_iterations = 1000
 
 print(f"Generating random convex hull of {n_points} points and computing a circle packing...")
 poly = randomConvexHullE3(n_points)

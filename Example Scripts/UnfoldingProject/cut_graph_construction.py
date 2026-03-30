@@ -47,12 +47,13 @@ def create_cut_graph_from_packing(packing: DCEL) -> DCEL:
         dart.origin = parents_to_vertices[parents]
 
         # Connect to twin if it exists, and create corresponding edge
-        twin = created_darts.get((idx0, idx1), None)
+        twin_key = tuple(sorted([idx0, idx1]))
+        twin = created_darts.get(twin_key, None)
         if twin is None:
-            created_darts[(idx0, idx1)] = dart
+            created_darts[twin_key] = dart
             edge = Edge(cut_graph, dart)
             dart.edge = edge
-            edge.data = packing.verts[dart_idx].idx
+            edge.data = vertex.edges()[dart_idx].idx
         else:
             dart.makeTwin(twin)
             dart.edge = twin.edge
@@ -127,7 +128,7 @@ def compute_interstices(cut_graph: DCEL, packing: DCEL) -> None:
         vertex.data = compute_interstice(*(vertex.data))
     return
 
-def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[int], root_idx: int) -> (DCEL, int):
+def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[int], root_idx: int) -> DCEL:
     """
     Constructs a join tree from a cut tree, starting at root_idx. Returns the unfolding
     along with the root index.
@@ -135,7 +136,7 @@ def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[int], root_idx: i
     :param packing: DCEL structure of the cut graph.
     :param cut_set: A set of the indices of edges in the cut tree.
     :param root_idx: Index of the vertex in the join graph to start from.
-    :return: Unfolding DCEL and root index.
+    :return: Unfolding DCEL.
     """
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()
@@ -165,4 +166,4 @@ def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[int], root_idx: i
                         fringe.append(v1)
                         tree_set.add(v1)
                         v1.parent = v0
-    return unfolding, root_idx
+    return unfolding
