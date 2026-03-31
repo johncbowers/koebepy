@@ -10,7 +10,7 @@ cut set of edge indices and the index of the root vertex.
 """
 
 
-def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0, 0, 1)) -> set[int]:
+def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0, 0, 1)) -> (set[int], int):
     """
     Steepest edge unfolding as described in Wolfram 54-57.
 
@@ -19,7 +19,8 @@ def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0
     :param direction: Direction used to determine edge steepness.
     :return: Cut set of edge indices.
     """
-    compute_interstices(cut_graph, packing)
+
+    compute_interstices(cut_graph=cut_graph, packing=packing)
 
     def hinge_direction(dart: Dart) -> VectorE3:
         origin, dest = dart.origin, dart.dest
@@ -42,10 +43,13 @@ def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0
             edge_idx = vertex.edges()[steepest_edge_idx].idx
             cut_set.add(edge_idx)
     # TODO determine an appropriate root vertex as well
-    return cut_set
+
+    root_idx = min(packing.verts,
+                   key=lambda vert: relative_direction(VectorE3(*vert.data.centerE3))).idx
+    return cut_set, root_idx
 
 
-def depth_first_search_cut_tree(packing: DCEL) -> (set[Edge], int):
+def depth_first_search_cut_tree(cut_graph: DCEL) -> (set[Edge], int):
     """
     A simple depth-first computation of a cut tree, made to test other code.
 
@@ -56,8 +60,8 @@ def depth_first_search_cut_tree(packing: DCEL) -> (set[Edge], int):
     visited = set()
     tree_set = set()
     cut_set = set()
-    root_idx = 13
-    fringe = deque([packing.verts[root_idx]])
+    root_idx = 0
+    fringe = deque([cut_graph.verts[root_idx]])
 
     # Use whatever first search to construct the spanning tree
     while fringe:
@@ -73,7 +77,7 @@ def depth_first_search_cut_tree(packing: DCEL) -> (set[Edge], int):
                     v0, v1 = v1, v0
                 # Only add edge to v1 if the tree does not already connect to v1
                 if v1 not in tree_set:
-                    cut_set.add(edge)
+                    cut_set.add(edge.idx)
                     fringe.append(v1)
                     tree_set.add(v1)
     return cut_set, root_idx

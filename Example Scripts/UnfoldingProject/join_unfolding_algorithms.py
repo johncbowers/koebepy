@@ -307,6 +307,9 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
         bisect.insort(T, i, key=lambda idx: angle_with_c(packing.verts[idx]))
     return unfolding, root_idx
 
+def join_steepest_edge_unfolding(packing) -> (DCEL, int):
+    pass
+
 def coin_unfolding(packing):
     """
     Unfolds a packing using Bower's algorithm. This algorithm uses a sweep-line approach. It defines a vertex

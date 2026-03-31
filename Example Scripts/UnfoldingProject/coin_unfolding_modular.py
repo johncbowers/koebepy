@@ -1,15 +1,13 @@
 # Import geometries
+import time
 
 from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
-from koebe.geometries.spherical2 import *
 from koebe.geometries.euclidean2 import *
 from koebe.geometries.euclidean3 import *
-from koebe.geometries.orientedProjective2 import *
 
 # Import convex hull, circle packing, and tutte embedding algorithms
-from koebe.algorithms.incrementalConvexHull import incrConvexHull, orientationPointE3, randomConvexHullE3
+from koebe.algorithms.incrementalConvexHull import randomConvexHullE3
 from koebe.algorithms.hypPacker import *
-from koebe.algorithms.tutteEmbeddings import tutteEmbeddingE2
 
 # General imports
 
@@ -19,37 +17,40 @@ from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
 
 from cut_unfolding_algorithms import *
+from join_unfolding_algorithms import *
 from cut_graph_construction import *
 from build_unfolding import *
+from unfolding_testing import *
+
 
 n_points = 100
 n_iterations = 1000
 
 
-def generate_coin_polygon(n_points, n_iterations):
+def generate_coin_polygon(n_points, n_iterations, seed=42):
     """
-    Generates a coin polygon.
+    Generates a coin polygon. Returns tuple of (join_graph, cut_graph).
     :param n_points:
     :param n_iterations:
-    :return:
+    :return: ()
     """
-    print(f"Generating random convex hull of {n_points} points and computing a Tutte embedding... ")
-    poly = randomConvexHullE3(n_points)  # Generate a random polyhedron with 16 vertices.
-    poly.outerFace = poly.faces[0]  # Arbitrarily select an outer face.
-    print("\tdone.")
+    cut_graph = randomConvexHullE3(n_points)
+    cut_graph.outerFace = cut_graph.faces[0]  # Arbitrarily select an outer face.
 
-    print("Computing a circle packing... ")
-
+    start_time = time.time()
     hyp_packing, _ = maximalPacking(
-        poly,
-        num_passes=n_iterations
+        cut_graph,
+        num_passes=n_iterations,
+        tolerance=1e-6,
     )
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time for computing packing: {elapsed_time}")
     packing = canonical_spherical_projection(hyp_packing)
     packing.markIndices()
-    print("\tdone.")
 
     compute_tangencies(packing)
-    return packing
+    return packing, cut_graph
 
 def visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts=None):
     """
@@ -80,11 +81,14 @@ def visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts=None):
     redStyle = makeStyle(stroke=(255, 0, 0), strokeWeight=2, fill=None)
     greenStyle = makeStyle(stroke=(0, 255, 0), strokeWeight=2, fill=None)
     blueStyle = makeStyle(stroke=(0, 0, 255), strokeWeight=2, fill=None)
+
+    #yellowStyle = makeStyle(stroke=(255, 255, 0), strokeWeight=2, fill=None)
+    boldStyle = makeStyle(stroke=(0, 0, 0), strokeWeight=2, fill=None)
     grayStyle = makeStyle(stroke=(128, 128, 128), strokeWeight=0.5, fill=None)
 
     sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
     size = 800
-    sceneE2 = E2Scene(title="Proposed unfolding", scale=1.5, height=size, width=size, pan_and_zoom=True)
+    sceneE2 = E2Scene(title="Proposed unfolding", scale=1.0, height=size, width=size, pan_and_zoom=True)
 
     sceneS2.addAll([(v.data,
                      redStyle if v.idx == root_idx else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[
@@ -106,8 +110,8 @@ def visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts=None):
         direction_segment = SegmentE3(PointE3(0, 0, 0), PointE3(0, 0, 1))
         sceneS2.addAll([(direction_segment, redStyle)])
 
-        sceneS2.addAll([(s, grayStyle) for s in remaining_segments])
-        sceneS2.addAll([(s, greenStyle) for s in cut_segments])
+        sceneS2.addAll([(s, boldStyle) for s in remaining_segments])
+        sceneS2.addAll([(s, boldStyle) for s in cut_segments])
 
     scale = 100
     sceneE2.addAll([(scale * v.data,
@@ -122,19 +126,47 @@ def visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts=None):
     viewer.run()
 
 
-packing = generate_coin_polygon(n_points, n_iterations)
-cut_graph = create_cut_graph_from_packing(packing)
-cut_tree = steepest_edge_unfolding(cut_graph, packing)
-root_idx = 0
-unfolding, root_idx = create_join_tree_from_cut_tree(packing, cut_tree, root_idx)
+def cut_unfolding(algorithm=steepest_edge_unfolding,
+                  n_points=100, n_iterations=1000,
+                  visualize=True,
+                  visual_cut_graph=False,
+                  test_for_overlap=False,
+                  seed = 42,
+                  **kwargs) -> bool:
+    packing, cut_graph = generate_coin_polygon(n_points, n_iterations, seed)
+    cut_graph = create_cut_graph_from_packing(packing)
+    # cut_graph.markIndices()
+    cut_tree, root_idx = algorithm(cut_graph=cut_graph, packing=packing, **kwargs)
+    unfolding = create_join_tree_from_cut_tree(packing, cut_tree, root_idx)
+    unfolding_geometry_from_tree(packing, unfolding, root_idx)
+    nbsE2 = unfolding.verts[root_idx].neighbors()
+
+    verify_unfolding(unfolding, packing, debug=True)
+    if visualize:
+        cuts = (cut_graph, cut_tree) if visual_cut_graph else None
+        visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts)
+    if test_for_overlap:
+        return verify_unfolding(unfolding, packing, debug=True) and check_for_intersections(unfolding)
+    return True
+
+def join_unfolding(algorithm=breadth_first_search_unfolding, n_points=100, n_iterations=1000, **kwargs):
+    packing, _ = generate_coin_polygon(n_points, n_iterations)
+    unfolding, root_idx = algorithm(packing=packing, **kwargs)
+    unfolding_geometry_from_tree(packing, unfolding, root_idx)
+    print(len(unfolding.verts))
+    nbsE2 = unfolding.verts[root_idx].neighbors()
+    visualize_unfolding(unfolding, packing, nbsE2, root_idx, None)
+    return
 
 
-unfolding_geometry_from_tree(packing, unfolding, root_idx)
 
-# print(check_for_intersections(unfolding))
 
-nbsE2 = unfolding.verts[root_idx].neighbors()
+tests = [cut_unfolding(n_points=500, n_iterations=float("inf"), visualize=True, test_for_overlap=True, seed=i)
+         for i in range(1)]
 
-#visualize(cut_graph, cut_tree)
-visualize_unfolding(unfolding, packing, nbsE2, root_idx)
+if not all(tests):
+    print(f"Test failed at index {next(
+        filter(lambda pair: pair[1] == False, enumerate(tests)))}")
+
+
 

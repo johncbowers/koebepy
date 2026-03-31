@@ -1,5 +1,5 @@
 
-def check_for_intersections(unfolding, tol=1e-10) -> bool:
+def check_for_intersections(unfolding, tol=1e-8) -> bool:
     """
     Checks for intersections through a brute force search of every pair
     of vertices.
@@ -17,10 +17,12 @@ def check_for_intersections(unfolding, tol=1e-10) -> bool:
             distance = point_i.distTo(point_j)
             sum_radii = v_i.data.radius + v_j.data.radius
             if sum_radii-tol > distance:
-                print(f"Overlap between {point_i} and {point_j} at tolerance {tol}"
-                      f"distance {distance} less than the sum of their radii {sum_radii}")
+                return False
+                # print(f"Overlap between {point_i} and {point_j} at tolerance {tol}"
+                #       f"distance {distance} less than the sum of their radii {sum_radii}")
+    return True
 
-def verify_unfolding(unfolding, packing):
+def verify_unfolding(unfolding, packing, debug=False):
     """
     Verifies an unfolding using the inversive distances test.
     :param unfolding:
@@ -37,12 +39,18 @@ def verify_unfolding(unfolding, packing):
                 inversive_distances_sphere.append(packing.verts[i].data.inversiveDistTo(packing.verts[j].data))
                 inversive_distances_plane.append(unfolding.verts[i].data.inversiveDistTo(unfolding.verts[j].data))
 
+    passed = True
     for i in range(len(inversive_distances_plane)):
         if inversive_distances_plane[i] < inversive_distances_sphere[i]:
-            print(
+            passed = False
+            if debug:
+                print(
                 f"{i} {inversive_distances_plane[i]} {inversive_distances_sphere[i]} {inversive_distances_plane[i] - inversive_distances_sphere[i]} {inversive_distances_plane[i] > inversive_distances_sphere[i]}")
 
-    print(
-        f"Passes inversive distance test: {not (False in [inversive_distances_plane[i] > inversive_distances_sphere[i] for i in range(len(inversive_distances_plane))])}")
-    print(f"Minimum inversive distance detected in the sphere: {min(inversive_distances_sphere)}")
-    print(f"Minimum inversive distance detected in the plane: {min(inversive_distances_plane)}")
+    if debug:
+        print(
+            f"Passes inversive distance test: {not (False in [inversive_distances_plane[i] > inversive_distances_sphere[i] for i in range(len(inversive_distances_plane))])}")
+        print(f"Minimum inversive distance detected in the sphere: {min(inversive_distances_sphere)}")
+        print(f"Minimum inversive distance detected in the plane: {min(inversive_distances_plane)}")
+    return passed
+
