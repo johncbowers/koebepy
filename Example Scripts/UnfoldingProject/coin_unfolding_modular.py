@@ -159,14 +159,13 @@ def join_unfolding(algorithm=breadth_first_search_unfolding, n_points=100, n_ite
     return
 
 
+if __name__ == "__main__":
+    tests = [cut_unfolding(n_points=500, n_iterations=float("inf"), visualize=True, test_for_overlap=True, seed=i)
+            for i in range(1)]
 
-
-tests = [cut_unfolding(n_points=500, n_iterations=float("inf"), visualize=True, test_for_overlap=True, seed=i)
-         for i in range(1)]
-
-if not all(tests):
-    print(f"Test failed at index {next(
-        filter(lambda pair: pair[1] == False, enumerate(tests)))}")
+    if not all(tests):
+        print(f"Test failed at index {next(
+            filter(lambda pair: pair[1] == False, enumerate(tests)))}")
 
 
 
