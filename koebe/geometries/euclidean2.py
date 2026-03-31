@@ -36,6 +36,13 @@ class PointE2:
         yield self.x
         yield self.y
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @classmethod
     def fromPolarCoordinates(cls, r, theta):
         return PointE2(r * math.cos(theta), r * math.sin(theta))
@@ -132,6 +139,13 @@ class VectorE2:
         yield self.x
         yield self.y
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     def __add__(self, other):
         return VectorE2(self.x + other.x, 
                         self.y + other.y)
@@ -211,6 +225,13 @@ class SegmentE2:
     def __iter__(self):
         yield tuple(self.source)
         yield tuple(self.target)
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     @property
     def lengthSq(self):
@@ -302,6 +323,13 @@ class CircleE2:
     def __iter__(self):
         yield tuple(self.center)
         yield self.radius
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     def inversiveDistTo(self, other: "CircleE2") -> float: 
         dSq = self.center.distSqTo(other.center)
@@ -380,6 +408,13 @@ class PolygonE2:
     
     def __iter__(self):
         yield vertices
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     def segments(self):
         return [SegmentE2(self.vertices[i-1], self.vertices[i]) 
@@ -526,6 +561,13 @@ class LineE2:
 
     p1: PointE2
     p2: PointE2
+
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
 
     def intersectWithLineE2(self, line2):
         from koebe.geometries.orientedProjective2 import PointOP2, LineOP2

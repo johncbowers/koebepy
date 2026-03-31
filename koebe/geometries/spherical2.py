@@ -31,6 +31,13 @@ class PointS2:
         yield self.y
         yield self.z
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @classmethod
     def fromVector(cls, v):
         return cls(v.x, v.y, v.z)
@@ -131,6 +138,13 @@ class DiskS2:
         yield self.b
         yield self.c
         yield self.d
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def fromDiskS2(cls, disk):
@@ -232,6 +246,10 @@ class DiskS2:
     def radiusE3(self):
         return (1.0 - (self.centerE3 - PointE3.O).normSq())**(0.5)
     
+    @property
+    def centerS2(self):
+        return PointS2.fromVector(self.directionE3.v * self.d)
+
     @property
     def radiusS2(self):
         return math.asin(self.radiusE3)
@@ -380,6 +398,13 @@ class CoaxialFamilyS2:
         yield self.source
         yield self.target
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     def type(self):
         isectCount = len(LineOP3.fromPlaneOP3(self.source.dualPlaneOP3, self.target.dualPlaneOP3).getIntersectionWithUnit2Sphere())
         if isectCount == 0:
@@ -462,6 +487,13 @@ class CPlaneS2:
         yield self.b
         yield self.c
         yield self.d
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def throughThreeDiskS2(cls, disk1, disk2, disk3):
@@ -513,6 +545,13 @@ class CircleArcS2:
         yield self.source
         yield self.target
         yield self.disk
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     @property
     def basis1(self):

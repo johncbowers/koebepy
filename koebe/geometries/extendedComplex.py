@@ -48,6 +48,13 @@ class ExtendedComplex:
         yield self.z
         yield self.w
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @property
     def real(self):
         return self.toComplex().real
@@ -223,6 +230,13 @@ class Mobius:
     b: ExtendedComplex
     c: ExtendedComplex
     d: ExtendedComplex
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def transformToZeroOneInfinity(cls, z1: ExtendedComplex, z2: ExtendedComplex, z3: ExtendedComplex) -> "Mobius":

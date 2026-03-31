@@ -29,6 +29,13 @@ class LineOP3:
         yield self.p13
         yield self.p23
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @classmethod
     def fromPointOP3(cls, p1, p2):
         return cls(
@@ -141,6 +148,13 @@ class PointOP3:
         yield self.hz
         yield self.hw
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @classmethod
     def fromPointOP3(cls, p):
         return cls(p.hx, p.hy, p.hz, p.hw)
@@ -230,6 +244,13 @@ class PlaneOP3:
         yield self.Z
         yield self.W
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @classmethod
     def fromPointOP3(cls, p1, p2, p3):
         return cls(
@@ -277,6 +298,13 @@ class VectorOP3:
         yield self.hy
         yield self.hz
         yield self.hw
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     @classmethod
     def fromVectorOP3(self, v):

@@ -22,6 +22,13 @@ class PointH2:
             object.__setattr__(self, 'coord', ExtendedComplex(coord))
         elif isinstance(coord, ExtendedComplex):
             object.__setattr__(self, 'coord', coord)
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
 #     def toPoincarePointE2(self) -> PointE2:
 #         """Computes euclidean point representing this point in the 
 #         poincare disk model of the hyperbolic plane. 
@@ -64,6 +71,13 @@ class LineH2:
     def __iter__(self):
         yield self.source
         yield self.target
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     def toPoincareCircleArcOP2(self):
         z = self.source.coord
@@ -110,6 +124,13 @@ class SegmentH2:
     def __iter__(self):
         yield self.source
         yield self.target
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     def toPoincareCircleArcOP2(self):
         z = self.source.coord
@@ -152,6 +173,13 @@ class CircleH2:
     
     center: PointH2
     xRadius: Any
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def withCenterAndHRadius(cls, center, hRadius):

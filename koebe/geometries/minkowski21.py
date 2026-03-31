@@ -32,6 +32,13 @@ class VectorM21:
         yield self.x
         yield self.y
         yield self.t
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def fromPointE2(cls, p):
@@ -156,6 +163,13 @@ class SpanM21:
         yield self.a
         yield self.b
         yield self.c
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     def dualVectorM21(self):
         return VectorM21(-self.a, -self.b, self.c)
