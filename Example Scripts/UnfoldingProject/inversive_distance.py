@@ -45,16 +45,6 @@ This file imports generate_coin_polygon and unfolding_geometry_from_tree from
 coin_unfolding_modular.py. That module currently executes visualization code at
 import time (including viewer.run()), which can block before trials print.
 
-Aggregate results over 100 trials:
-n_points=50,
-n_iterations=1000,
-trials=1000,
-pair_scope="all",
-include_tree_edges=False,
-Aggregate
-BFS  avg_pairs=1176.0 avg_min_plane=1.036876 avg_min_sphere=1.000000 avg_min_delta=0.036876 avg_mean_delta=79.331728 avg_median_delta=25.536828 avg_viol=0.00
-DFS  avg_pairs=1176.0 avg_min_plane=1.028056 avg_min_sphere=1.000000 avg_min_delta=-0.041914 avg_mean_delta=149.546968 avg_median_delta=38.704641 avg_viol=0.03
-
 Aggregate results over 1000 trials: 
 n_points=50,
 n_iterations=1000,
@@ -67,15 +57,6 @@ DFS  avg_pairs=1176.0 avg_min_plane=1.026065 avg_min_sphere=1.000000 avg_min_del
 
 DFS has 0.0017% pair-violation rate over 1000 trials
 BFS has 0% pair violation rate trials
-
-Trail of where overlapping occurs (over 1000 trails):
-Aggregate
-BFS  avg_pairs=1176.0 avg_min_plane=1.034512 avg_min_sphere=0.999999 avg_min_delta=0.034504 avg_mean_delta=81.144180 avg_median_delta=25.711167 avg_viol=0.00
-DFS  avg_pairs=1176.0 avg_min_plane=1.023833 avg_min_sphere=0.999999 avg_min_delta=0.012581 avg_mean_delta=151.841945 avg_median_delta=38.574268 avg_viol=0.01
-
-Violation localization (rate by bin):
-BFS  depth[early:0/14989(0.0000) mid:0/425520(0.0000) late:0/735491(0.0000)] order[early:0/120000(0.0000) mid:0/376000(0.0000) late:0/680000(0.0000)]
-DFS  depth[early:2/160427(0.0000) mid:9/400267(0.0000) late:3/615306(0.0000)] order[early:1/120000(0.0000) mid:6/376000(0.0000) late:7/680000(0.0000)]
 """
 
 from math import *
@@ -83,6 +64,8 @@ from random import *
 from collections import defaultdict, deque
 from statistics import mean, median
 import heapq
+import time
+import argparse
 
 from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
 from koebe.geometries.spherical2 import *
@@ -98,8 +81,10 @@ from coin_unfolding_modular import (
     generate_coin_polygon,
     unfolding_geometry_from_tree,
 )
+import join_unfolding_algorithms as join_algs
 from koebepy.WIP.visualize2D import display_dcel_2d
 from koebe.graphics.flask.multiviewserver import viewer
+from koebe.graphics.scenes.spherical2scene import S2Scene
 from koebe.graphics.scenes.euclidean2scene import makeStyle
 
 
@@ -165,6 +150,85 @@ def generate_spanning_tree_dfs(packing: DCEL):
                 stack.append(neighbor)
 
     return unfolding, root_idx
+
+
+def _assign_search_order_from_tree(unfolding: DCEL, root_idx: int):
+    """Assign deterministic BFS search_order values from parent pointers."""
+    for v in unfolding.verts:
+        v.search_order = -1
+
+    if not unfolding.verts:
+        return
+
+    if root_idx < 0 or root_idx >= len(unfolding.verts):
+        root_idx = 0
+
+    child_dict = _build_child_dict(unfolding)
+    queue = deque([unfolding.verts[root_idx]])
+    order = 0
+
+    while queue:
+        v = queue.popleft()
+        if v.search_order != -1:
+            continue
+        v.search_order = order
+        order += 1
+        for child in child_dict[v]:
+            if child.search_order == -1:
+                queue.append(child)
+
+
+def _resolve_method_registry():
+    """Return unfolding methods that produce (unfolding, root_idx)."""
+    return {
+        "bfs": generate_spanning_tree_bfs,
+        "dfs": generate_spanning_tree_dfs,
+        "join_bfs": join_algs.breadth_first_search_unfolding,
+        "join_dfs": join_algs.depth_first_search_unfolding,
+        "shortest_paths": join_algs.shortest_paths_unfolding,
+        "min_degree_shortest_paths": join_algs.min_degree_shortest_paths_unfolding,
+        "max_degree_shortest_paths": join_algs.max_degree_shortest_paths_unfolding,
+        "shortest_shortest_paths": join_algs.shortest_shortest_paths_unfolding,
+        "longest_shortest_paths": join_algs.longest_shortest_paths_unfolding,
+        "normal_min": lambda packing: join_algs.normal_order_unfolding(packing, "min"),
+        "normal_max": lambda packing: join_algs.normal_order_unfolding(packing, "max"),
+        "normal_flat": lambda packing: join_algs.normal_order_unfolding(packing, "flat"),
+        "normal_long": lambda packing: join_algs.normal_order_unfolding(packing, "long"),
+    }
+
+
+def _parse_method_selection(methods: list[str] | None):
+    """Resolve requested methods, with support for aliases and comma lists."""
+    registry = _resolve_method_registry()
+    aliases = {
+        "all": list(registry.keys()),
+        "default": ["bfs", "dfs"],
+    }
+
+    if methods is None or len(methods) == 0:
+        selected = aliases["default"]
+    else:
+        expanded = []
+        for item in methods:
+            for token in item.split(","):
+                token = token.strip().lower()
+                if token:
+                    expanded.append(token)
+
+        selected = []
+        for token in expanded:
+            if token in aliases:
+                selected.extend(aliases[token])
+            else:
+                selected.append(token)
+
+    unknown = [m for m in selected if m not in registry]
+    if unknown:
+        valid = ", ".join(sorted(registry.keys()))
+        raise ValueError(f"Unknown methods: {unknown}. Valid methods are: {valid}, plus aliases: all, default")
+
+    # Preserve order while removing duplicates.
+    return list(dict.fromkeys(selected)), registry
 
 
 def _build_child_dict(unfolding: DCEL):
@@ -427,16 +491,91 @@ def visualize_overlapping_unfolding(unfolding: DCEL, mode: str, trial_index: int
     )
 
 
-def evaluate_algorithm(packing: DCEL, mode: str, pair_scope: str = "all", include_tree_edges: bool = False):
-    """Run one algorithm (BFS or DFS), place unfolding geometry, and summarize metrics."""
-    if mode == "bfs":
-        unfolding, root_idx = generate_spanning_tree_bfs(packing)
-    elif mode == "dfs":
-        unfolding, root_idx = generate_spanning_tree_dfs(packing)
-    else:
-        raise ValueError(f"mode must be 'bfs' or 'dfs', got {mode}")
+def visualize_trial_unfolding(unfolding: DCEL, mode: str, trial_index: int, root_idx: int, overlaps: list[tuple[int, int]]):
+    """Visualize one trial unfolding, regardless of overlap status."""
+    overlap_vertices = {idx for i, j in overlaps for idx in (i, j)}
+    primary_overlap_vertices = set(overlaps[0]) if overlaps else set()
 
-    child_dict = _build_child_dict(unfolding)
+    gray_style = makeStyle(stroke=(130, 130, 130), strokeWeight=1.0, fill=None)
+    green_style = makeStyle(stroke=(0, 165, 0), strokeWeight=2.4, fill=None)
+    orange_style = makeStyle(stroke=(255, 140, 0), strokeWeight=2.0, fill=None)
+    red_style = makeStyle(stroke=(220, 0, 0), strokeWeight=2.4, fill=None)
+    purple_style = makeStyle(stroke=(170, 0, 170), strokeWeight=2.7, fill=None)
+    tree_style = makeStyle(stroke=(210, 210, 210), strokeWeight=0.6, fill=None)
+
+    def vertex_style(vertex, _depth=0):
+        if vertex.idx == root_idx and vertex.idx in overlap_vertices:
+            return purple_style
+        if vertex.idx == root_idx:
+            return green_style
+        if vertex.idx in primary_overlap_vertices:
+            return red_style
+        if vertex.idx in overlap_vertices:
+            return orange_style
+        return gray_style
+
+    title_suffix = f"overlap_pairs={len(overlaps)}" if overlaps else "no-overlap"
+    print(
+        f"Visualizing trial unfolding: mode={mode.upper()} trial={trial_index} "
+        f"root={root_idx} {title_suffix}"
+    )
+
+    display_dcel_2d(
+        unfolding,
+        viewer=viewer,
+        run=True,
+        title=f"Trial unfolding ({mode.upper()} trial {trial_index}, {title_suffix})",
+        show_vertices=True,
+        vertex_style=vertex_style,
+        show_edges=False,
+        show_tree=True,
+        tree_style=tree_style,
+        root_idx=root_idx,
+        root_at_origin=True,
+        pan_and_zoom=True,
+        scale=130,
+    )
+
+
+def visualize_trial_packing(packing: DCEL, trial_index: int, trial_seed: int):
+    """Visualize the original spherical circle packing for one trial."""
+    print(
+        f"Visualizing trial packing: trial={trial_index} seed={trial_seed} "
+        f"verts={len(packing.verts)}"
+    )
+    print("Legend: red=root(idx 0), black=all other circles.")
+
+    black_style = makeStyle(stroke=(0, 0, 0), strokeWeight=1.4, fill=None)
+    red_style = makeStyle(stroke=(220, 0, 0), strokeWeight=2.2, fill=None)
+
+    scene_s2 = S2Scene(
+        title=f"Trial packing (trial {trial_index}, seed {trial_seed})",
+        show_sphere=False,
+    )
+    scene_s2.addAll([
+        (v.data, red_style if v.idx == 0 else black_style)
+        for v in packing.verts
+        if v.data is not None
+    ])
+
+    viewer.add_scene(scene_s2)
+    viewer.run()
+
+
+def evaluate_algorithm(packing: DCEL, mode: str, pair_scope: str = "all", include_tree_edges: bool = False):
+    """Run one unfolding method, place geometry, and summarize metrics."""
+    registry = _resolve_method_registry()
+    if mode not in registry:
+        raise ValueError(f"Unknown unfolding method: {mode}")
+
+    unfolding, root_idx = registry[mode](packing)
+
+    if not isinstance(root_idx, int):
+        raise ValueError(f"Method '{mode}' did not return an integer root index")
+    if root_idx < 0 or root_idx >= len(unfolding.verts):
+        raise ValueError(f"Method '{mode}' returned out-of-range root index {root_idx}")
+
+    _assign_search_order_from_tree(unfolding, root_idx)
     unfolding_geometry_from_tree(packing, unfolding, root_idx)
 
     rows = track_inversive_pairs(
@@ -450,54 +589,153 @@ def evaluate_algorithm(packing: DCEL, mode: str, pair_scope: str = "all", includ
     return summarize_inversive_rows(rows, mode), summarize_violation_profile(rows, mode), unfolding, root_idx, overlaps
 
 
+def compare_methods(
+        methods: list[str] | None = None,
+        n_points: int = 50,
+        n_iterations: int = 1000,
+        trials: int = 3,
+        pair_scope: str = "all",
+        include_tree_edges: bool = False,
+    visualize_trial_packing_each_trial: bool = False,
+    visualize_each_trial: bool = False,
+        visualize_first_overlap: bool = True,
+        base_seed: int | None = None,
+):
+    """Run multiple trials and print summaries for selected unfolding methods."""
+    selected_methods, _registry = _parse_method_selection(methods)
+    runs_by_method = {name: [] for name in selected_methods}
+    profiles_by_method = {name: [] for name in selected_methods}
+    has_visualized_overlap = False
+    resolved_base_seed = int(time.time_ns()) if base_seed is None else int(base_seed)
+    seed_rng = Random(resolved_base_seed)
+    trial_seeds = []
+
+    print("\nMethods under test:")
+    print(", ".join(selected_methods))
+
+    print("\nReproducibility setup")
+    print(f"base_seed={resolved_base_seed}")
+    print("(reuse this base_seed to reproduce the exact same trial sequence)")
+
+    for t in range(1, trials + 1):
+        trial_seed = seed_rng.randrange(0, 2**63)
+        trial_seeds.append(trial_seed)
+        seed(trial_seed)
+
+        print(f"\nTrial {t}/{trials} seed={trial_seed}")
+        packing = generate_coin_polygon(n_points, n_iterations)
+
+        if visualize_trial_packing_each_trial:
+            visualize_trial_packing(packing, t, trial_seed)
+
+        for method_name in selected_methods:
+            try:
+                summary, profile, unfolding, root_idx, overlaps = evaluate_algorithm(
+                    packing,
+                    method_name,
+                    pair_scope,
+                    include_tree_edges,
+                )
+            except Exception as ex:
+                print(f"{method_name.upper():<24} ERROR: {ex}")
+                continue
+            runs_by_method[method_name].append(summary)
+            profiles_by_method[method_name].append(profile)
+
+            if visualize_each_trial:
+                visualize_trial_unfolding(unfolding, method_name, t, root_idx, overlaps)
+
+            if visualize_first_overlap and not has_visualized_overlap and len(overlaps) > 0:
+                visualize_overlapping_unfolding(unfolding, method_name, t, root_idx, overlaps)
+                has_visualized_overlap = True
+
+            print(_line(summary))
+
+    print("\nAggregate")
+    for method_name in selected_methods:
+        print(_aggregate_line(method_name, runs_by_method[method_name]))
+
+    print("\nViolation localization (rate by bin):")
+    combined_profiles = {}
+    for method_name in selected_methods:
+        combined_profiles[method_name] = _combine_profiles(method_name, profiles_by_method[method_name])
+        print(_profile_line(combined_profiles[method_name], method_name))
+
+    print("\nReproducibility seed record")
+    print(f"base_seed={resolved_base_seed}")
+    print(f"trial_seeds={trial_seeds}")
+
+    return {
+        "methods": selected_methods,
+        "base_seed": resolved_base_seed,
+        "trial_seeds": trial_seeds,
+        "runs": runs_by_method,
+        "profiles": combined_profiles,
+    }
+
+
 def compare_bfs_dfs(
         n_points: int = 50,
         n_iterations: int = 1000,
         trials: int = 3,
         pair_scope: str = "all",
         include_tree_edges: bool = False,
-    visualize_first_overlap: bool = True,
+    visualize_trial_packing_each_trial: bool = False,
+    visualize_each_trial: bool = False,
+        visualize_first_overlap: bool = True,
+        base_seed: int | None = None,
 ):
-    """Run multiple trials and print side-by-side BFS/DFS inversive summaries."""
-    bfs_runs = []
-    dfs_runs = []
-    bfs_profiles = []
-    dfs_profiles = []
-    has_visualized_overlap = False
+    """Backward-compatible wrapper: run compare_methods with BFS and DFS.
 
-    for t in range(1, trials + 1):
-        print(f"\nTrial {t}/{trials}")
-        packing = generate_coin_polygon(n_points, n_iterations)
+    Reproducibility model:
+    - If base_seed is None, use time.time_ns() for a unique run seed.
+    - Per-trial seeds are then deterministically generated from base_seed.
+    - The full seed record is printed and returned to allow exact reruns.
+    """
+    result = compare_methods(
+        methods=["bfs", "dfs"],
+        n_points=n_points,
+        n_iterations=n_iterations,
+        trials=trials,
+        pair_scope=pair_scope,
+        include_tree_edges=include_tree_edges,
+        visualize_trial_packing_each_trial=visualize_trial_packing_each_trial,
+        visualize_each_trial=visualize_each_trial,
+        visualize_first_overlap=visualize_first_overlap,
+        base_seed=base_seed,
+    )
 
-        bfs_summary, bfs_profile, bfs_unfolding, bfs_root_idx, bfs_overlaps = evaluate_algorithm(
-            packing, "bfs", pair_scope, include_tree_edges
-        )
-        dfs_summary, dfs_profile, dfs_unfolding, dfs_root_idx, dfs_overlaps = evaluate_algorithm(
-            packing, "dfs", pair_scope, include_tree_edges
-        )
-        bfs_runs.append(bfs_summary)
-        dfs_runs.append(dfs_summary)
-        bfs_profiles.append(bfs_profile)
-        dfs_profiles.append(dfs_profile)
+    return {
+        "base_seed": result["base_seed"],
+        "trial_seeds": result["trial_seeds"],
+        "bfs_runs": result["runs"].get("bfs", []),
+        "dfs_runs": result["runs"].get("dfs", []),
+        "bfs_profile": result["profiles"].get("bfs", {}),
+        "dfs_profile": result["profiles"].get("dfs", {}),
+    }
 
-        if visualize_first_overlap and not has_visualized_overlap:
-            if len(bfs_overlaps) > 0:
-                visualize_overlapping_unfolding(bfs_unfolding, "bfs", t, bfs_root_idx, bfs_overlaps)
-                has_visualized_overlap = True
-            elif len(dfs_overlaps) > 0:
-                visualize_overlapping_unfolding(dfs_unfolding, "dfs", t, dfs_root_idx, dfs_overlaps)
-                has_visualized_overlap = True
 
-        print(_line(bfs_summary))
-        print(_line(dfs_summary))
-
-    print("\nAggregate")
-    print(_aggregate_line("bfs", bfs_runs))
-    print(_aggregate_line("dfs", dfs_runs))
-
-    print("\nViolation localization (rate by bin):")
-    print(_profile_line(_combine_profiles("bfs", bfs_profiles), "bfs"))
-    print(_profile_line(_combine_profiles("dfs", dfs_profiles), "dfs"))
+def _build_arg_parser():
+    """CLI parser for selecting unfolding methods and run options."""
+    parser = argparse.ArgumentParser(description="Inversive-distance analysis across unfolding methods")
+    parser.add_argument(
+        "--methods",
+        nargs="+",
+        default=["default"],
+        help=(
+            "Methods to test (space or comma separated). "
+            "Use aliases: default (bfs,dfs), all."
+        ),
+    )
+    parser.add_argument("--n-points", type=int, default=50)
+    parser.add_argument("--n-iterations", type=int, default=1000)
+    parser.add_argument("--trials", type=int, default=10)
+    parser.add_argument("--pair-scope", choices=["all", "neighbors", "non_neighbors"], default="all")
+    parser.add_argument("--include-tree-edges", action="store_true")
+    parser.add_argument("--no-visualize-first-overlap", action="store_true")
+    parser.add_argument("--base-seed", type=int, default=1774411564778725000)
+    parser.add_argument("--list-methods", action="store_true", help="Print available method names and exit")
+    return parser
 
 
 def _line(summary: dict):
@@ -528,10 +766,29 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 
 if __name__ == "__main__":
-    compare_bfs_dfs(
+    result = compare_methods(
+        methods=["dfs"],
         n_points=50,
         n_iterations=1000,
-        trials=1000,
+        trials=10,
         pair_scope="all",
         include_tree_edges=False,
+        visualize_trial_packing_each_trial=False,
+        visualize_each_trial=False, #this shows the unfolding for each trial
+        visualize_first_overlap=True,
+        base_seed=1774895576523358000,
     )
+
+    # Edit the compare_methods(...) arguments above to choose methods/settings.
+    # Available methods:
+    # bfs, dfs, join_bfs, join_dfs, shortest_paths,
+    # min_degree_shortest_paths, max_degree_shortest_paths,
+    # shortest_shortest_paths, longest_shortest_paths,
+    # normal_min, normal_max, normal_flat, normal_long
+    # ["bfs", "dfs", "shortest_paths", "min_degree_shortest_paths",
+    #              "max_degree_shortest_paths", "shortest_shortest_paths",
+    #              "longest_shortest_paths", "normal_min", "normal_max",
+    #              "normal_flat", "normal_long"]
+
+    print("\nRerun note")
+    print(f"To reproduce this run exactly, call compare_methods(..., base_seed={result['base_seed']})")

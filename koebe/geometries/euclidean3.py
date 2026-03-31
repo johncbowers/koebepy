@@ -23,6 +23,13 @@ class PointE3:
         yield self.x
         yield self.y
         yield self.z
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def fromPointE3(cls, p):
@@ -78,6 +85,13 @@ class SegmentE3:
         yield tuple(self.source)
         yield tuple(self.target)
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @property
     def lengthSq(self):
         return self.target.distSqTo(self.source)
@@ -107,6 +121,13 @@ class VectorE3:
         yield self.x
         yield self.y
         yield self.z
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def fromVectorE3(cls, v):
@@ -176,6 +197,13 @@ class DirectionE3:
         yield _v.y
         yield _v.z
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @classmethod
     def fromDirectionE3(cls,d):
         return cls(d.vec)
@@ -230,6 +258,13 @@ class PlaneE3:
     def __iter__(self):
         yield tuple(self.N)
         yield self.d
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     @classmethod
     def fromPlaneE3(cls, p):

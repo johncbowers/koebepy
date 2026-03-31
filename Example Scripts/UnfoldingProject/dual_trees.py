@@ -96,6 +96,19 @@ for v, p in primal_tree.items():
         primal_tree_segs.append((SegmentE3(v.data.centerE3, tangency_point), blueStyle))
         primal_tree_segs.append((SegmentE3(p.data.centerE3, tangency_point), blueStyle))
 
+# Here we are going to create CircleArcS2 objects. Instead of centerE3 for the v.data and p.data
+# we need to use .centerS2 to get the center of the dual disk on the sphere. 
+# We then need to create a DiskS2 object through the two points and the tangency point (in the middle)
+# using the class method DiskS2.throughThreePointS2. Finally we create a CircleArcS2 object from the two centers 
+# and the disk we just created, using CircleArcS2.fromTwoCentersAndDiskS2.
+primal_tree_arcs = []
+for v, p in primal_tree.items():
+    if p is not None:
+        e = vertex_pair_edge_map[(v, p)]
+        tangency_point = e.data
+        disk = DiskS2.throughThreePointS2(v.data.centerS2, PointS2(*tangency_point), p.data.centerS2)
+        primal_tree_arcs.append((CircleArcS2(v.data.centerS2, p.data.centerS2, disk), blueStyle))
+
 # Create CPlaneS2 objects for each face and store them at the .data of each face
 # using CPlaneS2.throughThreeDiskS2 (since DiskS2 objects are stored at each vertex)
 for f in packing.faces:
@@ -122,6 +135,9 @@ sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
 sceneS2.addAll(primal_tree_segs)
 #sceneS2.addAll([(f.data, redStyle) for f in packing.faces])
 sceneS2.addAll(dual_tree_segs)
+
+# It doesn't seem like arc drawing is implemented yet. 
+#sceneS2.addAll(primal_tree_arcs)
 
 sceneS2.addAll([(v.data, blackStyle) for v in packing.verts])
 #sceneS2.addAll([(v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in packing.verts])

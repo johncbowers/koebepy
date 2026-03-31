@@ -30,6 +30,13 @@ class VectorM31:
         yield self.y
         yield self.z
         yield self.t
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def fromPointE3(cls, p):
@@ -114,6 +121,13 @@ class SpanM31:
         yield self.b
         yield self.c
         yield self.d
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     def dualVectorM31(self):
         return VectorM31(-self.a, -self.b, -self.c, self.d)

@@ -32,6 +32,13 @@ class PointOP2:
         yield self.hy
         yield self.hw
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     def distSqTo(self, p):
         dx = p.hx / p.hw - self.hx / self.hw
         dy = p.hy / p.hw - self.hy / self.hw
@@ -79,6 +86,13 @@ class DiskOP2:
         yield self.b
         yield self.c
         yield self.d
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     def translate(self, tx, ty):
         T = np.array([[1,               0,   0, 0], 
@@ -311,6 +325,13 @@ class CircleArcOP2:
         yield tuple(self.target)
         yield tuple(self.disk)
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     @classmethod
     def fromPointOP2(cls, p1, p2, p3):
         return cls(p1, p3, DiskOP2.fromPointOP2(p1, p2, p3))
@@ -364,6 +385,13 @@ class LineOP2:
         yield self.b
         yield self.c
     
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
+    
     def intersectWithLineOP2(self, line2): 
         detx =  determinant2(self.b, self.c, line2.b, line2.c)
         dety = -determinant2(self.a, self.c, line2.a, line2.c)
@@ -395,6 +423,13 @@ class VectorOP2:
         yield self.hx
         yield self.hy
         yield self.hw
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
         
     @classmethod
     def fromVectorOP2(cls, v):
@@ -446,6 +481,13 @@ class SegmentOP2:
     def __iter__(self):
         yield tuple(self.source)
         yield tuple(self.target)
+    
+    def __getstate__(self):
+        return {slot: getattr(self, slot) for slot in self.__slots__}
+    
+    def __setstate__(self, state):
+        for slot, value in state.items():
+            object.__setattr__(self, slot, value)
     
     @property
     def lengthSq(self):
