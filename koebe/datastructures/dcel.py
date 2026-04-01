@@ -16,6 +16,50 @@ class DCEL:
         self.outerFace = (None if outerFaceData == None 
                                else self.Face(self, data = outerFaceData))
 
+    def __reduce__(self):
+        """Serialize by converting circular object references to indices."""
+        # Build index maps
+        self.markIndices()
+        # vert_to_idx = {v: i for i, v in enumerate(self.verts)}
+        # dart_to_idx = {d: i for i, d in enumerate(self.darts)}
+        # edge_to_idx = {e: i for i, e in enumerate(self.edges)}
+        # face_to_idx = {f: i for i, f in enumerate(self.faces)}
+        
+        # Serialize vertex data with aDart as index
+        vert_data = [(v.aDart.idx, v.data) for v in self.verts]
+        
+        # Serialize dart data with all pointers as indices
+        dart_data = []
+        for d in self.darts:
+            dart_data.append({
+                'edge': d.edge.idx,
+                'origin': d.origin.idx,
+                'face': d.face.idx,
+                'prev': d.prev.idx,
+                'next': d.next.idx,
+                'twin': d.twin.idx,
+                'data': d.data
+            })
+        
+        # Serialize edge data with aDart as index
+        edge_data = [(e.aDart.idx, e.data) for e in self.edges]
+        
+        # Serialize face data with aDart as index
+        face_data = [(f.aDart.idx, f.data) for f in self.faces]
+        
+        # Serialize outer face reference as index
+        outer_face_idx = self.outerFace.idx if self.outerFace is not None else None
+        
+        state = {
+            'vert_data': vert_data,
+            'dart_data': dart_data,
+            'edge_data': edge_data,
+            'face_data': face_data,
+            'outer_face_idx': outer_face_idx
+        }
+        
+        return (_restore_dcel, (state,))
+
     def markIndices(self):
         for vIdx in range(len(self.verts)):
             self.verts[vIdx].idx = vIdx
@@ -345,7 +389,8 @@ class Dart:
             self.next.prev = self
         if self.twin != None:
             self.twin.twin = self
-      
+    
+    
     @property
     def dest(self):
         if self.twin == None:
@@ -521,6 +566,76 @@ class Face:
         
 
 # END Face
+
+# Pickle restoration helper functions
+def _restore_dcel(state):
+    """Restore a DCEL from pickle, reconstructing from indices."""
+    dcel = DCEL.__new__(DCEL)
+    
+    # Initialize the lists and class references
+    dcel.verts = []
+    dcel.darts = []
+    dcel.edges = []
+    dcel.faces = []
+    dcel.Vertex = Vertex
+    dcel.Edge = Edge
+    dcel.Dart = Dart
+    dcel.Face = Face
+    
+    # Extract data
+    vert_data = state['vert_data']
+    dart_data = state['dart_data']
+    edge_data = state['edge_data']
+    face_data = state['face_data']
+    outer_face_idx = state['outer_face_idx']
+    
+    # Create all vertex objects (aDart will be set after darts are created)
+    for aDart_idx, data in vert_data:
+        v = Vertex(dcel, aDart=None, data=data)
+    
+    # Create all dart objects (pointers will be set next)
+    for dd in dart_data:
+        d = Dart(dcel, edge=None, origin=None, face=None, 
+                prev=None, next=None, twin=None, data=dd['data'])
+    
+    # Create all edge objects
+    for aDart_idx, data in edge_data:
+        e = Edge(dcel, aDart=None, data=data)
+    
+    # Create all face objects
+    for aDart_idx, data in face_data:
+        f = Face(dcel, aDart=None, data=data)
+    
+    # Now restore all the pointers using indices
+    # Restore dart pointers
+    for dart_idx, dd in enumerate(dart_data):
+        d = dcel.darts[dart_idx]
+        d.edge = dcel.edges[dd['edge']] if dd['edge'] is not None else None
+        d.origin = dcel.verts[dd['origin']] if dd['origin'] is not None else None
+        d.face = dcel.faces[dd['face']] if dd['face'] is not None else None
+        d.prev = dcel.darts[dd['prev']] if dd['prev'] is not None else None
+        d.next = dcel.darts[dd['next']] if dd['next'] is not None else None
+        d.twin = dcel.darts[dd['twin']] if dd['twin'] is not None else None
+    
+    # Restore vertex aDart pointers
+    for vert_idx, (aDart_dart_idx, _) in enumerate(vert_data):
+        if aDart_dart_idx is not None:
+            dcel.verts[vert_idx].aDart = dcel.darts[aDart_dart_idx]
+    
+    # Restore edge aDart pointers
+    for edge_idx, (aDart_dart_idx, _) in enumerate(edge_data):
+        if aDart_dart_idx is not None:
+            dcel.edges[edge_idx].aDart = dcel.darts[aDart_dart_idx]
+    
+    # Restore face aDart pointers
+    for face_idx, (aDart_dart_idx, _) in enumerate(face_data):
+        if aDart_dart_idx is not None:
+            dcel.faces[face_idx].aDart = dcel.darts[aDart_dart_idx]
+    
+    # Restore outer face
+    dcel.outerFace = dcel.faces[outer_face_idx] if outer_face_idx is not None else None
+    
+    return dcel
 
 class MalformedDCELException(Exception):
     pass
