@@ -21,6 +21,7 @@ from join_unfolding_algorithms import *
 from cut_graph_construction import *
 from build_unfolding import *
 from unfolding_testing import *
+from matlab_test import *
 
 
 n_points = 100
@@ -34,12 +35,12 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     :param n_iterations:
     :return: ()
     """
-    cut_graph = randomConvexHullE3(n_points)
-    cut_graph.outerFace = cut_graph.faces[0]  # Arbitrarily select an outer face.
+    convex_hull = randomConvexHullE3(n_points)
+    convex_hull.outerFace = convex_hull.faces[0]  # Arbitrarily select an outer face.
 
     start_time = time.time()
     hyp_packing, _ = maximalPacking(
-        cut_graph,
+        convex_hull,
         num_passes=n_iterations,
         tolerance=1e-6,
     )
@@ -50,7 +51,7 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     packing.markIndices()
 
     compute_tangencies(packing)
-    return packing, cut_graph
+    return packing, convex_hull
 
 def visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts=None):
     """
@@ -133,13 +134,17 @@ def cut_unfolding(algorithm=steepest_edge_unfolding,
                   test_for_overlap=False,
                   seed = 42,
                   **kwargs) -> bool:
-    packing, cut_graph = generate_coin_polygon(n_points, n_iterations, seed)
+    # packing, _ = generate_coin_polygon(n_points, n_iterations, seed)
+    packing = build_dcel_with_gop(n_points)
     cut_graph = create_cut_graph_from_packing(packing)
-    # cut_graph.markIndices()
     cut_tree, root_idx = algorithm(cut_graph=cut_graph, packing=packing, **kwargs)
     unfolding = create_join_tree_from_cut_tree(packing, cut_tree, root_idx)
     unfolding_geometry_from_tree(packing, unfolding, root_idx)
     nbsE2 = unfolding.verts[root_idx].neighbors()
+
+    for i, vertex in enumerate(packing.verts):
+        print(f"vertex {i}: center at vertex {vertex.data.centerE3} with radius {vertex.data.radiusE3}")
+
 
     verify_unfolding(unfolding, packing, debug=True)
     if visualize:
@@ -160,7 +165,7 @@ def join_unfolding(algorithm=breadth_first_search_unfolding, n_points=100, n_ite
 
 
 if __name__ == "__main__":
-    tests = [cut_unfolding(n_points=500, n_iterations=float("inf"), visualize=True, test_for_overlap=True, seed=i)
+    tests = [cut_unfolding(n_points=1000, n_iterations=float("inf"), visualize=True, test_for_overlap=True, seed=i)
             for i in range(1)]
 
     if not all(tests):
