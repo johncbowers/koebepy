@@ -41,7 +41,7 @@ def whatever_first_search_unfolding(packing: DCEL, search_type: str) -> (DCEL, i
     # initialize graph data structures
     visited = set()
     tree_set = set()
-    root_idx = 13
+    root_idx = 0
     fringe = deque([unfolding.verts[root_idx]])
 
 
@@ -322,7 +322,7 @@ def coin_unfolding(packing):
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()
 
-    print(f"Placing vertex {0} ")
+    # print(f"Placing vertex {0} ")
     unfolding.verts[0].data = CircleE2(PointE2(0, 0), packing.verts[0].data.radiusE3)
     nbsS2 = packing.verts[0].neighbors()
     edgesS2 = packing.verts[0].edges()
@@ -341,7 +341,7 @@ def coin_unfolding(packing):
     for i in range(1, len(nbsE2)):
         v0 = edgesS2[0].data.toVectorE3() - packing.verts[0].data.centerE3
         vi = edgesS2[i].data.toVectorE3() - packing.verts[0].data.centerE3
-        print(f"Placing vertex {nbsS2[i].idx} with parent 0")
+        # print(f"Placing vertex {nbsS2[i].idx} with parent 0")
         theta = math.atan2(v0.cross(vi).dot(n), v0.dot(vi))
         nbsE2[i].data = CircleE2(
             PointE2(
@@ -369,7 +369,7 @@ def coin_unfolding(packing):
         v0 = unfolding.verts[v0_idx]
         v1 = unfolding.verts[v1_idx]
         if v0.data == None and v1.data == None:
-            print("Can't place edge because neither endpoint is placed. This should never happen.")
+            # print("Can't place edge because neither endpoint is placed. This should never happen.")
             continue
         if v0.data == None:
             v0, v1 = v1, v0
@@ -377,9 +377,9 @@ def coin_unfolding(packing):
 
         if v1.data == None:
             # now v0 has been placed and we need to place v1
-            print(f"Placing vertex {v1_idx} with parent {v0_idx}")
+            # print(f"Placing vertex {v1_idx} with parent {v0_idx}")
             if v0.parent == None:
-                print(f"v0 has no parent, this should not happen. v0's index is {v0_idx}")
+                # print(f"v0 has no parent, this should not happen. v0's index is {v0_idx}")
                 break
             parent_idx = v0.neighbors().index(v0.parent)
             parent_dirE2 = (v0.parent.data.center - v0.data.center).normalize()

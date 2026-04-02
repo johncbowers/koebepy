@@ -22,7 +22,7 @@ def check_for_intersections(unfolding, tol=1e-8) -> bool:
                 #       f"distance {distance} less than the sum of their radii {sum_radii}")
     return True
 
-def verify_unfolding(unfolding, packing, debug=False):
+def inversive_distances_test(unfolding, packing, debug=False) -> bool:
     """
     Verifies an unfolding using the inversive distances test.
     :param unfolding:
@@ -49,7 +49,7 @@ def verify_unfolding(unfolding, packing, debug=False):
 
     if debug:
         print(
-            f"Passes inversive distance test: {not (False in [inversive_distances_plane[i] > inversive_distances_sphere[i] for i in range(len(inversive_distances_plane))])}")
+            f"Passes inversive distance test: {passed}")
         print(f"Minimum inversive distance detected in the sphere: {min(inversive_distances_sphere)}")
         print(f"Minimum inversive distance detected in the plane: {min(inversive_distances_plane)}")
     return passed

@@ -21,7 +21,7 @@ from join_unfolding_algorithms import *
 from cut_graph_construction import *
 from build_unfolding import *
 from unfolding_testing import *
-from matlab_test import *
+from matlab_packing_generation import *
 
 
 n_points = 100
@@ -146,12 +146,12 @@ def cut_unfolding(algorithm=steepest_edge_unfolding,
         print(f"vertex {i}: center at vertex {vertex.data.centerE3} with radius {vertex.data.radiusE3}")
 
 
-    verify_unfolding(unfolding, packing, debug=True)
+    inversive_distances_test(unfolding, packing, debug=True)
     if visualize:
         cuts = (cut_graph, cut_tree) if visual_cut_graph else None
         visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts)
     if test_for_overlap:
-        return verify_unfolding(unfolding, packing, debug=True) and check_for_intersections(unfolding)
+        return inversive_distances_test(unfolding, packing, debug=True) and check_for_intersections(unfolding)
     return True
 
 def join_unfolding(algorithm=breadth_first_search_unfolding, n_points=100, n_iterations=1000, **kwargs):

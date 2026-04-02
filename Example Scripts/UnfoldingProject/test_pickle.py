@@ -1,10 +1,5 @@
 import pickle
-import sys
-
-from koebe.datastructures.dcel import DCEL
-from koebe.geometries.spherical2 import DiskS2
-
-from matlab_test import build_dcel_with_gop
+from matlab_packing_generation import build_dcel_with_gop
 
 def profile_pickle(n_points=100, file_name='packing.pkl') -> (float, float, int):
     """
@@ -32,13 +27,3 @@ def profile_pickle(n_points=100, file_name='packing.pkl') -> (float, float, int)
 
 if __name__ == "__main__":
     print(profile_pickle(n_points=500))
-    # dcel = DCEL()
-    # dcel.Vertex(dcel, data=DiskS2(1.0, 2.0, 3.0, 4.0))
-    #
-    # # Saves to binary file
-    # with open('my_dcel.pkl', 'wb') as f:
-    #     pickle.dump(dcel, f)
-    #
-    # # Loads from binary file
-    # with open('my_dcel.pkl', 'rb') as f:
-    #     dcel_loaded = pickle.load(f)
