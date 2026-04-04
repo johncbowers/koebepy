@@ -21,7 +21,14 @@ from join_unfolding_algorithms import *
 from cut_graph_construction import *
 from build_unfolding import *
 from unfolding_testing import *
-from matlab_packing_generation import *
+
+# Optional MATLAB support - only needed for build_dcel_with_gop functions
+try:
+    from matlab_packing_generation import *
+except ModuleNotFoundError:
+    # MATLAB Engine not installed - generate_coin_polygon will still work
+    # but build_dcel_with_gop functions will fail if called
+    pass
 
 
 n_points = 100
