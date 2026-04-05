@@ -82,7 +82,7 @@ from coin_unfolding_modular import (
     unfolding_geometry_from_tree,
 )
 import join_unfolding_algorithms as join_algs
-from koebepy.WIP.visualize2D import display_dcel_2d
+from WIP.visualize2D import display_dcel_2d
 from koebe.graphics.flask.multiviewserver import viewer
 from koebe.graphics.scenes.spherical2scene import S2Scene
 from koebe.graphics.scenes.euclidean2scene import makeStyle
@@ -623,7 +623,7 @@ def compare_methods(
         seed(trial_seed)
 
         print(f"\nTrial {t}/{trials} seed={trial_seed}")
-        packing = generate_coin_polygon(n_points, n_iterations)
+        packing, _ = generate_coin_polygon(n_points, n_iterations)
 
         if visualize_trial_packing_each_trial:
             visualize_trial_packing(packing, t, trial_seed)
