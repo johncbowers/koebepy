@@ -43,7 +43,7 @@ from statistics import mean, median
 koebepy_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(koebepy_root))
 
-from inversive_distance import find_overlapping_pairs, visualize_trial_unfolding
+from inversive_distance import find_overlapping_pairs, visualize_trial_unfolding, visualize_trial_packing
 from koebe.graphics.flask.multiviewserver import viewer
 
 
@@ -184,10 +184,16 @@ def load_and_verify_case(case, output_dir="overlapping_packings", visualize=Fals
         try:
             trial_index = int(case["trial"])
             method = case["method"]
+            trial_seed_str = case["metadata"].get("Trial Seed", "0")
+            trial_seed = int(trial_seed_str)
             root_idx_str = case["metadata"].get("Root vertex index", "0")
             root_idx = int(root_idx_str)
-            print(f"\nVisualizing unfolding with root_idx={root_idx}...")
-            print(f"  Debug - Unfolding has {len(unfolding.verts)} vertices, {len(unfolding.edges)} edges")
+            print(f"\nVisualizing packing and unfolding...")
+            print(f"  Packing has {len(packing.verts)} vertices")
+            print(f"  Unfolding has {len(unfolding.verts)} vertices with root_idx={root_idx}")
+            # First visualize the original spherical packing
+            visualize_trial_packing(packing, trial_index, trial_seed)
+            # Then visualize the unfolded plane with overlaps highlighted
             visualize_trial_unfolding(unfolding, method, trial_index, root_idx, overlaps)
         except Exception as e:
             print(f"Error during visualization: {e}")
