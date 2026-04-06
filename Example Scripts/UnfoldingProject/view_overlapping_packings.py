@@ -114,18 +114,23 @@ def find_cases(base_seed=None, trial=None, method=None, output_dir="overlapping_
     
     if not cases:
         return []
-    
+
+    return filter_cases(cases, base_seed=base_seed, trial=trial, method=method)
+
+
+def filter_cases(cases, base_seed=None, trial=None, method=None):
+    """Apply base-seed, trial, and method filters to an existing case list."""
     filtered = cases
-    
+
     if base_seed is not None:
         filtered = [c for c in filtered if str(c["base_seed"]) == str(base_seed)]
-    
+
     if trial is not None:
         filtered = [c for c in filtered if str(c["trial"]) == str(trial)]
-    
+
     if method is not None:
         filtered = [c for c in filtered if c["method"].lower() == method.lower()]
-    
+
     return filtered
 
 
@@ -315,7 +320,25 @@ def main():
         args.list_all = True
     
     if args.list_all:
-        list_all_cases(args.output_dir)
+        cases = list_all_cases(args.output_dir)
+        if args.visualize:
+            cases = filter_cases(
+                cases,
+                base_seed=args.base_seed,
+                trial=args.trial,
+                method=args.method,
+            )
+            if not cases:
+                print("No cases match the filters")
+                return
+            print(f"\nVisualizing {len(cases)} case(s)...")
+            for i, case in enumerate(cases, 1):
+                print(f"\n[{i}/{len(cases)}]", end=" ")
+                result = load_and_verify_case(case, args.output_dir, visualize=True)
+                if not result:
+                    print("  FAILED TO LOAD")
+                elif not result["verified"]:
+                    print("  VERIFICATION FAILED")
     
     if args.load_one:
         case_name = args.load_one

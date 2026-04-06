@@ -894,15 +894,16 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 if __name__ == "__main__":
     result = compare_methods(
-        methods=["dfs"],
+        methods=["dfs", "bfs", "shortest_paths", ],
         n_points=50,
         n_iterations=1000,
-        trials=200,
+        trials=250,
         pair_scope="all",
         include_tree_edges=False,
         visualize_trial_packing_each_trial=False,
         visualize_each_trial=False, #this shows the unfolding for each trial
-        visualize_first_overlap=True
+        visualize_first_overlap=True,
+        base_seed=1774895576523358000
     )
 
     # seed with overlap for dfs: 1774895576523358000, this overlapping does not happen every time which is something I need to look into
