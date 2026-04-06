@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<line x1="266.57" y1="959.31" x2="338.84" y2="842.09" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="280.72" y1="565.77" x2="389.19" y2="630.54" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="138.64" y1="102.86" x2="157.12" y2="217.14" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="339.15" y1="1074.99" x2="266.57" y2="959.31" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="338.84" y1="842.09" x2="266.57" y2="959.31" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="157.12" y1="217.14" x2="166.23" y2="348.37" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="560.62" y1="663.32" x2="389.19" y2="630.54" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="347.49" y1="752.21" x2="338.84" y2="842.09" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="219.11" y1="1089.67" x2="266.57" y2="959.31" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="220.17" y1="476.31" x2="280.72" y2="565.77" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="473.90" y1="453.86" x2="389.19" y2="630.54" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="333.25" y1="516.65" x2="389.19" y2="630.54" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="166.23" y1="348.37" x2="220.17" y2="476.31" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="389.19" y1="630.54" x2="347.49" y2="752.21" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="167.64" y1="808.60" x2="266.57" y2="959.31" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="221.41" y1="136.29" x2="157.12" y2="217.14" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="433.77" y1="789.34" x2="338.84" y2="842.09" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="121.12" y1="993.99" x2="266.57" y2="959.31" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="423.30" y1="959.31" x2="266.57" y2="959.31" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<line x1="285.70" y1="526.02" x2="280.72" y2="565.77" stroke="#d62728" stroke-width="2" opacity="0.9"/>
+<circle cx="266.57" cy="959.31" r="82.96" fill="none" stroke="#1f77b4" stroke-width="3"/>
+<circle cx="280.72" cy="565.77" r="33.28" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="138.64" cy="102.86" r="48.32" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="339.15" cy="1074.99" r="53.62" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="338.84" cy="842.09" r="54.74" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="157.12" cy="217.14" r="67.45" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="560.62" cy="663.32" r="81.48" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="347.49" cy="752.21" r="35.56" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="219.11" cy="1089.67" r="55.78" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="220.17" cy="476.31" r="74.74" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="473.90" cy="453.86" r="102.89" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="333.25" cy="516.65" r="33.83" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="166.23" cy="348.37" r="64.10" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="389.19" cy="630.54" r="93.05" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="167.64" cy="808.60" r="97.31" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="221.41" cy="136.29" r="35.85" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="433.77" cy="789.34" r="53.86" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="121.12" cy="993.99" r="66.57" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="423.30" cy="959.31" r="73.78" fill="none" stroke="#111111" stroke-width="1.4"/>
+<circle cx="285.70" cy="526.02" r="6.78" fill="none" stroke="#111111" stroke-width="1.4"/>
+<text x="20" y="36" font-size="24" font-family="Arial" fill="#111">Depth-first join unfolding example (n=20)</text>
+</svg>

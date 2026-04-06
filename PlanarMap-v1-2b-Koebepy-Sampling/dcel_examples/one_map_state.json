@@ -1,0 +1,357 @@
+{
+  "vert_data": [
+    [
+      0,
+      null
+    ],
+    [
+      3,
+      null
+    ],
+    [
+      6,
+      null
+    ],
+    [
+      9,
+      null
+    ],
+    [
+      12,
+      null
+    ],
+    [
+      16,
+      null
+    ],
+    [
+      20,
+      null
+    ],
+    [
+      23,
+      null
+    ]
+  ],
+  "dart_data": [
+    {
+      "edge": 0,
+      "origin": 0,
+      "face": 0,
+      "prev": 7,
+      "next": 4,
+      "twin": 3,
+      "data": null
+    },
+    {
+      "edge": 1,
+      "origin": 0,
+      "face": 1,
+      "prev": 3,
+      "next": 14,
+      "twin": 13,
+      "data": null
+    },
+    {
+      "edge": 2,
+      "origin": 0,
+      "face": 2,
+      "prev": 13,
+      "next": 8,
+      "twin": 7,
+      "data": null
+    },
+    {
+      "edge": 0,
+      "origin": 1,
+      "face": 1,
+      "prev": 17,
+      "next": 1,
+      "twin": 0,
+      "data": null
+    },
+    {
+      "edge": 3,
+      "origin": 1,
+      "face": 0,
+      "prev": 0,
+      "next": 7,
+      "twin": 6,
+      "data": null
+    },
+    {
+      "edge": 4,
+      "origin": 1,
+      "face": 3,
+      "prev": 6,
+      "next": 18,
+      "twin": 17,
+      "data": null
+    },
+    {
+      "edge": 3,
+      "origin": 2,
+      "face": 3,
+      "prev": 9,
+      "next": 5,
+      "twin": 4,
+      "data": null
+    },
+    {
+      "edge": 2,
+      "origin": 2,
+      "face": 0,
+      "prev": 4,
+      "next": 0,
+      "twin": 2,
+      "data": null
+    },
+    {
+      "edge": 5,
+      "origin": 2,
+      "face": 2,
+      "prev": 2,
+      "next": 10,
+      "twin": 9,
+      "data": null
+    },
+    {
+      "edge": 5,
+      "origin": 3,
+      "face": 3,
+      "prev": 21,
+      "next": 6,
+      "twin": 8,
+      "data": null
+    },
+    {
+      "edge": 6,
+      "origin": 3,
+      "face": 2,
+      "prev": 8,
+      "next": 13,
+      "twin": 12,
+      "data": null
+    },
+    {
+      "edge": 7,
+      "origin": 3,
+      "face": 4,
+      "prev": 12,
+      "next": 22,
+      "twin": 21,
+      "data": null
+    },
+    {
+      "edge": 6,
+      "origin": 4,
+      "face": 4,
+      "prev": 24,
+      "next": 11,
+      "twin": 10,
+      "data": null
+    },
+    {
+      "edge": 1,
+      "origin": 4,
+      "face": 2,
+      "prev": 10,
+      "next": 2,
+      "twin": 1,
+      "data": null
+    },
+    {
+      "edge": 8,
+      "origin": 4,
+      "face": 1,
+      "prev": 1,
+      "next": 17,
+      "twin": 16,
+      "data": null
+    },
+    {
+      "edge": 9,
+      "origin": 4,
+      "face": 5,
+      "prev": 16,
+      "next": 25,
+      "twin": 24,
+      "data": null
+    },
+    {
+      "edge": 8,
+      "origin": 5,
+      "face": 5,
+      "prev": 25,
+      "next": 15,
+      "twin": 14,
+      "data": null
+    },
+    {
+      "edge": 4,
+      "origin": 5,
+      "face": 1,
+      "prev": 14,
+      "next": 3,
+      "twin": 5,
+      "data": null
+    },
+    {
+      "edge": 10,
+      "origin": 5,
+      "face": 3,
+      "prev": 5,
+      "next": 21,
+      "twin": 20,
+      "data": null
+    },
+    {
+      "edge": 11,
+      "origin": 5,
+      "face": 6,
+      "prev": 20,
+      "next": 23,
+      "twin": 25,
+      "data": null
+    },
+    {
+      "edge": 10,
+      "origin": 6,
+      "face": 6,
+      "prev": 23,
+      "next": 19,
+      "twin": 18,
+      "data": null
+    },
+    {
+      "edge": 7,
+      "origin": 6,
+      "face": 3,
+      "prev": 18,
+      "next": 9,
+      "twin": 11,
+      "data": null
+    },
+    {
+      "edge": 12,
+      "origin": 6,
+      "face": 4,
+      "prev": 11,
+      "next": 24,
+      "twin": 23,
+      "data": null
+    },
+    {
+      "edge": 12,
+      "origin": 7,
+      "face": 6,
+      "prev": 19,
+      "next": 20,
+      "twin": 22,
+      "data": null
+    },
+    {
+      "edge": 9,
+      "origin": 7,
+      "face": 4,
+      "prev": 22,
+      "next": 12,
+      "twin": 15,
+      "data": null
+    },
+    {
+      "edge": 11,
+      "origin": 7,
+      "face": 5,
+      "prev": 15,
+      "next": 16,
+      "twin": 19,
+      "data": null
+    }
+  ],
+  "edge_data": [
+    [
+      0,
+      null
+    ],
+    [
+      1,
+      null
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      4,
+      null
+    ],
+    [
+      5,
+      null
+    ],
+    [
+      8,
+      null
+    ],
+    [
+      10,
+      null
+    ],
+    [
+      11,
+      null
+    ],
+    [
+      14,
+      null
+    ],
+    [
+      15,
+      null
+    ],
+    [
+      18,
+      null
+    ],
+    [
+      19,
+      null
+    ],
+    [
+      22,
+      null
+    ]
+  ],
+  "face_data": [
+    [
+      0,
+      null
+    ],
+    [
+      1,
+      null
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      5,
+      null
+    ],
+    [
+      11,
+      null
+    ],
+    [
+      15,
+      null
+    ],
+    [
+      19,
+      null
+    ]
+  ],
+  "outer_face_idx": null
+}

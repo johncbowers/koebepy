@@ -1,0 +1,799 @@
+{
+  "vert_data": [
+    [
+      0,
+      null
+    ],
+    [
+      3,
+      null
+    ],
+    [
+      6,
+      null
+    ],
+    [
+      9,
+      null
+    ],
+    [
+      12,
+      null
+    ],
+    [
+      15,
+      null
+    ],
+    [
+      18,
+      null
+    ],
+    [
+      21,
+      null
+    ],
+    [
+      24,
+      null
+    ],
+    [
+      27,
+      null
+    ],
+    [
+      30,
+      null
+    ],
+    [
+      33,
+      null
+    ],
+    [
+      36,
+      null
+    ],
+    [
+      39,
+      null
+    ],
+    [
+      42,
+      null
+    ],
+    [
+      45,
+      null
+    ],
+    [
+      48,
+      null
+    ],
+    [
+      51,
+      null
+    ],
+    [
+      54,
+      null
+    ],
+    [
+      57,
+      null
+    ]
+  ],
+  "dart_data": [
+    {
+      "edge": 0,
+      "origin": 0,
+      "face": 0,
+      "prev": 16,
+      "next": 4,
+      "twin": 3,
+      "data": null
+    },
+    {
+      "edge": 1,
+      "origin": 0,
+      "face": 1,
+      "prev": 3,
+      "next": 26,
+      "twin": 25,
+      "data": null
+    },
+    {
+      "edge": 2,
+      "origin": 0,
+      "face": 2,
+      "prev": 25,
+      "next": 17,
+      "twin": 16,
+      "data": null
+    },
+    {
+      "edge": 0,
+      "origin": 1,
+      "face": 1,
+      "prev": 28,
+      "next": 1,
+      "twin": 0,
+      "data": null
+    },
+    {
+      "edge": 3,
+      "origin": 1,
+      "face": 0,
+      "prev": 0,
+      "next": 7,
+      "twin": 6,
+      "data": null
+    },
+    {
+      "edge": 4,
+      "origin": 1,
+      "face": 3,
+      "prev": 6,
+      "next": 29,
+      "twin": 28,
+      "data": null
+    },
+    {
+      "edge": 3,
+      "origin": 2,
+      "face": 3,
+      "prev": 31,
+      "next": 5,
+      "twin": 4,
+      "data": null
+    },
+    {
+      "edge": 5,
+      "origin": 2,
+      "face": 0,
+      "prev": 4,
+      "next": 10,
+      "twin": 9,
+      "data": null
+    },
+    {
+      "edge": 6,
+      "origin": 2,
+      "face": 4,
+      "prev": 9,
+      "next": 32,
+      "twin": 31,
+      "data": null
+    },
+    {
+      "edge": 5,
+      "origin": 3,
+      "face": 4,
+      "prev": 14,
+      "next": 8,
+      "twin": 7,
+      "data": null
+    },
+    {
+      "edge": 7,
+      "origin": 3,
+      "face": 0,
+      "prev": 7,
+      "next": 13,
+      "twin": 12,
+      "data": null
+    },
+    {
+      "edge": 8,
+      "origin": 3,
+      "face": 5,
+      "prev": 12,
+      "next": 12,
+      "twin": 14,
+      "data": null
+    },
+    {
+      "edge": 7,
+      "origin": 4,
+      "face": 5,
+      "prev": 11,
+      "next": 11,
+      "twin": 10,
+      "data": null
+    },
+    {
+      "edge": 9,
+      "origin": 4,
+      "face": 0,
+      "prev": 10,
+      "next": 16,
+      "twin": 15,
+      "data": null
+    },
+    {
+      "edge": 8,
+      "origin": 4,
+      "face": 4,
+      "prev": 15,
+      "next": 9,
+      "twin": 11,
+      "data": null
+    },
+    {
+      "edge": 9,
+      "origin": 5,
+      "face": 4,
+      "prev": 18,
+      "next": 14,
+      "twin": 13,
+      "data": null
+    },
+    {
+      "edge": 2,
+      "origin": 5,
+      "face": 0,
+      "prev": 13,
+      "next": 0,
+      "twin": 2,
+      "data": null
+    },
+    {
+      "edge": 10,
+      "origin": 5,
+      "face": 2,
+      "prev": 2,
+      "next": 19,
+      "twin": 18,
+      "data": null
+    },
+    {
+      "edge": 10,
+      "origin": 6,
+      "face": 4,
+      "prev": 58,
+      "next": 15,
+      "twin": 17,
+      "data": null
+    },
+    {
+      "edge": 11,
+      "origin": 6,
+      "face": 2,
+      "prev": 17,
+      "next": 22,
+      "twin": 21,
+      "data": null
+    },
+    {
+      "edge": 12,
+      "origin": 6,
+      "face": 6,
+      "prev": 21,
+      "next": 59,
+      "twin": 58,
+      "data": null
+    },
+    {
+      "edge": 11,
+      "origin": 7,
+      "face": 6,
+      "prev": 59,
+      "next": 20,
+      "twin": 19,
+      "data": null
+    },
+    {
+      "edge": 13,
+      "origin": 7,
+      "face": 2,
+      "prev": 19,
+      "next": 25,
+      "twin": 24,
+      "data": null
+    },
+    {
+      "edge": 14,
+      "origin": 7,
+      "face": 7,
+      "prev": 24,
+      "next": 57,
+      "twin": 59,
+      "data": null
+    },
+    {
+      "edge": 13,
+      "origin": 8,
+      "face": 7,
+      "prev": 27,
+      "next": 23,
+      "twin": 22,
+      "data": null
+    },
+    {
+      "edge": 1,
+      "origin": 8,
+      "face": 2,
+      "prev": 22,
+      "next": 2,
+      "twin": 1,
+      "data": null
+    },
+    {
+      "edge": 15,
+      "origin": 8,
+      "face": 1,
+      "prev": 1,
+      "next": 28,
+      "twin": 27,
+      "data": null
+    },
+    {
+      "edge": 15,
+      "origin": 9,
+      "face": 7,
+      "prev": 30,
+      "next": 24,
+      "twin": 26,
+      "data": null
+    },
+    {
+      "edge": 4,
+      "origin": 9,
+      "face": 1,
+      "prev": 26,
+      "next": 3,
+      "twin": 5,
+      "data": null
+    },
+    {
+      "edge": 16,
+      "origin": 9,
+      "face": 3,
+      "prev": 5,
+      "next": 31,
+      "twin": 30,
+      "data": null
+    },
+    {
+      "edge": 16,
+      "origin": 10,
+      "face": 7,
+      "prev": 33,
+      "next": 27,
+      "twin": 29,
+      "data": null
+    },
+    {
+      "edge": 6,
+      "origin": 10,
+      "face": 3,
+      "prev": 29,
+      "next": 6,
+      "twin": 8,
+      "data": null
+    },
+    {
+      "edge": 17,
+      "origin": 10,
+      "face": 4,
+      "prev": 8,
+      "next": 34,
+      "twin": 33,
+      "data": null
+    },
+    {
+      "edge": 17,
+      "origin": 11,
+      "face": 7,
+      "prev": 44,
+      "next": 30,
+      "twin": 32,
+      "data": null
+    },
+    {
+      "edge": 18,
+      "origin": 11,
+      "face": 4,
+      "prev": 32,
+      "next": 37,
+      "twin": 36,
+      "data": null
+    },
+    {
+      "edge": 19,
+      "origin": 11,
+      "face": 8,
+      "prev": 36,
+      "next": 42,
+      "twin": 44,
+      "data": null
+    },
+    {
+      "edge": 18,
+      "origin": 12,
+      "face": 8,
+      "prev": 41,
+      "next": 35,
+      "twin": 34,
+      "data": null
+    },
+    {
+      "edge": 20,
+      "origin": 12,
+      "face": 4,
+      "prev": 34,
+      "next": 40,
+      "twin": 39,
+      "data": null
+    },
+    {
+      "edge": 21,
+      "origin": 12,
+      "face": 9,
+      "prev": 39,
+      "next": 39,
+      "twin": 41,
+      "data": null
+    },
+    {
+      "edge": 20,
+      "origin": 13,
+      "face": 9,
+      "prev": 38,
+      "next": 38,
+      "twin": 37,
+      "data": null
+    },
+    {
+      "edge": 22,
+      "origin": 13,
+      "face": 4,
+      "prev": 37,
+      "next": 43,
+      "twin": 42,
+      "data": null
+    },
+    {
+      "edge": 21,
+      "origin": 13,
+      "face": 8,
+      "prev": 42,
+      "next": 36,
+      "twin": 38,
+      "data": null
+    },
+    {
+      "edge": 22,
+      "origin": 14,
+      "face": 8,
+      "prev": 35,
+      "next": 41,
+      "twin": 40,
+      "data": null
+    },
+    {
+      "edge": 23,
+      "origin": 14,
+      "face": 4,
+      "prev": 40,
+      "next": 46,
+      "twin": 45,
+      "data": null
+    },
+    {
+      "edge": 19,
+      "origin": 14,
+      "face": 7,
+      "prev": 45,
+      "next": 33,
+      "twin": 35,
+      "data": null
+    },
+    {
+      "edge": 23,
+      "origin": 15,
+      "face": 7,
+      "prev": 56,
+      "next": 44,
+      "twin": 43,
+      "data": null
+    },
+    {
+      "edge": 24,
+      "origin": 15,
+      "face": 4,
+      "prev": 43,
+      "next": 49,
+      "twin": 48,
+      "data": null
+    },
+    {
+      "edge": 25,
+      "origin": 15,
+      "face": 10,
+      "prev": 48,
+      "next": 54,
+      "twin": 56,
+      "data": null
+    },
+    {
+      "edge": 24,
+      "origin": 16,
+      "face": 10,
+      "prev": 53,
+      "next": 47,
+      "twin": 46,
+      "data": null
+    },
+    {
+      "edge": 26,
+      "origin": 16,
+      "face": 4,
+      "prev": 46,
+      "next": 52,
+      "twin": 51,
+      "data": null
+    },
+    {
+      "edge": 27,
+      "origin": 16,
+      "face": 11,
+      "prev": 51,
+      "next": 51,
+      "twin": 53,
+      "data": null
+    },
+    {
+      "edge": 26,
+      "origin": 17,
+      "face": 11,
+      "prev": 50,
+      "next": 50,
+      "twin": 49,
+      "data": null
+    },
+    {
+      "edge": 28,
+      "origin": 17,
+      "face": 4,
+      "prev": 49,
+      "next": 55,
+      "twin": 54,
+      "data": null
+    },
+    {
+      "edge": 27,
+      "origin": 17,
+      "face": 10,
+      "prev": 54,
+      "next": 48,
+      "twin": 50,
+      "data": null
+    },
+    {
+      "edge": 28,
+      "origin": 18,
+      "face": 10,
+      "prev": 47,
+      "next": 53,
+      "twin": 52,
+      "data": null
+    },
+    {
+      "edge": 29,
+      "origin": 18,
+      "face": 4,
+      "prev": 52,
+      "next": 58,
+      "twin": 57,
+      "data": null
+    },
+    {
+      "edge": 25,
+      "origin": 18,
+      "face": 7,
+      "prev": 57,
+      "next": 45,
+      "twin": 47,
+      "data": null
+    },
+    {
+      "edge": 29,
+      "origin": 19,
+      "face": 7,
+      "prev": 23,
+      "next": 56,
+      "twin": 55,
+      "data": null
+    },
+    {
+      "edge": 12,
+      "origin": 19,
+      "face": 4,
+      "prev": 55,
+      "next": 18,
+      "twin": 20,
+      "data": null
+    },
+    {
+      "edge": 14,
+      "origin": 19,
+      "face": 6,
+      "prev": 20,
+      "next": 21,
+      "twin": 23,
+      "data": null
+    }
+  ],
+  "edge_data": [
+    [
+      0,
+      null
+    ],
+    [
+      1,
+      null
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      4,
+      null
+    ],
+    [
+      5,
+      null
+    ],
+    [
+      7,
+      null
+    ],
+    [
+      8,
+      null
+    ],
+    [
+      10,
+      null
+    ],
+    [
+      11,
+      null
+    ],
+    [
+      13,
+      null
+    ],
+    [
+      17,
+      null
+    ],
+    [
+      19,
+      null
+    ],
+    [
+      20,
+      null
+    ],
+    [
+      22,
+      null
+    ],
+    [
+      23,
+      null
+    ],
+    [
+      26,
+      null
+    ],
+    [
+      29,
+      null
+    ],
+    [
+      32,
+      null
+    ],
+    [
+      34,
+      null
+    ],
+    [
+      35,
+      null
+    ],
+    [
+      37,
+      null
+    ],
+    [
+      38,
+      null
+    ],
+    [
+      40,
+      null
+    ],
+    [
+      43,
+      null
+    ],
+    [
+      46,
+      null
+    ],
+    [
+      47,
+      null
+    ],
+    [
+      49,
+      null
+    ],
+    [
+      50,
+      null
+    ],
+    [
+      52,
+      null
+    ],
+    [
+      55,
+      null
+    ]
+  ],
+  "face_data": [
+    [
+      0,
+      null
+    ],
+    [
+      1,
+      null
+    ],
+    [
+      2,
+      null
+    ],
+    [
+      5,
+      null
+    ],
+    [
+      8,
+      null
+    ],
+    [
+      11,
+      null
+    ],
+    [
+      20,
+      null
+    ],
+    [
+      23,
+      null
+    ],
+    [
+      35,
+      null
+    ],
+    [
+      38,
+      null
+    ],
+    [
+      47,
+      null
+    ],
+    [
+      50,
+      null
+    ]
+  ],
+  "outer_face_idx": null
+}
