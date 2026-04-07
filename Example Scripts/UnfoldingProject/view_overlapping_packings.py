@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+# I have to do an analysis on how the number of overlapings for dfs, bfs, and shrotest_path.
+# the variable that is changing is the n_points variable
+# change tolerance to 3e-8 in hyPacker.maximalPacking, actually just change the parameter in coin_unfolding_modular
+# try 10k passes (iterations)
 """
 View and analyze saved overlapping DCEL structures.
 
