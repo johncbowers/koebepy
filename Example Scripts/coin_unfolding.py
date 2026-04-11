@@ -20,8 +20,8 @@ from koebe.graphics.flask.multiviewserver import viewer
 from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
 
-n_points = 20
-n_iterations = 100
+n_points = 100
+n_iterations = 10000
 
 print(f"Generating random convex hull of {n_points} points and computing a Tutte embedding... ")
 poly = randomConvexHullE3(n_points) # Generate a random polyhedron with 16 vertices. 
@@ -35,6 +35,9 @@ hyp_packing, _ = maximalPacking(
     num_passes=n_iterations 
 )
 packing = canonical_spherical_projection(hyp_packing)
+packing = hyp_packing.duplicate(
+        vdata_transform=lambda d: (1+random())*DiskOP2.fromCircleE2(d.toPoincareCircleE2()).toDiskS2()
+    )
 packing.markIndices()
 print("\tdone.")
 
@@ -64,7 +67,10 @@ for i in range(1, len(nbsE2)):
     v0 = edgesS2[0].data.toVectorE3() - packing.verts[0].data.centerE3
     vi = edgesS2[i].data.toVectorE3() - packing.verts[0].data.centerE3
     print(f"Placing vertex {nbsS2[i].idx} with parent 0")
+
+    # Signed angle between v0 and vi (probably found at https://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane)
     theta = math.atan2(v0.cross(vi).dot(n), v0.dot(vi))
+    
     nbsE2[i].data = CircleE2(
         PointE2(
             (packing.verts[0].data.radiusE3 + nbsS2[i].data.radiusE3) * math.cos(theta),
@@ -109,6 +115,8 @@ while len(pq) > 0:
         parent_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v0.parent.idx].data).toVectorE3() - packing.verts[v0_idx].data.centerE3
         v1_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v1_idx].data).toVectorE3() - packing.verts[v0_idx].data.centerE3
         n = packing.verts[v0_idx].data.basis3.normalize()
+
+        # Signed angle between v0 and vi (probably found at https://stackoverflow.com/questions/5188561/signed-angle-between-two-3d-vectors-with-same-origin-within-the-same-plane)
         theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
         
         v = parent_dirE2.rotate(theta).normalize()
