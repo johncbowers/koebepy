@@ -77,7 +77,16 @@ def canonical_spherical_layout(packingS2, n_iterations=50):
         if curr_norm > last_norm:
             step_ratio *= 0.5
         last_norm = curr_norm
-        print(curr_norm)
+        # print(curr_norm)
+
+        # Print the conformal energy E(x) = sum log(1 - <x, p_i>) evaluated at x = 0
+        # At x = 0, each term is log(1 - 0) = log(1) = 0, so E(0) = 0 always.
+        # Instead, evaluate E at the current barycenter x = center_of_mass:
+        conformal_energy = sum(
+            math.log(1 - (center_of_mass.x * p.x + center_of_mass.y * p.y + center_of_mass.z * p.z))
+            for p in points_to_center
+        )
+        print(f"E = {conformal_energy:.12f}  |b| = {curr_norm:.12e}")
         # center_of_mass = step_ratio * center_of_mass
 
         # Create a DiskS2 object representing the center of mass (note it will have imaginary radius, since this is a timelike ray
