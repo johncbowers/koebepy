@@ -1,6 +1,36 @@
 """
-IMPORTANT WARNING:
-    To get this code running you will need to comment out lines 125 and on of coin_unfolding_modular
+
+
+Orick version:
+Summary:
+randomConvexHullE3: Scales roughly O(n^2) with respect to n_points (quadratic growth)
+newton_packing (Orick's): Scales roughly linearly with n_points.
+canonical_spherical_layout: Scales roughly linearly
+
+(All the below is only ran over 5 trials and eyeballed)
+n_points = 200
+avg Elapsed time for computing randomConvexHullE3: 0.15
+avg Elapsed time for computing newton_packing (Orick's Newton method): 0.028
+avg Elapsed time for computing canonical_spherical_layout: 8.9
+
+n_points = 100
+avg Elapsed time for computing randomConvexHullE3: 0.04
+avg Elapsed time for computing newton_packing (Orick's Newton method): 0.015
+avg Elapsed time for computing canonical_spherical_layout: 4.4
+
+Now with n_points = 50
+Elapsed time for computing randomConvexHullE3: 0.009
+Elapsed time for computing newton_packing (Orick's Newton method): 0.009
+avg Elapsed time for computing canonical_spherical_layout: 2.1
+
+Now with n_points = 25
+avg Elapsed time for computing randomConvexHullE3: 0.002
+avg Elapsed time for computing newton_packing (Orick's Newton method): 0.004
+avg Elapsed time for computing canonical_spherical_layout: 0.99
+
+Previous version:
+n_points = 100
+avg Elapsed time for computing maximalPacking: 3.2
 
 Compare BFS and DFS unfolding trees using inversive-distance metrics.
 
@@ -62,6 +92,8 @@ BFS has 0% pair violation rate trials
 import sys
 import os
 from pathlib import Path
+import csv
+from datetime import datetime
 
 # Add koebepy root to path for imports
 koebepy_root = Path(__file__).parent.parent.parent
@@ -87,7 +119,7 @@ from koebe.algorithms.hypPacker import *
 from koebe.algorithms.tutteEmbeddings import tutteEmbeddingE2
 
 from coin_unfolding_modular import (
-    generate_coin_polygon,
+    generate_coin_polygon_orick,
     unfolding_geometry_from_tree,
 )
 import join_unfolding_algorithms as join_algs
@@ -663,6 +695,47 @@ def visualize_trial_packing(packing: DCEL, trial_index: int, trial_seed: int):
     viewer.run()
 
 
+def _ensure_parent_dir(path: str):
+    """Create parent directory for a file path when needed."""
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+
+def _export_trial_rows_to_csv(csv_path: str, rows: list[dict]):
+    """Append trial rows to CSV, writing header once for new files."""
+    if not rows:
+        return
+
+    fieldnames = [
+        "run_id",
+        "run_timestamp",
+        "root_seed",
+        "trial_seed",
+        "trial",
+        "method",
+        "n_points",
+        "pairs",
+        "min_plane",
+        "min_sphere",
+        "min_delta",
+        "mean_delta",
+        "median_delta",
+        "viol_plane_lt_sphere",
+        "num_overlappings",
+    ]
+
+    _ensure_parent_dir(csv_path)
+    file_exists = os.path.exists(csv_path)
+    write_header = (not file_exists) or os.path.getsize(csv_path) == 0
+
+    with open(csv_path, "a", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        if write_header:
+            writer.writeheader()
+        writer.writerows(rows)
+
+
 def evaluate_algorithm(packing: DCEL, mode: str, pair_scope: str = "all", include_tree_edges: bool = False):
     """Run one unfolding method, place geometry, and summarize metrics."""
     registry = _resolve_method_registry()
@@ -703,6 +776,10 @@ def compare_methods(
         base_seed: int | None = None,
         save_overlapping_decls: bool = True,
         overlapping_output_dir: str = "overlapping_packings",
+        save_trial_data: bool = False,
+        trial_data_output_dir: str = "n_points_data",
+        trial_data_filename: str = "unfolding_method_metrics.csv",
+        run_id: str | None = None,
 ):
     """Run multiple trials and print summaries for selected unfolding methods."""
     selected_methods, _registry = _parse_method_selection(methods)
@@ -711,6 +788,10 @@ def compare_methods(
     has_visualized_overlap = False
     resolved_base_seed = int(time.time_ns()) if base_seed is None else int(base_seed)
     seed_rng = Random(resolved_base_seed)
+    resolved_run_id = run_id if run_id is not None else f"run_{resolved_base_seed}"
+    run_timestamp = datetime.now().isoformat(timespec="seconds")
+    trial_csv_rows = []
+    trial_data_csv_path = os.path.join(trial_data_output_dir, trial_data_filename)
     trial_seeds = []
     saved_overlapping_decls = []
 
@@ -727,7 +808,7 @@ def compare_methods(
         seed(trial_seed)
 
         print(f"\nTrial {t}/{trials} seed={trial_seed}")
-        packing, _ = generate_coin_polygon(n_points, n_iterations)
+        packing, _ = generate_coin_polygon_orick(n_points, n_iterations)
 
         if visualize_trial_packing_each_trial:
             visualize_trial_packing(packing, t, trial_seed)
@@ -767,6 +848,25 @@ def compare_methods(
                 )
                 saved_overlapping_decls.append(save_result)
 
+            if save_trial_data:
+                trial_csv_rows.append({
+                    "run_id": resolved_run_id,
+                    "run_timestamp": run_timestamp,
+                    "root_seed": resolved_base_seed,
+                    "trial_seed": trial_seed,
+                    "trial": t,
+                    "method": method_name,
+                    "n_points": n_points,
+                    "pairs": summary["pair_count"],
+                    "min_plane": summary["min_plane"],
+                    "min_sphere": summary["min_sphere"],
+                    "min_delta": summary["min_delta"],
+                    "mean_delta": summary["mean_delta"],
+                    "median_delta": summary["median_delta"],
+                    "viol_plane_lt_sphere": summary["violations_plane_lt_sphere"],
+                    "num_overlappings": len(overlaps),
+                })
+
             print(_line(summary))
 
     print("\nAggregate")
@@ -786,12 +886,19 @@ def compare_methods(
     if save_overlapping_decls and saved_overlapping_decls:
         print(f"\n{len(saved_overlapping_decls)} overlapping DCEL(s) saved to '{overlapping_output_dir}/'")
 
+    if save_trial_data and trial_csv_rows:
+        _export_trial_rows_to_csv(trial_data_csv_path, trial_csv_rows)
+        print(f"\nSaved {len(trial_csv_rows)} trial metric row(s) to '{trial_data_csv_path}'")
+
     return {
         "methods": selected_methods,
+        "run_id": resolved_run_id,
+        "run_timestamp": run_timestamp,
         "base_seed": resolved_base_seed,
         "trial_seeds": trial_seeds,
         "runs": runs_by_method,
         "profiles": combined_profiles,
+        "trial_data_csv_path": trial_data_csv_path if save_trial_data else None,
         "saved_overlapping_decls": saved_overlapping_decls,
     }
 
@@ -808,6 +915,10 @@ def compare_bfs_dfs(
         base_seed: int | None = None,
         save_overlapping_decls: bool = True,
         overlapping_output_dir: str = "overlapping_packings",
+        save_trial_data: bool = False,
+        trial_data_output_dir: str = "n_points_data",
+        trial_data_filename: str = "unfolding_method_metrics.csv",
+        run_id: str | None = None,
 ):
     """Backward-compatible wrapper: run compare_methods with BFS and DFS.
 
@@ -829,15 +940,22 @@ def compare_bfs_dfs(
         base_seed=base_seed,
         save_overlapping_decls=save_overlapping_decls,
         overlapping_output_dir=overlapping_output_dir,
+        save_trial_data=save_trial_data,
+        trial_data_output_dir=trial_data_output_dir,
+        trial_data_filename=trial_data_filename,
+        run_id=run_id,
     )
 
     return {
+        "run_id": result.get("run_id"),
+        "run_timestamp": result.get("run_timestamp"),
         "base_seed": result["base_seed"],
         "trial_seeds": result["trial_seeds"],
         "bfs_runs": result["runs"].get("bfs", []),
         "dfs_runs": result["runs"].get("dfs", []),
         "bfs_profile": result["profiles"].get("bfs", {}),
         "dfs_profile": result["profiles"].get("dfs", {}),
+        "trial_data_csv_path": result.get("trial_data_csv_path"),
         "saved_overlapping_decls": result.get("saved_overlapping_decls", []),
     }
 
@@ -895,14 +1013,16 @@ def _aggregate_line(label: str, summaries: list[dict]):
 if __name__ == "__main__":
     result = compare_methods(
         methods=["dfs", "bfs", "shortest_paths", ],
-        n_points=100,
+        n_points=25,
         n_iterations=1000,
         trials=5,
         pair_scope="all",
         include_tree_edges=False,
         visualize_trial_packing_each_trial=False,
         visualize_each_trial=False, #this shows the unfolding for each trial
-        visualize_first_overlap=True
+        visualize_first_overlap=False,
+        save_trial_data=True,
+        run_id="01_100"
     )
 
     # seed with overlap for dfs: 1774895576523358000, this overlapping does not happen every time which is something I need to look into

@@ -1,7 +1,10 @@
 # Import geometries
 import time
+import sys
+import io
 
-from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
+from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies, canonical_spherical_layout
+from koebe.algorithms.circlepackings.newton_packing import newton_packing
 from koebe.geometries.euclidean2 import *
 from koebe.geometries.euclidean3 import *
 
@@ -42,7 +45,11 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     :param n_iterations:
     :return: ()
     """
+    start_time = time.time()
     convex_hull = randomConvexHullE3(n_points)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time for computing randomConvexHullE3: {elapsed_time}")
     convex_hull.outerFace = convex_hull.faces[0]  # Arbitrarily select an outer face.
 
     start_time = time.time()
@@ -53,8 +60,62 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     )
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"Elapsed time for computing packing: {elapsed_time}")
-    packing = canonical_spherical_projection(hyp_packing)
+    print(f"Elapsed time for computing maximalPacking: {elapsed_time}")
+    # Suppress verbose output from canonical_spherical_projection computation
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    sys.stdout = io.StringIO()
+    sys.stderr = io.StringIO()
+    start_time = time.time()
+    try:
+        packing = canonical_spherical_projection(hyp_packing, n_iterations=n_iterations)
+    finally:
+        end_time = time.time()
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time for computing canonical_spherical_projection: {elapsed_time}")
+    packing.markIndices()
+
+    compute_tangencies(packing)
+    return packing, convex_hull
+
+def generate_coin_polygon_orick(n_points, n_iterations, seed=42):
+    """
+    Generates a coin polygon using Orick's Newton method (faster packing algorithm).
+    Returns tuple of (packing, convex_hull).
+    :param n_points: Number of points for convex hull
+    :param n_iterations: Number of iterations for canonical layout refinement
+    :param seed: Random seed (default 42)
+    :return: (packing, convex_hull) tuple
+    """
+    start_time = time.time()
+    convex_hull = randomConvexHullE3(n_points)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time for computing randomConvexHullE3: {elapsed_time}")
+    convex_hull.outerFace = convex_hull.faces[0]  # Arbitrarily select an outer face.
+
+    start_time = time.time()
+    packing = newton_packing(convex_hull, tol=3e-8, quiet=True)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time for computing newton_packing (Orick's Newton method): {elapsed_time}")
+
+    # Suppress verbose output from canonical_spherical_projection computation
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    sys.stdout = io.StringIO()
+    sys.stderr = io.StringIO()
+    start_time = time.time()
+    try:
+        packing = canonical_spherical_layout(packing, n_iterations=n_iterations)
+    finally:
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+    print(f"Elapsed time for computing canonical_spherical_layout: {elapsed_time}")
     packing.markIndices()
 
     compute_tangencies(packing)
