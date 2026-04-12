@@ -49,6 +49,7 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     hyp_packing, _ = maximalPacking(
         convex_hull,
         num_passes=n_iterations,
+        tolerance=float(3e-8)
     )
     end_time = time.time()
     elapsed_time = end_time - start_time
