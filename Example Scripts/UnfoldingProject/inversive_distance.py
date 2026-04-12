@@ -59,6 +59,14 @@ DFS has 0.0017% pair-violation rate over 1000 trials
 BFS has 0% pair violation rate trials
 """
 
+import sys
+import os
+from pathlib import Path
+
+# Add koebepy root to path for imports
+koebepy_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(koebepy_root))
+
 from math import *
 from random import *
 from collections import defaultdict, deque
@@ -66,6 +74,7 @@ from statistics import mean, median
 import heapq
 import time
 import argparse
+import pickle
 
 from koebe.algorithms.circlepackings.layout import canonical_spherical_projection, compute_tangencies
 from koebe.geometries.spherical2 import *
@@ -442,6 +451,98 @@ def find_overlapping_pairs(unfolding: DCEL, tol: float = 1e-10):
     return overlaps
 
 
+def save_overlapping_dcel(
+    packing: DCEL,
+    unfolding: DCEL,
+    mode: str,
+    trial_index: int,
+    trial_seed: int,
+    base_seed: int,
+    root_idx: int,
+    overlaps: list[tuple[int, int]],
+    output_dir: str = "overlapping_packings"
+):
+    """Save both packing and unfolding DCEL structures when overlapping is detected.
+    
+    Args:
+        packing: The original coin packing (spherical DCEL)
+        unfolding: The unfolded plane DCEL with overlaps
+        mode: Unfolding method name (e.g., 'bfs', 'dfs')
+        trial_index: Trial number
+        trial_seed: Random seed for this trial
+        base_seed: Base seed for the entire trial run
+        root_idx: Root vertex index of the unfolding tree
+        overlaps: List of overlapping circle pairs
+        output_dir: Directory to store the pickled DCEL files
+    
+    Returns:
+        dict with saved file paths and metadata
+    """
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    
+    # Prepare metadata
+    num_overlaps = len(overlaps)
+    packing_size = len(packing.verts)
+    
+    # Create descriptive filenames - include base_seed for unique identification
+    base_name = f"base{base_seed}_trial{trial_index:04d}_{mode}_{num_overlaps}overlaps_{packing_size}verts"
+    packing_filename = os.path.join(output_dir, f"{base_name}_packing.pkl")
+    unfolding_filename = os.path.join(output_dir, f"{base_name}_unfolding.pkl")
+    metadata_filename = os.path.join(output_dir, f"{base_name}_metadata.txt")
+    
+    # Mark indices before pickling (required by DCEL)
+    packing.markIndices()
+    unfolding.markIndices()
+    
+    # Save packing DCEL
+    with open(packing_filename, 'wb') as f:
+        pickle.dump(packing, f, protocol=pickle.HIGHEST_PROTOCOL)
+    
+    # Save unfolding DCEL
+    with open(unfolding_filename, 'wb') as f:
+        pickle.dump(unfolding, f, protocol=pickle.HIGHEST_PROTOCOL)
+    
+    # Save metadata as human-readable text
+    with open(metadata_filename, 'w') as f:
+        f.write(f"Overlapping DCEL Detection\n")
+        f.write(f"==========================\n")
+        f.write(f"Base Seed: {base_seed}\n")
+        f.write(f"Trial: {trial_index}\n")
+        f.write(f"Trial Seed: {trial_seed}\n")
+        f.write(f"Method: {mode}\n")
+        f.write(f"Root vertex index: {root_idx}\n")
+        f.write(f"Number of vertices: {packing_size}\n")
+        f.write(f"Number of overlapping pairs detected: {num_overlaps}\n")
+        f.write(f"First 5 overlapping pairs: {overlaps[:5]}\n\n")
+        f.write(f"To load these DCEL structures:\n")
+        f.write(f"  import pickle\n")
+        f.write(f"  with open('{packing_filename}', 'rb') as f:\n")
+        f.write(f"      packing = pickle.load(f)\n")
+        f.write(f"  with open('{unfolding_filename}', 'rb') as f:\n")
+        f.write(f"      unfolding = pickle.load(f)\n")
+        f.write(f"  packing.markIndices()\n")
+        f.write(f"  unfolding.markIndices()\n")
+    
+    print(f"  Saved overlapping DCEL: {packing_filename}")
+    print(f"  Saved overlapping DCEL: {unfolding_filename}")
+    print(f"  Saved metadata: {metadata_filename}")
+    
+    return {
+        "packing_file": packing_filename,
+        "unfolding_file": unfolding_filename,
+        "metadata_file": metadata_filename,
+        "trial": trial_index,
+        "method": mode,
+        "base_seed": base_seed,
+        "trial_seed": trial_seed,
+        "num_overlaps": num_overlaps,
+        "num_verts": packing_size,
+        "root_idx": root_idx,
+    }
+
+
 def visualize_overlapping_unfolding(unfolding: DCEL, mode: str, trial_index: int, root_idx: int, overlaps: list[tuple[int, int]]):
     """Visualize one unfolding that contains overlaps."""
     print(
@@ -600,6 +701,8 @@ def compare_methods(
     visualize_each_trial: bool = False,
         visualize_first_overlap: bool = True,
         base_seed: int | None = None,
+        save_overlapping_decls: bool = True,
+        overlapping_output_dir: str = "overlapping_packings",
 ):
     """Run multiple trials and print summaries for selected unfolding methods."""
     selected_methods, _registry = _parse_method_selection(methods)
@@ -609,6 +712,7 @@ def compare_methods(
     resolved_base_seed = int(time.time_ns()) if base_seed is None else int(base_seed)
     seed_rng = Random(resolved_base_seed)
     trial_seeds = []
+    saved_overlapping_decls = []
 
     print("\nMethods under test:")
     print(", ".join(selected_methods))
@@ -649,6 +753,20 @@ def compare_methods(
                 visualize_overlapping_unfolding(unfolding, method_name, t, root_idx, overlaps)
                 has_visualized_overlap = True
 
+            if save_overlapping_decls and len(overlaps) > 0:
+                save_result = save_overlapping_dcel(
+                    packing,
+                    unfolding,
+                    method_name,
+                    t,
+                    trial_seed,
+                    resolved_base_seed,
+                    root_idx,
+                    overlaps,
+                    output_dir=overlapping_output_dir,
+                )
+                saved_overlapping_decls.append(save_result)
+
             print(_line(summary))
 
     print("\nAggregate")
@@ -665,12 +783,16 @@ def compare_methods(
     print(f"base_seed={resolved_base_seed}")
     print(f"trial_seeds={trial_seeds}")
 
+    if save_overlapping_decls and saved_overlapping_decls:
+        print(f"\n{len(saved_overlapping_decls)} overlapping DCEL(s) saved to '{overlapping_output_dir}/'")
+
     return {
         "methods": selected_methods,
         "base_seed": resolved_base_seed,
         "trial_seeds": trial_seeds,
         "runs": runs_by_method,
         "profiles": combined_profiles,
+        "saved_overlapping_decls": saved_overlapping_decls,
     }
 
 
@@ -684,6 +806,8 @@ def compare_bfs_dfs(
     visualize_each_trial: bool = False,
         visualize_first_overlap: bool = True,
         base_seed: int | None = None,
+        save_overlapping_decls: bool = True,
+        overlapping_output_dir: str = "overlapping_packings",
 ):
     """Backward-compatible wrapper: run compare_methods with BFS and DFS.
 
@@ -703,6 +827,8 @@ def compare_bfs_dfs(
         visualize_each_trial=visualize_each_trial,
         visualize_first_overlap=visualize_first_overlap,
         base_seed=base_seed,
+        save_overlapping_decls=save_overlapping_decls,
+        overlapping_output_dir=overlapping_output_dir,
     )
 
     return {
@@ -712,6 +838,7 @@ def compare_bfs_dfs(
         "dfs_runs": result["runs"].get("dfs", []),
         "bfs_profile": result["profiles"].get("bfs", {}),
         "dfs_profile": result["profiles"].get("dfs", {}),
+        "saved_overlapping_decls": result.get("saved_overlapping_decls", []),
     }
 
 
@@ -767,17 +894,18 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 if __name__ == "__main__":
     result = compare_methods(
-        methods=["dfs"],
-        n_points=50,
+        methods=["dfs", "bfs", "shortest_paths", ],
+        n_points=100,
         n_iterations=1000,
-        trials=10,
+        trials=5,
         pair_scope="all",
         include_tree_edges=False,
         visualize_trial_packing_each_trial=False,
         visualize_each_trial=False, #this shows the unfolding for each trial
-        visualize_first_overlap=True,
-        base_seed=1774895576523358000,
+        visualize_first_overlap=True
     )
+
+    # seed with overlap for dfs: 1774895576523358000, this overlapping does not happen every time which is something I need to look into
 
     # Edit the compare_methods(...) arguments above to choose methods/settings.
     # Available methods:

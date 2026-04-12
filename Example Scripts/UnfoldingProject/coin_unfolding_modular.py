@@ -21,7 +21,14 @@ from join_unfolding_algorithms import *
 from cut_graph_construction import *
 from build_unfolding import *
 from unfolding_testing import *
-from matlab_packing_generation import *
+
+# Optional MATLAB support - only needed for build_dcel_with_gop functions
+try:
+    from matlab_packing_generation import *
+except ModuleNotFoundError:
+    # MATLAB Engine not installed - generate_coin_polygon will still work
+    # but build_dcel_with_gop functions will fail if called
+    pass
 
 
 n_points = 100
@@ -42,7 +49,7 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     hyp_packing, _ = maximalPacking(
         convex_hull,
         num_passes=n_iterations,
-        tolerance=1e-6,
+        tolerance=float(3e-8)
     )
     end_time = time.time()
     elapsed_time = end_time - start_time
