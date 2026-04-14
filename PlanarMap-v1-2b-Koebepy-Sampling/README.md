@@ -2,7 +2,7 @@
 
 **Convert PlanarMap-generated triangulations into koebepy DCEL state JSON files.**
 
-This folder contains a Python pipeline that bridges PlanarMap (an external tool by Gilles Schaeffer) with koebepy's DCEL representation. The original PlanarMap source is kept external; only the bridge code is committed here.
+This folder contains a Python pipeline that bridges PlanarMap (an external tool by Gilles Schaeffer) with koebepy's DCEL representation. The original PlanarMap source is kept external; only the bridge code is committed here. (Note that the Original Planar Map code uses deprecated lrand() and srand() functions)
 
 **Attribution:**
 - PlanarMap by Gilles Schaeffer
@@ -112,10 +112,15 @@ In dual mode (`-d`) with cubic maps (`-C2`):
 - `-F<n>` controls triangulation vertices
 - `-V<n>` controls triangulation faces
 
+Important exact-size note (from `planarmap -h`):
+- `-I<nb>` means approximate size `[N +/- I]`
+- Use `-I0` to force exact size
+- For exactly 100 triangulation vertices, use `-F100 -I0 -d`
+
 Validated 100-vertex triangulation example:
 
 ```bash
-python batch_dcel_state_generator.py --count 1 -C2 -F100 -d
+python batch_dcel_state_generator.py --count 1 -C3 -F100 -I0 -d
 ```
 
 ### Quick Recipes (Copy/Paste)
@@ -131,25 +136,31 @@ $env:PLANARMAP_BIN = "Path\PlanarMap-v1-2b\planarmap.exe"
 Generate 1 DCEL state file with 100 vertices:
 
 ```bash
-python batch_dcel_state_generator.py --count 1 -C2 -F100 -d
+python batch_dcel_state_generator.py --count 1 -C3 -F100 -I0 -d
 ```
 
 Generate 100 DCEL state files with 100 vertices each:
 
 ```bash
-python batch_dcel_state_generator.py --count 100 -C2 -F100 -d
+python batch_dcel_state_generator.py --count 100 -C3 -F100 -I0 -d
 ```
 
 Generate 500 DCEL state files with 80 vertices each:
 
 ```bash
-python batch_dcel_state_generator.py --count 500 -C2 -F80 -d
+python batch_dcel_state_generator.py --count 500 -C3 -F80 -I0 -d
 ```
 
 Use a fixed seed for reproducible runs:
 
 ```bash
-python batch_dcel_state_generator.py --count 50 --seed 12345 -C2 -F100 -d
+python batch_dcel_state_generator.py --count 50 --seed 12345 -C3 -F100 -I0 -d
+```
+
+View one generated state directly with the fast Orick/Newton pipeline:
+
+```bash
+python view_coin_polyhedron_orick_from_state.py --state ./state_output/triangulation_0000_map0_state.json
 ```
 
 See the original PlanarMap-v1-b2 files for a more comprehensive understanding of available flags. 
