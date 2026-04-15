@@ -1016,9 +1016,9 @@ def _aggregate_line(label: str, summaries: list[dict]):
 if __name__ == "__main__":
     result = compare_methods(
         methods=["steepest_edge"],
-        n_points=100,
+        n_points=500,
         n_iterations=1000,
-        trials=1,
+        trials=10,
         pair_scope="all",
         include_tree_edges=False,
         visualize_trial_packing_each_trial=False,

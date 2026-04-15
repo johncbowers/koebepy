@@ -145,7 +145,7 @@ def create_join_tree_from_cut_tree(packing: DCEL, cut_set: set[int], root_idx: i
         v.parent = None
 
     visited = set()
-    tree_set = set(unfolding.verts[root_idx])
+    tree_set: set = {unfolding.verts[root_idx]}
     fringe = deque([unfolding.verts[root_idx]])
 
     # Build using DFS
