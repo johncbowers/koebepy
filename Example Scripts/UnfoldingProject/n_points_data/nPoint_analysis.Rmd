@@ -1,0 +1,257 @@
+---
+title: "Basic analysis of the affects of n_points on overlaps and delta metrics"
+author: "Joe DiRocco"
+date: "April 10, 2026"
+output: html_document
+---
+
+# Observations
+
+It is made clear through the visualizations that as n_points increases so does
+the probability of an overlapping. Extreme outliers were observed more often as n_points increased leading to heavy skewness in the delta metrics. 
+Our previous understanding of the overlap risk of these unfolding methods has held true. At n_points = 100 DFS has a 7% overlap rate, shortest_paths nearly 1%, and bfs with 0.4%. 
+
+
+```{r include=FALSE}
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(ggplot2)
+  library(tidyr)
+  library(readr)
+  library(broom)
+})
+
+data_path <- "unfolding_method_metrics.csv"
+
+df <- read_csv(data_path, show_col_types = FALSE) %>%
+  mutate(
+    method = as.factor(method),
+    n_points = as.integer(n_points),
+    has_overlap = num_overlappings > 0,
+    overlap_rate = num_overlappings / pairs,
+    neg_min_delta = min_delta < 0
+  )
+
+cat("Rows:", nrow(df), "\n")
+cat("Methods:", paste(sort(unique(df$method)), collapse = ", "), "\n")
+cat("n_points:", paste(sort(unique(df$n_points)), collapse = ", "), "\n\n")
+```
+
+# Summary by n_points only
+
+```{r, echo=FALSE, warning=FALSE}
+summary_by_n <- df %>%
+  group_by(n_points) %>%
+  summarise(
+    trials = n(),
+    overlap_prob = mean(has_overlap),
+    mean_num_overlappings = mean(num_overlappings),
+    mean_min_delta = mean(min_delta),
+    median_min_delta = median(min_delta),
+    mean_mean_delta = mean(mean_delta),
+    median_mean_delta = median(mean_delta),
+    mean_median_delta = mean(median_delta),
+    .groups = "drop"
+  )
+
+knitr::kable(summary_by_n)
+```
+
+
+# Summary by method and n_points
+```{r, echo=FALSE, warning=FALSE}
+summary_by_method_n <- df %>%
+  group_by(method, n_points) %>%
+  summarise(
+    trials = n(),
+    overlap_prob = mean(has_overlap),
+    mean_num_overlappings = mean(num_overlappings),
+    mean_min_delta = mean(min_delta),
+    median_min_delta = median(min_delta),
+    mean_mean_delta = mean(mean_delta),
+    median_mean_delta = median(mean_delta),   # add this
+    mean_median_delta = mean(median_delta),
+    median_median_delta = median(median_delta), # add this
+    neg_min_delta_prob = mean(neg_min_delta),
+    .groups = "drop"
+  )
+
+knitr::kable(summary_by_method_n)
+```
+
+# Tail-risk comparison for min_delta
+
+This compares the extreme lower tail (worst 5%) to a less-extreme tail band
+(15-20th percentile, labeled here as the 80-85% worst band) to show how sharp
+the drop becomes near the worst outcomes.
+
+```{r, echo=FALSE, warning=FALSE}
+tail_profile <- df %>%
+  group_by(method, n_points) %>%
+  summarise(
+    q05 = quantile(min_delta, 0.05, na.rm = TRUE),
+    q15 = quantile(min_delta, 0.15, na.rm = TRUE),
+    q20 = quantile(min_delta, 0.20, na.rm = TRUE),
+    band_80_85_mid = (q15 + q20) / 2,
+    tail_drop = band_80_85_mid - q05,
+    tail_drop_ratio = if_else(abs(band_80_85_mid) > 0, q05 / band_80_85_mid, NA_real_),
+    .groups = "drop"
+  )
+
+knitr::kable(tail_profile)
+```
+
+```{r, echo=FALSE, warning=FALSE}
+tail_profile_long <- tail_profile %>%
+  select(method, n_points, q05, band_80_85_mid) %>%
+  pivot_longer(
+    cols = c(q05, band_80_85_mid),
+    names_to = "tail_metric",
+    values_to = "value"
+  )
+
+ggplot(tail_profile_long, aes(x = n_points, y = value, color = method, linetype = tail_metric)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "min_delta tail comparison: worst 5% vs 80-85% worst band",
+    x = "n_points",
+    y = "min_delta",
+    color = "method",
+    linetype = "tail metric"
+  ) +
+  theme_minimal()
+```
+
+Interpretation: `q05` shows the worst-case behavior in the lower tail, while
+`band_80_85_mid` is a less extreme bad-case baseline. DFS has a sharp tail cliff and a small fraction of
+trials become much worse than the rest.
+
+
+```{r, include=FALSE}
+# Overlap probability model
+overlap_model <- glm(
+  has_overlap ~ n_points + method,
+  data = df,
+  family = binomial()
+)
+
+tidy(overlap_model)
+
+# Delta trend models
+lm_min_delta <- lm(min_delta ~ n_points * method, data = df)
+lm_mean_delta <- lm(mean_delta ~ n_points * method, data = df)
+lm_median_delta <- lm(median_delta ~ n_points * method, data = df)
+
+tidy(lm_min_delta)
+
+tidy(lm_mean_delta)
+
+tidy(lm_median_delta)
+```
+
+# Visualizations
+```{r}
+
+# Overlap probability by n_points and method
+p_overlap_prob <- summary_by_method_n %>%
+  ggplot(aes(x = n_points, y = overlap_prob, color = method)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  scale_y_continuous(limits = c(0, 0.15)) +
+  labs(
+    title = "Overlap Probability vs n_points",
+    x = "n_points",
+    y = "P(num_overlappings > 0)",
+    color = "method"
+  ) +
+  theme_minimal()
+
+p_overlap_prob
+
+# Mean number of overlaps by n_points and method
+p_overlap_count <- summary_by_method_n %>%
+  ggplot(aes(x = n_points, y = mean_num_overlappings, color = method)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Mean Number of Overlappings vs n_points",
+    x = "n_points",
+    y = "Mean num_overlappings",
+    color = "method"
+  ) +
+  theme_minimal()
+
+print(p_overlap_count)
+
+# Delta trends (summaries)
+delta_summary_long <- summary_by_method_n %>%
+  select(method, n_points, mean_min_delta, mean_mean_delta, mean_median_delta) %>%
+  pivot_longer(
+    cols = c(mean_min_delta, mean_mean_delta, mean_median_delta),
+    names_to = "metric",
+    values_to = "value"
+  )
+
+p_delta_summary <- delta_summary_long %>%
+  ggplot(aes(x = n_points, y = value, color = method)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~metric, scales = "free_y") +
+  labs(
+    title = "Delta Metrics vs n_points",
+    x = "n_points",
+    y = "Metric value",
+    color = "method"
+  ) +
+  theme_minimal()
+
+p_delta_summary
+
+# Median-based delta trends
+delta_median_long <- summary_by_method_n %>%
+  select(method, n_points, median_min_delta, median_mean_delta, median_median_delta) %>%
+  pivot_longer(
+    cols = c(median_min_delta, median_mean_delta, median_median_delta),
+    names_to = "metric",
+    values_to = "value"
+  )
+
+p_delta_median <- delta_median_long %>%
+  ggplot(aes(x = n_points, y = value, color = method)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~metric, scales = "free_y") +
+  labs(
+    title = "Median Delta Metrics vs n_points",
+    x = "n_points",
+    y = "Median value",
+    color = "method"
+  ) +
+  theme_minimal()
+
+p_delta_median
+
+# Raw distributions for delta metrics
+df_long <- df %>%
+  select(method, n_points, min_delta, mean_delta, median_delta) %>%
+  pivot_longer(
+    cols = c(min_delta, mean_delta, median_delta),
+    names_to = "metric",
+    values_to = "value"
+  )
+
+p_delta_box <- df_long %>%
+  ggplot(aes(x = factor(n_points), y = value, fill = method)) +
+  geom_boxplot(outlier.alpha = 0.2) +
+  facet_wrap(~metric, scales = "free_y") +
+  labs(
+    title = "Distribution of Delta Metrics by n_points",
+    x = "n_points",
+    y = "Value",
+    fill = "method"
+  ) +
+  theme_minimal()
+
+p_delta_box
+```

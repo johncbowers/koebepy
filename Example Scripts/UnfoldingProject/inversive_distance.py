@@ -739,6 +739,13 @@ def _export_trial_rows_to_csv(csv_path: str, rows: list[dict]):
         writer.writerows(rows)
 
 
+def _clone_packing_for_method(packing: DCEL):
+    """Return an isolated deep copy of a packing for one method evaluation."""
+    cloned = pickle.loads(pickle.dumps(packing, protocol=pickle.HIGHEST_PROTOCOL))
+    cloned.markIndices()
+    return cloned
+
+
 def evaluate_algorithm(packing: DCEL, mode: str, pair_scope: str = "all", include_tree_edges: bool = False):
     """Run one unfolding method, place geometry, and summarize metrics."""
     registry = _resolve_method_registry()
@@ -783,6 +790,8 @@ def compare_methods(
         trial_data_output_dir: str = "n_points_data",
         trial_data_filename: str = "unfolding_method_metrics.csv",
         run_id: str | None = None,
+        trial_seed_override: int | None = None,
+        isolate_packing_per_method: bool = True,
 ):
     """Run multiple trials and print summaries for selected unfolding methods."""
     selected_methods, _registry = _parse_method_selection(methods)
@@ -801,25 +810,34 @@ def compare_methods(
     print("\nMethods under test:")
     print(", ".join(selected_methods))
 
+    if trial_seed_override is not None:
+        trial_seed_sequence = [int(trial_seed_override)]
+    else:
+        trial_seed_sequence = [seed_rng.randrange(0, 2**63) for _ in range(trials)]
+
+    trial_seeds.extend(trial_seed_sequence)
+
     print("\nReproducibility setup")
     print(f"base_seed={resolved_base_seed}")
-    print("(reuse this base_seed to reproduce the exact same trial sequence)")
+    if trial_seed_override is not None:
+        print(f"trial_seed_override={int(trial_seed_override)} (running exactly 1 trial)")
+    else:
+        print("(reuse this base_seed to reproduce the exact same trial sequence)")
 
-    for t in range(1, trials + 1):
-        trial_seed = seed_rng.randrange(0, 2**63)
-        trial_seeds.append(trial_seed)
+    for t, trial_seed in enumerate(trial_seed_sequence, start=1):
         seed(trial_seed)
 
-        print(f"\nTrial {t}/{trials} seed={trial_seed}")
+        print(f"\nTrial {t}/{len(trial_seed_sequence)} seed={trial_seed}")
         packing, _ = generate_coin_polygon_orick(n_points, n_iterations)
 
         if visualize_trial_packing_each_trial:
             visualize_trial_packing(packing, t, trial_seed)
 
         for method_name in selected_methods:
+            method_packing = _clone_packing_for_method(packing) if isolate_packing_per_method else packing
             try:
                 summary, profile, unfolding, root_idx, overlaps = evaluate_algorithm(
-                    packing,
+                    method_packing,
                     method_name,
                     pair_scope,
                     include_tree_edges,
@@ -839,7 +857,7 @@ def compare_methods(
 
             if save_overlapping_decls and len(overlaps) > 0:
                 save_result = save_overlapping_dcel(
-                    packing,
+                    method_packing,
                     unfolding,
                     method_name,
                     t,
@@ -922,6 +940,8 @@ def compare_bfs_dfs(
         trial_data_output_dir: str = "n_points_data",
         trial_data_filename: str = "unfolding_method_metrics.csv",
         run_id: str | None = None,
+        trial_seed_override: int | None = None,
+        isolate_packing_per_method: bool = True,
 ):
     """Backward-compatible wrapper: run compare_methods with BFS and DFS.
 
@@ -947,6 +967,8 @@ def compare_bfs_dfs(
         trial_data_output_dir=trial_data_output_dir,
         trial_data_filename=trial_data_filename,
         run_id=run_id,
+        trial_seed_override=trial_seed_override,
+        isolate_packing_per_method=isolate_packing_per_method,
     )
 
     return {
@@ -1015,7 +1037,7 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 if __name__ == "__main__":
     result = compare_methods(
-        methods=["steepest_edge"],
+        methods=["dfs", "bfs", "shortest_paths"],
         n_points=100,
         n_iterations=1000,
         trials=1,
@@ -1024,8 +1046,11 @@ if __name__ == "__main__":
         visualize_trial_packing_each_trial=False,
         visualize_each_trial=False, #this shows the unfolding for each trial
         visualize_first_overlap=False,
-        save_trial_data=True,
-        run_id="01_100"
+        #base_seed=1776051550710014000,
+        #trial_data_filename="unfolding_method_nPoint_metrics.csv",
+        trial_seed_override=1094571462471316433,
+        isolate_packing_per_method=True,
+        #run_id="02_25"
     )
 
     # seed with overlap for dfs: 1774895576523358000, this overlapping does not happen every time which is something I need to look into
