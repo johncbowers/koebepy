@@ -7,8 +7,8 @@ from math import acos
 from random import random
 
 from koebe.datastructures.dcel import DCEL, Vertex
-from koebe.geometries.euclidean2 import CircleE2, PointE2
 from koebe.geometries.euclidean3 import VectorE3, PointE3
+from cut_graph_construction import *
 
 """
 A file for unfolding algorithms based on the join graph. These algorithms return the
@@ -76,26 +76,7 @@ def depth_first_search_unfolding(packing) -> (DCEL, int):
 def breadth_first_search_unfolding(packing) -> (DCEL, int):
     return whatever_first_search_unfolding(packing, "breadth")
 
-def shortest_paths_unfolding(packing, root_idx=0) -> (DCEL, int):
-    """
-    Computes the shortest paths spanning tree starting at a certain vertex.
-    :param packing:
-    :return: A tuple of the generated unfolding and the index of the root vertex.
-    """
-    unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
-    unfolding.markIndices()
-
-    # initialize the unfolding parent for each vertex to None
-    for v in unfolding.verts:
-        v.parent = None
-
-    # initialize graph data structures
-    for edge in packing.edges:
-        u = edge.u.data.centerE3
-        v = edge.v.data.centerE3
-        magnitude = (u-v).norm()
-        edge.key = magnitude
-
+def least_cost_paths_unfolding(unfolding, packing, root_idx) -> (DCEL, int):
     pq = [(e.key, random(), e) for e in packing.verts[root_idx].edges()]
     heapq.heapify(pq)
 
@@ -117,6 +98,29 @@ def shortest_paths_unfolding(packing, root_idx=0) -> (DCEL, int):
         for child_edge in packing.verts[v1_idx].edges():
             heapq.heappush(pq, (child_edge.key, random(), child_edge))
     return unfolding, root_idx
+
+def shortest_paths_unfolding(packing, root_idx=0) -> (DCEL, int):
+    """
+    Computes the shortest paths spanning tree starting at a certain vertex.
+    :param packing:
+    :return: A tuple of the generated unfolding and the index of the root vertex.
+    """
+    unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
+    unfolding.markIndices()
+
+    # initialize the unfolding parent for each vertex to None
+    for v in unfolding.verts:
+        v.parent = None
+
+    # initialize graph data structures
+    for edge in packing.edges:
+        u = edge.u.data.centerE3
+        v = edge.v.data.centerE3
+        magnitude = (u-v).norm()
+        edge.key = magnitude
+    return least_cost_paths_unfolding(unfolding, packing, root_idx)
+
+
 
 
 def min_degree_shortest_paths_unfolding(packing) -> (DCEL, int):
@@ -310,7 +314,7 @@ def normal_order_unfolding(packing, mode="min") -> (DCEL, int):
 def join_steepest_edge_unfolding(packing) -> (DCEL, int):
     pass
 
-def coin_unfolding(packing):
+def coin_unfolding(packing) -> (DCEL, int):
     """
     Unfolds a packing using Bower's algorithm. This algorithm uses a sweep-line approach. It defines a vertex
     as the north direction, then adds vertices from north to south.
@@ -322,80 +326,24 @@ def coin_unfolding(packing):
     unfolding = packing.duplicate(vdata_transform=lambda _: None, edata_transform=lambda _: None)
     unfolding.markIndices()
 
-    # print(f"Placing vertex {0} ")
-    unfolding.verts[0].data = CircleE2(PointE2(0, 0), packing.verts[0].data.radiusE3)
-    nbsS2 = packing.verts[0].neighbors()
-    edgesS2 = packing.verts[0].edges()
-    nbsE2 = unfolding.verts[0].neighbors()
 
     # initialize the unfolding parent for each vertex to None
     for v in unfolding.verts:
         v.parent = None
 
-    # Place the first neighbor
-    nbsE2[0].data = CircleE2(PointE2(unfolding.verts[0].data.radius + nbsS2[0].data.radiusE3, 0), nbsS2[0].data.radiusE3)
-    nbsE2[0].parent = unfolding.verts[0]
-
     n = packing.verts[0].data.basis3.normalize()
-    # Place the rest of the neighbors
-    for i in range(1, len(nbsE2)):
-        v0 = edgesS2[0].data.toVectorE3() - packing.verts[0].data.centerE3
-        vi = edgesS2[i].data.toVectorE3() - packing.verts[0].data.centerE3
-        # print(f"Placing vertex {nbsS2[i].idx} with parent 0")
-        theta = math.atan2(v0.cross(vi).dot(n), v0.dot(vi))
-        nbsE2[i].data = CircleE2(
-            PointE2(
-                (packing.verts[0].data.radiusE3 + nbsS2[i].data.radiusE3) * math.cos(theta),
-                (packing.verts[0].data.radiusE3 + nbsS2[i].data.radiusE3) * math.sin(theta)
-            ),
-            nbsS2[i].data.radiusE3
-        )
-        nbsE2[i].parent = unfolding.verts[0]
 
     # Project all edge data points onto the line through the origin in direction n
     for e in packing.edges:
         v = e.data - PointE3.O
         e.key = -v.dot(n)
 
-    # Create a min priority queue of edge.data keyed by key.data for all edges
-    pq = [(e.key, random(), e) for e in packing.edges]
-    heapq.heapify(pq)
+    return least_cost_paths_unfolding(unfolding, packing, 0)
 
-    # While the queue is not empty remove min and process
-    while len(pq) > 0:
-        _, _, e = heapq.heappop(pq)
-        v0_idx, v1_idx = [v.idx for v in e.endPoints()]
 
-        v0 = unfolding.verts[v0_idx]
-        v1 = unfolding.verts[v1_idx]
-        if v0.data == None and v1.data == None:
-            # print("Can't place edge because neither endpoint is placed. This should never happen.")
-            continue
-        if v0.data == None:
-            v0, v1 = v1, v0
-            v0_idx, v1_idx = v1_idx, v0_idx
 
-        if v1.data == None:
-            # now v0 has been placed and we need to place v1
-            # print(f"Placing vertex {v1_idx} with parent {v0_idx}")
-            if v0.parent == None:
-                # print(f"v0 has no parent, this should not happen. v0's index is {v0_idx}")
-                break
-            parent_idx = v0.neighbors().index(v0.parent)
-            parent_dirE2 = (v0.parent.data.center - v0.data.center).normalize()
-
-            parent_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v0.parent.idx].data).toVectorE3() - \
-                           packing.verts[v0_idx].data.centerE3
-            v1_dirS2 = packing.verts[v0_idx].data.tangentPointWith(packing.verts[v1_idx].data).toVectorE3() - packing.verts[
-                v0_idx].data.centerE3
-            n = packing.verts[v0_idx].data.basis3.normalize()
-            theta = math.atan2(parent_dirS2.cross(v1_dirS2).dot(n), parent_dirS2.dot(v1_dirS2))
-
-            v = parent_dirE2.rotate(theta).normalize()
-            v1.data = CircleE2(
-                v0.data.center + (packing.verts[v0_idx].data.radiusE3 + packing.verts[v1_idx].data.radiusE3) * v,
-                packing.verts[v1_idx].data.radiusE3
-            )
-            v1.parent = v0
-
-    return unfolding, nbsE2
+def join_tree_algorithm_from_cut_algorithm(packing, cut_algorithm) -> (DCEL, int):
+    cut_graph = create_cut_graph_from_packing(packing)
+    cut_tree, root_idx = cut_algorithm(cut_graph=cut_graph, packing=packing)
+    unfolding = create_join_tree_from_cut_tree(packing, cut_tree, root_idx)
+    return unfolding, root_idx

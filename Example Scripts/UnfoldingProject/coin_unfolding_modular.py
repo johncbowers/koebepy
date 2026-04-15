@@ -68,7 +68,7 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     sys.stderr = io.StringIO()
     start_time = time.time()
     try:
-        packing = canonical_spherical_projection(hyp_packing, n_iterations=n_iterations)
+        packing = canonical_spherical_projection(hyp_packing)
     finally:
         end_time = time.time()
         sys.stdout = old_stdout
@@ -202,8 +202,8 @@ def cut_unfolding(algorithm=steepest_edge_unfolding,
                   test_for_overlap=False,
                   seed = 42,
                   **kwargs) -> bool:
-    # packing, _ = generate_coin_polygon(n_points, n_iterations, seed)
-    packing = build_dcel_with_gop(n_points)
+    packing, _ = generate_coin_polygon(n_points, n_iterations, seed)
+    # packing = build_dcel_with_gop(n_points)
     cut_graph = create_cut_graph_from_packing(packing)
     cut_tree, root_idx = algorithm(cut_graph=cut_graph, packing=packing, **kwargs)
     unfolding = create_join_tree_from_cut_tree(packing, cut_tree, root_idx)
@@ -228,17 +228,12 @@ def join_unfolding(algorithm=breadth_first_search_unfolding, n_points=100, n_ite
     unfolding_geometry_from_tree(packing, unfolding, root_idx)
     print(len(unfolding.verts))
     nbsE2 = unfolding.verts[root_idx].neighbors()
+    print(inversive_distances_test(unfolding, packing, debug=False))
     visualize_unfolding(unfolding, packing, nbsE2, root_idx, None)
     return
 
 
 if __name__ == "__main__":
-    tests = [cut_unfolding(n_points=1000, n_iterations=float("inf"), visualize=True, test_for_overlap=True, seed=i)
-            for i in range(1)]
-
-    if not all(tests):
-        print(f"Test failed at index {next(
-            filter(lambda pair: pair[1] == False, enumerate(tests)))}")
-
+    join_unfolding(coin_unfolding, n_points=100, n_iterations=1000)
 
 

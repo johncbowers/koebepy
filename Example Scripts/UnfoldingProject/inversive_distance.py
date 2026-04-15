@@ -123,6 +123,7 @@ from coin_unfolding_modular import (
     unfolding_geometry_from_tree,
 )
 import join_unfolding_algorithms as join_algs
+import cut_unfolding_algorithms as cut_algs
 from WIP.visualize2D import display_dcel_2d
 from koebe.graphics.flask.multiviewserver import viewer
 from koebe.graphics.scenes.spherical2scene import S2Scene
@@ -235,6 +236,7 @@ def _resolve_method_registry():
         "normal_max": lambda packing: join_algs.normal_order_unfolding(packing, "max"),
         "normal_flat": lambda packing: join_algs.normal_order_unfolding(packing, "flat"),
         "normal_long": lambda packing: join_algs.normal_order_unfolding(packing, "long"),
+        "steepest_edge": lambda packing: join_algs.join_tree_algorithm_from_cut_algorithm(packing, cut_algs.steepest_edge_unfolding),
     }
 
 
@@ -1012,10 +1014,10 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 if __name__ == "__main__":
     result = compare_methods(
-        methods=["dfs", "bfs", "shortest_paths", ],
-        n_points=25,
+        methods=["dfs", "bfs", "shortest_paths", "steepest_edge"],
+        n_points=100,
         n_iterations=1000,
-        trials=5,
+        trials=1,
         pair_scope="all",
         include_tree_edges=False,
         visualize_trial_packing_each_trial=False,

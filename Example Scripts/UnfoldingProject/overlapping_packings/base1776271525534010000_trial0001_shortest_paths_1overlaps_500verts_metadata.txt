@@ -1,0 +1,19 @@
+Overlapping DCEL Detection
+==========================
+Base Seed: 1776271525534010000
+Trial: 1
+Trial Seed: 8683977186209383546
+Method: shortest_paths
+Root vertex index: 0
+Number of vertices: 500
+Number of overlapping pairs detected: 1
+First 5 overlapping pairs: [(157, 425)]
+
+To load these DCEL structures:
+  import pickle
+  with open('overlapping_packings\base1776271525534010000_trial0001_shortest_paths_1overlaps_500verts_packing.pkl', 'rb') as f:
+      packing = pickle.load(f)
+  with open('overlapping_packings\base1776271525534010000_trial0001_shortest_paths_1overlaps_500verts_unfolding.pkl', 'rb') as f:
+      unfolding = pickle.load(f)
+  packing.markIndices()
+  unfolding.markIndices()
