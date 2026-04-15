@@ -234,6 +234,7 @@ def join_unfolding(algorithm=breadth_first_search_unfolding, n_points=100, n_ite
 
 
 if __name__ == "__main__":
+    steepest_edge_join = lambda packing: join_tree_algorithm_from_cut_algorithm(packing, steepest_edge_unfolding)
     join_unfolding(coin_unfolding, n_points=100, n_iterations=1000)
 
 

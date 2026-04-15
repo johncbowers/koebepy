@@ -297,6 +297,7 @@ def _vertex_depths(unfolding: DCEL, root_idx: int):
     """Return dict vertex_idx -> depth in the spanning tree."""
     depths = {root_idx: 0}
     child_dict = _build_child_dict(unfolding)
+
     queue = deque([unfolding.verts[root_idx]])
 
     while queue:
@@ -1014,7 +1015,7 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 if __name__ == "__main__":
     result = compare_methods(
-        methods=["dfs", "bfs", "shortest_paths", "steepest_edge"],
+        methods=["steepest_edge"],
         n_points=100,
         n_iterations=1000,
         trials=1,
