@@ -157,10 +157,10 @@ Use a fixed seed for reproducible runs:
 python batch_dcel_state_generator.py --count 50 --seed 12345 -C3 -F100 -I0 -d
 ```
 
-View one generated state directly with the fast Orick/Newton pipeline:
+View one generated state with the modular unfolding viewer (`--unfold`):
 
 ```bash
-python view_coin_polyhedron_orick_from_state.py --state ./state_output/triangulation_0000_map0_state.json
+python "../Example Scripts/UnfoldingProject/coin_unfolding_modular.py" --unfold ./state_output/triangulation_0000_map0_state.json --method bfs
 ```
 
 See the original PlanarMap-v1-b2 files for a more comprehensive understanding of available flags. 

@@ -1015,10 +1015,10 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 if __name__ == "__main__":
     result = compare_methods(
-        methods=["bfs"],
-        n_points=500,
+        methods=["steepest_edge"],
+        n_points=100,
         n_iterations=1000,
-        trials=100,
+        trials=1,
         pair_scope="all",
         include_tree_edges=False,
         visualize_trial_packing_each_trial=False,
