@@ -1014,19 +1014,23 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 
 if __name__ == "__main__":
-    result = compare_methods(
-        methods=["steepest_edge"],
-        n_points=100,
-        n_iterations=1000,
-        trials=1,
-        pair_scope="all",
-        include_tree_edges=False,
-        visualize_trial_packing_each_trial=False,
-        visualize_each_trial=False, #this shows the unfolding for each trial
-        visualize_first_overlap=False,
-        save_trial_data=True,
-        run_id="01_100"
-    )
+
+    point_numbers = list(range(50, 500, 50))
+    n_trials = 100
+    for n_points in point_numbers:
+        result = compare_methods(
+            methods=["steepest_edge"],
+            n_points=n_points,
+            n_iterations=1000,
+            trials=n_trials,
+            pair_scope="all",
+            include_tree_edges=False,
+            visualize_trial_packing_each_trial=False,
+            visualize_each_trial=False, #this shows the unfolding for each trial
+            visualize_first_overlap=False,
+            save_trial_data=True,
+            run_id=f"01_{n_points}"
+        )
 
     # seed with overlap for dfs: 1774895576523358000, this overlapping does not happen every time which is something I need to look into
 
