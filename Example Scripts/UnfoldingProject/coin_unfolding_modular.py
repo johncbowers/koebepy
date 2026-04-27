@@ -109,7 +109,7 @@ def generate_coin_polygon_orick(n_points, n_iterations, seed=42):
     sys.stderr = io.StringIO()
     start_time = time.time()
     try:
-        packing = canonical_spherical_layout(packing)
+        packing = canonical_spherical_layout(packing, n_iterations=20)
     finally:
         end_time = time.time()
         elapsed_time = end_time - start_time
