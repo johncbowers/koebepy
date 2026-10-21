@@ -10,7 +10,7 @@ cut set of edge indices and the index of the root vertex.
 """
 
 
-def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0, 0, 1)) -> (set[int], int):
+def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0, 0, 1)) -> tuple[set[int], int]:
     """
     Steepest edge unfolding as described in Wolfram 54-57.
 
@@ -49,7 +49,7 @@ def steepest_edge_unfolding(cut_graph: DCEL, packing: DCEL, direction=VectorE3(0
     return cut_set, root_idx
 
 
-def depth_first_search_cut_tree(cut_graph: DCEL) -> (set[Edge], int):
+def depth_first_search_cut_tree(cut_graph: DCEL) -> tuple[set[Edge], int]:
     """
     A simple depth-first computation of a cut tree, made to test other code.
 

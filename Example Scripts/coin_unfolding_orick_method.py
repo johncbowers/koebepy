@@ -20,7 +20,7 @@ from koebe.graphics.flask.multiviewserver import viewer
 from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
 
-n_points = 1000
+n_points = 500
 
 print(f"Generating random convex hull of {n_points} points and computing a Tutte embedding... ")
 poly = randomConvexHullE3(n_points)
@@ -221,23 +221,23 @@ for v in unfolding.verts:
                                 packing.verts[v.parent.idx].data.basis3.normalize().toPointE3()))
 
 # Visualization
-blackStyle = makeStyle(stroke=(0,0,0))
-redStyle = makeStyle(stroke=(255,0,0), strokeWeight=2, fill=None)
-greenStyle = makeStyle(stroke=(0,255,0), strokeWeight=2, fill=None)
-blueStyle = makeStyle(stroke=(0,0,255), strokeWeight=2, fill=None)
-grayStyle = makeStyle(stroke=(128,128,128), strokeWeight=0.5, fill=None)
-
-sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
-sceneE2 = E2Scene(title="Proposed unfolding", scale=1.5, height=800, width=800, pan_and_zoom=True)
-
-sceneS2.addAll([(v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in packing.verts])
-sceneS2.addAll([(s, grayStyle) for s in segsE3])
-
-scale = 100
-sceneE2.addAll([(scale * v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in unfolding.verts if v.data is not None])
-sceneE2.addAll([(scale * s, grayStyle) for s in segsE2])
-
-viewer.add_scene(sceneS2)
-viewer.add_scene(sceneE2)
-
-viewer.run()
+# blackStyle = makeStyle(stroke=(0,0,0))
+# redStyle = makeStyle(stroke=(255,0,0), strokeWeight=2, fill=None)
+# greenStyle = makeStyle(stroke=(0,255,0), strokeWeight=2, fill=None)
+# blueStyle = makeStyle(stroke=(0,0,255), strokeWeight=2, fill=None)
+# grayStyle = makeStyle(stroke=(128,128,128), strokeWeight=0.5, fill=None)
+#
+# sceneS2 = S2Scene(title="Coin polyhedron", show_sphere=False)
+# sceneE2 = E2Scene(title="Proposed unfolding", scale=1.5, height=800, width=800, pan_and_zoom=True)
+#
+# sceneS2.addAll([(v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in packing.verts])
+# sceneS2.addAll([(s, grayStyle) for s in segsE3])
+#
+# scale = 100
+# sceneE2.addAll([(scale * v.data, redStyle if v.idx == 0 else greenStyle if v.idx == nbsE2[0].idx else blueStyle if v.idx == nbsE2[1].idx else blackStyle) for v in unfolding.verts if v.data is not None])
+# sceneE2.addAll([(scale * s, grayStyle) for s in segsE2])
+#
+# viewer.add_scene(sceneS2)
+# viewer.add_scene(sceneE2)
+#
+# viewer.run()

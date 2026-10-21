@@ -9,3 +9,4 @@ Tmp/*
 */Lectures/*
 *soln.py
 *.pkl
+*_metadata.txt
