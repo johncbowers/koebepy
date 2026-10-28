@@ -146,7 +146,17 @@ def addPoint(ch, p, orientation):
                              edge.aDart.twin in visibleDarts)]
     
     # Next, let's collect the darts that are on the boundary, meaning each shadow dart whose twin is a visible dart.
-    shadowBoundaryDarts = [dart for dart in shadowDarts if dart.twin in visibleDarts]
+    # NOTE: iterate ch.darts (a list) rather than shadowDarts (a set of Dart
+    # objects). Sets of objects hash by identity, so their iteration order
+    # depends on memory addresses and varies between runs with the same seed.
+    # That order decides the order new faces/darts are appended below, which
+    # rotates every vertex's neighbor list and makes seeded hull generation
+    # irreproducible. ch.darts has just been filtered to exactly the shadow
+    # darts above (line ~141 removes precisely visibleDarts, and visible/shadow
+    # partition the darts), so this is equivalent but order-stable.
+    #
+    # WAS: shadowBoundaryDarts = [dart for dart in shadowDarts if dart.twin in visibleDarts]
+    shadowBoundaryDarts = [dart for dart in ch.darts if dart.twin in visibleDarts]
     
     v = Vertex(ch, data = p) # Create the new vertex
     

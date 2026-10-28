@@ -103,6 +103,7 @@ from math import *
 from random import *
 from collections import defaultdict, deque
 from statistics import mean, median
+import hashlib
 import heapq
 import time
 import argparse
@@ -125,7 +126,8 @@ from coin_unfolding_modular import (
 import join_unfolding_algorithms as join_algs
 import cut_unfolding_algorithms as cut_algs
 from WIP.visualize2D import display_dcel_2d
-from koebe.graphics.flask.multiviewserver import viewer
+# NOTE: koebe.graphics.flask.multiviewserver requires flask and is imported
+# lazily inside the visualize_* helpers so batch runs work headless.
 from koebe.graphics.scenes.spherical2scene import S2Scene
 from koebe.graphics.scenes.euclidean2scene import makeStyle
 
@@ -580,6 +582,7 @@ def save_overlapping_dcel(
 
 def visualize_overlapping_unfolding(unfolding: DCEL, mode: str, trial_index: int, root_idx: int, overlaps: list[tuple[int, int]]):
     """Visualize one unfolding that contains overlaps."""
+    from koebe.graphics.flask.multiviewserver import viewer
     print(
         f"\nFirst overlapping unfolding found: mode={mode.upper()} trial={trial_index} "
         f"overlap_pairs={len(overlaps)}"
@@ -629,6 +632,7 @@ def visualize_overlapping_unfolding(unfolding: DCEL, mode: str, trial_index: int
 
 def visualize_trial_unfolding(unfolding: DCEL, mode: str, trial_index: int, root_idx: int, overlaps: list[tuple[int, int]]):
     """Visualize one trial unfolding, regardless of overlap status."""
+    from koebe.graphics.flask.multiviewserver import viewer
     overlap_vertices = {idx for i, j in overlaps for idx in (i, j)}
     primary_overlap_vertices = set(overlaps[0]) if overlaps else set()
 
@@ -675,6 +679,7 @@ def visualize_trial_unfolding(unfolding: DCEL, mode: str, trial_index: int, root
 
 def visualize_trial_packing(packing: DCEL, trial_index: int, trial_seed: int):
     """Visualize the original spherical circle packing for one trial."""
+    from koebe.graphics.flask.multiviewserver import viewer
     print(
         f"Visualizing trial packing: trial={trial_index} seed={trial_seed} "
         f"verts={len(packing.verts)}"
@@ -726,17 +731,136 @@ def _export_trial_rows_to_csv(csv_path: str, rows: list[dict]):
         "median_delta",
         "viol_plane_lt_sphere",
         "num_overlappings",
+        "num_overlappings_certified",
+        "packing_residual",
     ]
 
     _ensure_parent_dir(csv_path)
     file_exists = os.path.exists(csv_path)
     write_header = (not file_exists) or os.path.getsize(csv_path) == 0
 
+    # Refuse to append rows to a file written under a different schema; doing so
+    # silently misaligns every column. Pre-Sept-2026 CSVs lack packing_residual
+    # and num_overlappings_certified (see PIPELINE_AUDIT.md).
+    if not write_header:
+        with open(csv_path, "r", newline="") as f:
+            existing = next(csv.reader(f), [])
+        if existing != fieldnames:
+            raise ValueError(
+                f"{csv_path} has an incompatible header.\n"
+                f"  existing: {existing}\n"
+                f"  expected: {fieldnames}\n"
+                "Pass trial_data_filename=<new name> rather than mixing schemas."
+            )
+
     with open(csv_path, "a", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         if write_header:
             writer.writeheader()
         writer.writerows(rows)
+
+
+def _export_pair_rows_to_csv(csv_path: str, rows: list[dict]):
+    """Append per-pair margin rows, writing header once for new files."""
+    if not rows:
+        return
+    fieldnames = [
+        "run_id", "trial_seed", "trial", "method", "n_points",
+        "total_pairs", "packing_residual",
+        "i", "j", "sphere", "plane", "margin", "delta", "depth_bin", "order_bin",
+    ]
+    _ensure_parent_dir(csv_path)
+    file_exists = os.path.exists(csv_path)
+    write_header = (not file_exists) or os.path.getsize(csv_path) == 0
+    if not write_header:
+        with open(csv_path, "r", newline="") as f:
+            existing = next(csv.reader(f), [])
+        if existing != fieldnames:
+            raise ValueError(f"{csv_path} has an incompatible header; use a new filename.")
+    with open(csv_path, "a", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        if write_header:
+            writer.writeheader()
+        writer.writerows(rows)
+
+
+def collect_margin_tail(pair_rows, tail_size: int):
+    """Return the `tail_size` pairs closest to overlapping, nearest first.
+
+    The question these rows answer is whether the per-pair margin distribution
+    has positive density as margin -> 0 (nothing holds pairs apart, so a large
+    enough n must eventually produce an overlap) or whether it thins out and
+    vanishes short of zero (something actively repels pairs from tangency, and
+    that repulsion is the theorem). Only the left tail carries that signal, so
+    exporting every pair is unnecessary -- at n=300 that would be ~45k rows per
+    trial per method.
+
+    margin = plane - 1       (below 0 means the two coins overlap)
+    delta  = plane - sphere  (below 0 means unfolding decreased inversive distance)
+    """
+    if tail_size <= 0:
+        return []
+    return heapq.nsmallest(tail_size, pair_rows, key=lambda r: r["plane"])
+
+
+def _clone_packing_for_method(packing: DCEL):
+    """Return an isolated deep copy of a packing for one method evaluation."""
+    cloned = pickle.loads(pickle.dumps(packing, protocol=pickle.HIGHEST_PROTOCOL))
+    cloned.markIndices()
+    return cloned
+
+
+def _method_seed(trial_seed: int, method_name: str) -> int:
+    """Derive a stable per-(trial, method) RNG seed.
+
+    Several unfolding methods draw from the global `random` module for
+    tie-breaking (see least_cost_paths_unfolding), so running methods in sequence
+    inside one trial made each method's result depend on which methods preceded
+    it. Re-seeding from this value before each method removes that coupling.
+
+    hashlib is used rather than hash() because str hashing is salted per process.
+    """
+    digest = hashlib.sha256(f"{trial_seed}:{method_name}".encode("utf-8")).digest()
+    return int.from_bytes(digest[:8], "big")
+
+
+def packing_tangency_residual(packing: DCEL) -> float:
+    """Measure how far the packing's own tangent circles are from true tangency.
+
+    Adjacent circles in a correct packing are tangent, i.e. inversive distance
+    exactly 1. Floating point error in the Newton solve leaves them slightly
+    overlapping or separated. The worst such deviation is the noise floor for
+    every overlap measurement taken downstream: a plane "overlap" shallower than
+    this number is indistinguishable from error in the input geometry.
+
+    Returns max |inversiveDistance(u, v) - 1| over all packing edges.
+    """
+    worst = 0.0
+    for edge in packing.edges:
+        u, v = edge.endPoints()
+        if u.data is None or v.data is None:
+            continue
+        worst = max(worst, abs(u.data.inversiveDistTo(v.data) - 1.0))
+    return worst
+
+
+def classify_overlaps(unfolding: DCEL, packing: DCEL, overlaps, residual: float,
+                      safety_factor: float = 10.0):
+    """Split detected overlaps into certified (real) and marginal (within noise).
+
+    An overlap is certified only when its inversive-distance deficit below
+    tangency exceeds safety_factor * residual. See PIPELINE_AUDIT.md for the two
+    steepest-edge "counterexamples" that this check retroactively rejects.
+    """
+    threshold = safety_factor * residual
+    certified, marginal = [], []
+    for i, j in overlaps:
+        vi, vj = unfolding.verts[i], unfolding.verts[j]
+        if vi.data is None or vj.data is None:
+            continue
+        deficit = 1.0 - vi.data.inversiveDistTo(vj.data)
+        (certified if deficit > threshold else marginal).append((i, j, deficit))
+    return certified, marginal
 
 
 def evaluate_algorithm(packing: DCEL, mode: str, pair_scope: str = "all", include_tree_edges: bool = False):
@@ -763,7 +887,8 @@ def evaluate_algorithm(packing: DCEL, mode: str, pair_scope: str = "all", includ
         include_tree_edges=include_tree_edges,
     )
     overlaps = find_overlapping_pairs(unfolding)
-    return summarize_inversive_rows(rows, mode), summarize_violation_profile(rows, mode), unfolding, root_idx, overlaps
+    return (summarize_inversive_rows(rows, mode), summarize_violation_profile(rows, mode),
+            unfolding, root_idx, overlaps, rows)
 
 
 def compare_methods(
@@ -783,6 +908,13 @@ def compare_methods(
         trial_data_output_dir: str = "n_points_data",
         trial_data_filename: str = "unfolding_method_metrics.csv",
         run_id: str | None = None,
+        trial_seed_override: int | None = None,
+        isolate_packing_per_method: bool = True,
+        newton_tol: float = 1e-13,
+        overlap_safety_factor: float = 10.0,
+        save_pair_data: bool = False,
+        pair_data_filename: str = "pair_margins.csv",
+        pair_tail_size: int = 200,
 ):
     """Run multiple trials and print summaries for selected unfolding methods."""
     selected_methods, _registry = _parse_method_selection(methods)
@@ -795,31 +927,52 @@ def compare_methods(
     run_timestamp = datetime.now().isoformat(timespec="seconds")
     trial_csv_rows = []
     trial_data_csv_path = os.path.join(trial_data_output_dir, trial_data_filename)
+    pair_data_csv_path = os.path.join(trial_data_output_dir, pair_data_filename)
+    pair_csv_rows = []
     trial_seeds = []
     saved_overlapping_decls = []
 
     print("\nMethods under test:")
     print(", ".join(selected_methods))
 
+    if trial_seed_override is not None:
+        trial_seed_sequence = [int(trial_seed_override)]
+    else:
+        trial_seed_sequence = [seed_rng.randrange(0, 2**63) for _ in range(trials)]
+
+    trial_seeds.extend(trial_seed_sequence)
+
     print("\nReproducibility setup")
     print(f"base_seed={resolved_base_seed}")
-    print("(reuse this base_seed to reproduce the exact same trial sequence)")
+    print(f"newton_tol={newton_tol} n_iterations={n_iterations}")
+    if trial_seed_override is not None:
+        print(f"trial_seed_override={int(trial_seed_override)} (running exactly 1 trial)")
+    else:
+        print("(reuse this base_seed to reproduce the exact same trial sequence)")
 
-    for t in range(1, trials + 1):
-        trial_seed = seed_rng.randrange(0, 2**63)
-        trial_seeds.append(trial_seed)
+    for t, trial_seed in enumerate(trial_seed_sequence, start=1):
         seed(trial_seed)
 
-        print(f"\nTrial {t}/{trials} seed={trial_seed}")
-        packing, _ = generate_coin_polygon_orick(n_points, n_iterations)
+        print(f"\nTrial {t}/{len(trial_seed_sequence)} seed={trial_seed}")
+        packing, _ = generate_coin_polygon_orick(n_points, n_iterations, newton_tol=newton_tol)
+
+        # Noise floor for this trial's overlap measurements.
+        residual = packing_tangency_residual(packing)
+        print(f"packing tangency residual={residual:.3e}")
 
         if visualize_trial_packing_each_trial:
             visualize_trial_packing(packing, t, trial_seed)
 
         for method_name in selected_methods:
+            # Isolate this method: its own packing copy (methods mutate edge
+            # payloads) and its own RNG stream (methods draw from the global
+            # random module for tie-breaking). Without both, a method's result
+            # depends on which methods ran before it in `methods`.
+            method_packing = _clone_packing_for_method(packing) if isolate_packing_per_method else packing
+            seed(_method_seed(trial_seed, method_name))
             try:
-                summary, profile, unfolding, root_idx, overlaps = evaluate_algorithm(
-                    packing,
+                summary, profile, unfolding, root_idx, overlaps, pair_rows = evaluate_algorithm(
+                    method_packing,
                     method_name,
                     pair_scope,
                     include_tree_edges,
@@ -830,6 +983,15 @@ def compare_methods(
             runs_by_method[method_name].append(summary)
             profiles_by_method[method_name].append(profile)
 
+            certified, marginal = classify_overlaps(
+                unfolding, method_packing, overlaps, residual, overlap_safety_factor,
+            )
+            if marginal:
+                print(f"{method_name.upper():<24} {len(marginal)} overlap(s) within packing noise (residual={residual:.3e}) - NOT counted as real")
+            if certified:
+                worst = max(d for _, _, d in certified)
+                print(f"{method_name.upper():<24} {len(certified)} CERTIFIED overlap(s), worst deficit={worst:.3e}")
+
             if visualize_each_trial:
                 visualize_trial_unfolding(unfolding, method_name, t, root_idx, overlaps)
 
@@ -839,7 +1001,7 @@ def compare_methods(
 
             if save_overlapping_decls and len(overlaps) > 0:
                 save_result = save_overlapping_dcel(
-                    packing,
+                    method_packing,
                     unfolding,
                     method_name,
                     t,
@@ -850,6 +1012,26 @@ def compare_methods(
                     output_dir=overlapping_output_dir,
                 )
                 saved_overlapping_decls.append(save_result)
+
+            if save_pair_data:
+                for r in collect_margin_tail(pair_rows, pair_tail_size):
+                    pair_csv_rows.append({
+                        "run_id": resolved_run_id,
+                        "trial_seed": trial_seed,
+                        "trial": t,
+                        "method": method_name,
+                        "n_points": n_points,
+                        "total_pairs": summary["pair_count"],
+                        "packing_residual": residual,
+                        "i": r["i"],
+                        "j": r["j"],
+                        "sphere": r["sphere"],
+                        "plane": r["plane"],
+                        "margin": r["plane"] - 1.0,
+                        "delta": r["delta"],
+                        "depth_bin": r["depth_bin"],
+                        "order_bin": r["order_bin"],
+                    })
 
             if save_trial_data:
                 trial_csv_rows.append({
@@ -868,6 +1050,8 @@ def compare_methods(
                     "median_delta": summary["median_delta"],
                     "viol_plane_lt_sphere": summary["violations_plane_lt_sphere"],
                     "num_overlappings": len(overlaps),
+                    "num_overlappings_certified": len(certified),
+                    "packing_residual": residual,
                 })
 
             print(_line(summary))
@@ -892,6 +1076,10 @@ def compare_methods(
     if save_trial_data and trial_csv_rows:
         _export_trial_rows_to_csv(trial_data_csv_path, trial_csv_rows)
         print(f"\nSaved {len(trial_csv_rows)} trial metric row(s) to '{trial_data_csv_path}'")
+
+    if save_pair_data and pair_csv_rows:
+        _export_pair_rows_to_csv(pair_data_csv_path, pair_csv_rows)
+        print(f"Saved {len(pair_csv_rows)} pair margin row(s) to '{pair_data_csv_path}'")
 
     return {
         "methods": selected_methods,
@@ -922,6 +1110,10 @@ def compare_bfs_dfs(
         trial_data_output_dir: str = "n_points_data",
         trial_data_filename: str = "unfolding_method_metrics.csv",
         run_id: str | None = None,
+        trial_seed_override: int | None = None,
+        isolate_packing_per_method: bool = True,
+        newton_tol: float = 1e-13,
+        overlap_safety_factor: float = 10.0,
 ):
     """Backward-compatible wrapper: run compare_methods with BFS and DFS.
 
@@ -947,6 +1139,10 @@ def compare_bfs_dfs(
         trial_data_output_dir=trial_data_output_dir,
         trial_data_filename=trial_data_filename,
         run_id=run_id,
+        trial_seed_override=trial_seed_override,
+        isolate_packing_per_method=isolate_packing_per_method,
+        newton_tol=newton_tol,
+        overlap_safety_factor=overlap_safety_factor,
     )
 
     return {
@@ -1014,36 +1210,22 @@ def _aggregate_line(label: str, summaries: list[dict]):
 
 
 if __name__ == "__main__":
-
-    point_numbers = list(range(50, 500, 50))
-    n_trials = 100
-    for n_points in point_numbers:
-        result = compare_methods(
-            methods=["steepest_edge"],
-            n_points=n_points,
-            n_iterations=1000,
-            trials=n_trials,
-            pair_scope="all",
-            include_tree_edges=False,
-            visualize_trial_packing_each_trial=False,
-            visualize_each_trial=False, #this shows the unfolding for each trial
-            visualize_first_overlap=False,
-            save_trial_data=True,
-            run_id=f"01_{n_points}"
-        )
-
-    # seed with overlap for dfs: 1774895576523358000, this overlapping does not happen every time which is something I need to look into
-
-    # Edit the compare_methods(...) arguments above to choose methods/settings.
-    # Available methods:
-    # bfs, dfs, join_bfs, join_dfs, shortest_paths,
-    # min_degree_shortest_paths, max_degree_shortest_paths,
-    # shortest_shortest_paths, longest_shortest_paths,
-    # normal_min, normal_max, normal_flat, normal_long
-    # ["bfs", "dfs", "shortest_paths", "min_degree_shortest_paths",
-    #              "max_degree_shortest_paths", "shortest_shortest_paths",
-    #              "longest_shortest_paths", "normal_min", "normal_max",
-    #              "normal_flat", "normal_long"]
-
-    print("\nRerun note")
-    print(f"To reproduce this run exactly, call compare_methods(..., base_seed={result['base_seed']})")
+    # Post-audit defaults: tight Newton tolerance, per-method isolation, and
+    # certified-overlap gating. See PIPELINE_AUDIT.md before loosening any of these.
+    result = compare_methods(
+        methods=["steepest_edge"],
+        n_points=100,
+        n_iterations=1000,
+        trials=10,
+        pair_scope="all",
+        include_tree_edges=False,
+        visualize_trial_packing_each_trial=False,
+        visualize_each_trial=False,  # this shows the unfolding for each trial
+        visualize_first_overlap=False,
+        save_trial_data=False,
+        trial_data_filename="unfolding_method_metrics_v2.csv",
+        newton_tol=1e-13,
+        isolate_packing_per_method=True,
+        overlap_safety_factor=10.0,
+        # trial_seed_override=5014809394238524692,  # replay one trial exactly
+    )

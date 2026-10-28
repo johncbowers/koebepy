@@ -20,7 +20,8 @@ from koebe.algorithms.hypPacker import *
 # General imports
 
 # Scene and Visualization libraries
-from koebe.graphics.flask.multiviewserver import viewer
+# NOTE: koebe.graphics.flask.multiviewserver requires flask and is imported
+# lazily inside visualize_unfolding() so headless analysis runs do not need it.
 from koebe.graphics.scenes.spherical2scene import S2Scene, makeStyle
 from koebe.graphics.scenes.euclidean2scene import E2Scene
 
@@ -85,13 +86,17 @@ def generate_coin_polygon(n_points, n_iterations, seed=42):
     compute_tangencies(packing)
     return packing, convex_hull
 
-def generate_coin_polygon_orick(n_points, n_iterations, seed=42):
+def generate_coin_polygon_orick(n_points, n_iterations, seed=42, newton_tol=1e-13):
     """
     Generates a coin polygon using Orick's Newton method (faster packing algorithm).
     Returns tuple of (packing, convex_hull).
     :param n_points: Number of points for convex hull
     :param n_iterations: Number of iterations for canonical layout refinement
     :param seed: Random seed (default 42)
+    :param newton_tol: Convergence tolerance for Orick's Newton packing solver.
+        Controls how nearly tangent the packed circles actually are, which sets
+        the noise floor for every downstream overlap measurement. See
+        PIPELINE_AUDIT.md -- a loose 3e-8 produced spurious overlaps at n>=350.
     :return: (packing, convex_hull) tuple
     """
     start_time = time.time()
@@ -102,7 +107,7 @@ def generate_coin_polygon_orick(n_points, n_iterations, seed=42):
     convex_hull.outerFace = convex_hull.faces[0]  # Arbitrarily select an outer face.
 
     start_time = time.time()
-    packing = newton_packing(convex_hull, tol=3e-8, quiet=True)
+    packing = newton_packing(convex_hull, tol=newton_tol, quiet=True)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Elapsed time for computing newton_packing (Orick's Newton method): {elapsed_time}")
@@ -114,7 +119,7 @@ def generate_coin_polygon_orick(n_points, n_iterations, seed=42):
     sys.stderr = io.StringIO()
     start_time = time.time()
     try:
-        packing = canonical_spherical_layout(packing, n_iterations=20)
+        packing = canonical_spherical_layout(packing, n_iterations=n_iterations)
     finally:
         end_time = time.time()
         elapsed_time = end_time - start_time
@@ -170,6 +175,7 @@ def visualize_unfolding(unfolding, packing, nbsE2, root_idx, cuts=None, title_su
                                     packing.verts[v.parent.idx].data.basis3.normalize().toPointE3()))
 
     # Put together the visualization
+    from koebe.graphics.flask.multiviewserver import viewer
 
     blackStyle = makeStyle(stroke=(0, 0, 0))
     redStyle = makeStyle(stroke=(255, 0, 0), strokeWeight=2, fill=None)

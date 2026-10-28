@@ -1,0 +1,1745 @@
+
+Methods under test:
+steepest_edge, dfs, bfs
+
+Reproducibility setup
+base_seed=1790184832759178000
+newton_tol=1e-13 n_iterations=1000
+(reuse this base_seed to reproduce the exact same trial sequence)
+
+Trial 1/100 seed=6413397404940542553
+Elapsed time for computing randomConvexHullE3: 6.347100257873535
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15989089012145996
+Elapsed time for computing canonical_spherical_layout: 45.364269971847534
+packing tangency residual=5.165e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000049 min_sphere=1.000000 min_delta=-2.801360 mean_delta=2519.893231 median_delta=675.133876 viol(plane<sphere)=14
+DFS                      26 CERTIFIED overlap(s), worst deficit=2.036e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0001_dfs_26overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0001_dfs_26overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0001_dfs_26overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.036068 min_sphere=1.000000 min_delta=-1019.165770 mean_delta=17257.857967 median_delta=5237.207275 viol(plane<sphere)=3320
+BFS                      8 CERTIFIED overlap(s), worst deficit=1.974e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0001_bfs_8overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0001_bfs_8overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0001_bfs_8overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.802634 min_sphere=1.000000 min_delta=-7.241248 mean_delta=2920.882867 median_delta=727.890939 viol(plane<sphere)=161
+
+Trial 2/100 seed=8959654010396178345
+Elapsed time for computing randomConvexHullE3: 6.363165855407715
+Elapsed time for computing newton_packing (Orick's Newton method): 0.16008901596069336
+Elapsed time for computing canonical_spherical_layout: 48.18895411491394
+packing tangency residual=6.011e-05
+STEEPEST_EDGE            1 overlap(s) within packing noise (residual=6.011e-05) - NOT counted as real
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0002_steepest_edge_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0002_steepest_edge_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0002_steepest_edge_1overlaps_1500verts_metadata.txt
+STEEPEST_EDGE pairs=1122751 min_plane=0.999979 min_sphere=0.999992 min_delta=-9.613633 mean_delta=2426.828766 median_delta=666.767012 viol(plane<sphere)=14
+DFS                      19 CERTIFIED overlap(s), worst deficit=1.509e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0002_dfs_19overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0002_dfs_19overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0002_dfs_19overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.508938 min_sphere=0.999992 min_delta=-22969.853482 mean_delta=22926.250408 median_delta=4916.597358 viol(plane<sphere)=10912
+BFS                      4 CERTIFIED overlap(s), worst deficit=9.210e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0002_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0002_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0002_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.907903 min_sphere=0.999992 min_delta=-121.227645 mean_delta=2542.033129 median_delta=717.547150 viol(plane<sphere)=343
+
+Trial 3/100 seed=3351085715199464496
+Elapsed time for computing randomConvexHullE3: 6.349605083465576
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15094780921936035
+Elapsed time for computing canonical_spherical_layout: 49.33354616165161
+packing tangency residual=1.798e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000021 min_sphere=0.999982 min_delta=-6.274099 mean_delta=2291.215659 median_delta=677.086682 viol(plane<sphere)=5
+DFS                      39 CERTIFIED overlap(s), worst deficit=2.344e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0003_dfs_39overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0003_dfs_39overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0003_dfs_39overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.344108 min_sphere=0.999982 min_delta=-1425.761191 mean_delta=13964.345375 median_delta=3509.173790 viol(plane<sphere)=4053
+BFS                      4 CERTIFIED overlap(s), worst deficit=7.113e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0003_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0003_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0003_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.288740 min_sphere=0.999982 min_delta=-69.457188 mean_delta=2983.332923 median_delta=742.093432 viol(plane<sphere)=285
+
+Trial 4/100 seed=3732583323848299802
+Elapsed time for computing randomConvexHullE3: 6.266833782196045
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15031909942626953
+Elapsed time for computing canonical_spherical_layout: 48.26832699775696
+packing tangency residual=9.936e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000080 min_sphere=0.999999 min_delta=-1.991614 mean_delta=2254.443452 median_delta=678.597022 viol(plane<sphere)=16
+DFS                      27 CERTIFIED overlap(s), worst deficit=1.924e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0004_dfs_27overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0004_dfs_27overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0004_dfs_27overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.924019 min_sphere=0.999999 min_delta=-12145.475254 mean_delta=9063.905621 median_delta=3218.752035 viol(plane<sphere)=8315
+BFS                      7 CERTIFIED overlap(s), worst deficit=1.919e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0004_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0004_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0004_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.808144 min_sphere=0.999999 min_delta=-16.128188 mean_delta=2410.849693 median_delta=787.641447 viol(plane<sphere)=91
+
+Trial 5/100 seed=1390845137665045149
+Elapsed time for computing randomConvexHullE3: 6.4166600704193115
+Elapsed time for computing newton_packing (Orick's Newton method): 0.16573166847229004
+Elapsed time for computing canonical_spherical_layout: 48.022688150405884
+packing tangency residual=9.945e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000060 min_sphere=1.000000 min_delta=-1.559963 mean_delta=2578.762367 median_delta=709.462368 viol(plane<sphere)=13
+DFS                      41 CERTIFIED overlap(s), worst deficit=3.082e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0005_dfs_41overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0005_dfs_41overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0005_dfs_41overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.081748 min_sphere=1.000000 min_delta=-1446.753400 mean_delta=23551.551420 median_delta=4329.778027 viol(plane<sphere)=4875
+BFS                      6 CERTIFIED overlap(s), worst deficit=2.531e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0005_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0005_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0005_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.746904 min_sphere=1.000000 min_delta=-26.857436 mean_delta=3273.197002 median_delta=736.936774 viol(plane<sphere)=242
+
+Trial 6/100 seed=2989053615273573838
+Elapsed time for computing randomConvexHullE3: 6.379038333892822
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15026164054870605
+Elapsed time for computing canonical_spherical_layout: 48.330472230911255
+packing tangency residual=2.796e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000026 min_sphere=0.999997 min_delta=-1.027404 mean_delta=2234.727183 median_delta=657.724086 viol(plane<sphere)=17
+DFS                      87 CERTIFIED overlap(s), worst deficit=8.679e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0006_dfs_87overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0006_dfs_87overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0006_dfs_87overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-7.679097 min_sphere=0.999997 min_delta=-2455.959284 mean_delta=22149.700909 median_delta=5412.085963 viol(plane<sphere)=9538
+BFS                      5 CERTIFIED overlap(s), worst deficit=2.731e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0006_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0006_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0006_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.726885 min_sphere=0.999997 min_delta=-11.616593 mean_delta=3407.149148 median_delta=664.522690 viol(plane<sphere)=96
+
+Trial 7/100 seed=4775486439448133031
+Elapsed time for computing randomConvexHullE3: 6.315784215927124
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1483469009399414
+Elapsed time for computing canonical_spherical_layout: 48.09256100654602
+packing tangency residual=7.152e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000078 min_sphere=1.000000 min_delta=-2.186229 mean_delta=2206.730442 median_delta=656.073162 viol(plane<sphere)=6
+DFS                      49 CERTIFIED overlap(s), worst deficit=2.892e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0007_dfs_49overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0007_dfs_49overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0007_dfs_49overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.891658 min_sphere=1.000000 min_delta=-11288.516905 mean_delta=17235.917639 median_delta=4197.711745 viol(plane<sphere)=14520
+BFS                      4 CERTIFIED overlap(s), worst deficit=9.156e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0007_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0007_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0007_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.908442 min_sphere=1.000000 min_delta=-20.285524 mean_delta=2947.260346 median_delta=662.115136 viol(plane<sphere)=160
+
+Trial 8/100 seed=8694516108146728737
+Elapsed time for computing randomConvexHullE3: 6.488418102264404
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15138888359069824
+Elapsed time for computing canonical_spherical_layout: 48.09496092796326
+packing tangency residual=2.047e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000018 min_sphere=1.000000 min_delta=-0.933585 mean_delta=2789.787590 median_delta=649.762939 viol(plane<sphere)=13
+DFS                      83 CERTIFIED overlap(s), worst deficit=1.604e+01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0008_dfs_83overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0008_dfs_83overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0008_dfs_83overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-15.038789 min_sphere=1.000000 min_delta=-31478.257253 mean_delta=18224.799372 median_delta=4106.003163 viol(plane<sphere)=13085
+BFS                      1 CERTIFIED overlap(s), worst deficit=1.928e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0008_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0008_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0008_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.807169 min_sphere=1.000000 min_delta=-86.634481 mean_delta=3362.456125 median_delta=689.467752 viol(plane<sphere)=175
+
+Trial 9/100 seed=1389004102109873387
+Elapsed time for computing randomConvexHullE3: 6.270279169082642
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15140008926391602
+Elapsed time for computing canonical_spherical_layout: 47.84516787528992
+packing tangency residual=1.057e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000039 min_sphere=0.999999 min_delta=-0.284670 mean_delta=2745.383667 median_delta=704.347672 viol(plane<sphere)=8
+DFS                      90 CERTIFIED overlap(s), worst deficit=4.155e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0009_dfs_90overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0009_dfs_90overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0009_dfs_90overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-3.154884 min_sphere=0.999999 min_delta=-8094.116138 mean_delta=23034.419625 median_delta=6600.300645 viol(plane<sphere)=10496
+BFS                      4 CERTIFIED overlap(s), worst deficit=2.614e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0009_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0009_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0009_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.738573 min_sphere=0.999999 min_delta=-79.087084 mean_delta=2729.182382 median_delta=813.366073 viol(plane<sphere)=242
+
+Trial 10/100 seed=1842128750138304527
+Elapsed time for computing randomConvexHullE3: 6.298263072967529
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14863276481628418
+Elapsed time for computing canonical_spherical_layout: 47.49722409248352
+packing tangency residual=4.149e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000025 min_sphere=1.000000 min_delta=-4.446928 mean_delta=2421.645127 median_delta=662.275884 viol(plane<sphere)=12
+DFS                      116 CERTIFIED overlap(s), worst deficit=4.762e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0010_dfs_116overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0010_dfs_116overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0010_dfs_116overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-3.761710 min_sphere=1.000000 min_delta=-38589.915933 mean_delta=21828.269839 median_delta=5316.790558 viol(plane<sphere)=14310
+BFS                      5 CERTIFIED overlap(s), worst deficit=3.247e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0010_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0010_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0010_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.675346 min_sphere=1.000000 min_delta=-5.746615 mean_delta=2760.652716 median_delta=714.518462 viol(plane<sphere)=104
+
+Trial 11/100 seed=2606272041393647879
+Elapsed time for computing randomConvexHullE3: 6.274277210235596
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1497480869293213
+Elapsed time for computing canonical_spherical_layout: 48.554149866104126
+packing tangency residual=9.021e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000030 min_sphere=0.999993 min_delta=-2.037115 mean_delta=2209.979281 median_delta=694.541815 viol(plane<sphere)=16
+DFS                      58 CERTIFIED overlap(s), worst deficit=3.163e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0011_dfs_58overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0011_dfs_58overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0011_dfs_58overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.162817 min_sphere=0.999993 min_delta=-5778.480556 mean_delta=15616.821440 median_delta=3595.389783 viol(plane<sphere)=14635
+BFS                      6 CERTIFIED overlap(s), worst deficit=3.362e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0011_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0011_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0011_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.663782 min_sphere=0.999991 min_delta=-159.210576 mean_delta=2721.387103 median_delta=738.105745 viol(plane<sphere)=381
+
+Trial 12/100 seed=8942630373204010552
+Elapsed time for computing randomConvexHullE3: 6.344426870346069
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14914393424987793
+Elapsed time for computing canonical_spherical_layout: 47.69014286994934
+packing tangency residual=5.955e-08
+STEEPEST_EDGE pairs=1122751 min_plane=1.000067 min_sphere=1.000000 min_delta=-2.389268 mean_delta=2300.538514 median_delta=658.628228 viol(plane<sphere)=14
+DFS                      21 CERTIFIED overlap(s), worst deficit=2.046e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0012_dfs_21overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0012_dfs_21overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0012_dfs_21overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.045693 min_sphere=1.000000 min_delta=-162852.339244 mean_delta=13203.521804 median_delta=3987.479708 viol(plane<sphere)=20934
+BFS                      2 CERTIFIED overlap(s), worst deficit=2.143e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0012_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0012_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0012_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.978569 min_sphere=1.000000 min_delta=-62.664667 mean_delta=2346.631895 median_delta=788.027706 viol(plane<sphere)=252
+
+Trial 13/100 seed=8537618541185423047
+Elapsed time for computing randomConvexHullE3: 6.2614099979400635
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15439105033874512
+Elapsed time for computing canonical_spherical_layout: 48.27844977378845
+packing tangency residual=7.977e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000092 min_sphere=1.000000 min_delta=-0.511746 mean_delta=2260.074406 median_delta=664.976271 viol(plane<sphere)=24
+DFS                      42 CERTIFIED overlap(s), worst deficit=2.004e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0013_dfs_42overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0013_dfs_42overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0013_dfs_42overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.003965 min_sphere=1.000000 min_delta=-5685.299540 mean_delta=22186.962680 median_delta=6193.970687 viol(plane<sphere)=7246
+BFS                      2 CERTIFIED overlap(s), worst deficit=6.630e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0013_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0013_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0013_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.336977 min_sphere=1.000000 min_delta=-21.066458 mean_delta=2250.822419 median_delta=813.457629 viol(plane<sphere)=163
+
+Trial 14/100 seed=7120473799224613747
+Elapsed time for computing randomConvexHullE3: 6.308107614517212
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15599417686462402
+Elapsed time for computing canonical_spherical_layout: 47.854599952697754
+packing tangency residual=3.375e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000030 min_sphere=0.999971 min_delta=-0.095242 mean_delta=2391.156286 median_delta=694.014821 viol(plane<sphere)=5
+DFS                      34 CERTIFIED overlap(s), worst deficit=2.300e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0014_dfs_34overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0014_dfs_34overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0014_dfs_34overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.299627 min_sphere=0.999971 min_delta=-5311.176984 mean_delta=21759.961219 median_delta=4557.117000 viol(plane<sphere)=8080
+BFS                      7 CERTIFIED overlap(s), worst deficit=3.974e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0014_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0014_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0014_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.602604 min_sphere=0.999971 min_delta=-16.038621 mean_delta=3381.377158 median_delta=713.149615 viol(plane<sphere)=227
+
+Trial 15/100 seed=8929811877126082036
+Elapsed time for computing randomConvexHullE3: 6.231630086898804
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15081024169921875
+Elapsed time for computing canonical_spherical_layout: 48.30528688430786
+packing tangency residual=6.182e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000019 min_sphere=0.999999 min_delta=-0.122056 mean_delta=2816.305227 median_delta=667.707524 viol(plane<sphere)=7
+DFS                      42 CERTIFIED overlap(s), worst deficit=2.480e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0015_dfs_42overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0015_dfs_42overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0015_dfs_42overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.480152 min_sphere=0.999999 min_delta=-31896.345720 mean_delta=18654.386381 median_delta=4592.661627 viol(plane<sphere)=22379
+BFS                      1 CERTIFIED overlap(s), worst deficit=8.192e-03
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0015_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0015_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0015_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.991808 min_sphere=0.999999 min_delta=-20.772556 mean_delta=2745.464801 median_delta=777.348597 viol(plane<sphere)=143
+
+Trial 16/100 seed=2127854224580855757
+Elapsed time for computing randomConvexHullE3: 6.290687799453735
+Elapsed time for computing newton_packing (Orick's Newton method): 0.18301606178283691
+Elapsed time for computing canonical_spherical_layout: 48.27317214012146
+packing tangency residual=2.793e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000004 min_sphere=0.999999 min_delta=-2.989478 mean_delta=2783.197714 median_delta=700.356505 viol(plane<sphere)=23
+DFS                      174 CERTIFIED overlap(s), worst deficit=4.534e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0016_dfs_174overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0016_dfs_174overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0016_dfs_174overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-3.534084 min_sphere=0.999998 min_delta=-15277.023244 mean_delta=38929.247650 median_delta=6977.322153 viol(plane<sphere)=15903
+BFS                      5 CERTIFIED overlap(s), worst deficit=3.379e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0016_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0016_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0016_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.662140 min_sphere=0.999998 min_delta=-8.356922 mean_delta=5488.452517 median_delta=688.744761 viol(plane<sphere)=93
+
+Trial 17/100 seed=8674846704181861005
+Elapsed time for computing randomConvexHullE3: 6.2604851722717285
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1481790542602539
+Elapsed time for computing canonical_spherical_layout: 47.87010312080383
+packing tangency residual=5.422e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000059 min_sphere=1.000000 min_delta=-2.719590 mean_delta=2036.383982 median_delta=649.900241 viol(plane<sphere)=2
+DFS                      17 CERTIFIED overlap(s), worst deficit=1.883e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0017_dfs_17overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0017_dfs_17overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0017_dfs_17overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.883471 min_sphere=1.000000 min_delta=-14356.487311 mean_delta=16108.815713 median_delta=5201.511056 viol(plane<sphere)=13725
+BFS                      2 CERTIFIED overlap(s), worst deficit=7.581e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0017_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0017_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0017_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.924194 min_sphere=1.000000 min_delta=-209.009315 mean_delta=2169.852027 median_delta=729.597926 viol(plane<sphere)=306
+
+Trial 18/100 seed=4834892672411001602
+Elapsed time for computing randomConvexHullE3: 6.3358848094940186
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14924907684326172
+Elapsed time for computing canonical_spherical_layout: 48.08913803100586
+packing tangency residual=2.178e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000021 min_sphere=1.000000 min_delta=-1.270705 mean_delta=2248.650470 median_delta=661.141373 viol(plane<sphere)=4
+DFS                      82 CERTIFIED overlap(s), worst deficit=7.664e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0018_dfs_82overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0018_dfs_82overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0018_dfs_82overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-6.663682 min_sphere=1.000000 min_delta=-2880.400259 mean_delta=19166.752960 median_delta=5966.000841 viol(plane<sphere)=9704
+BFS                      4 CERTIFIED overlap(s), worst deficit=1.774e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0018_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0018_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0018_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.822580 min_sphere=1.000000 min_delta=-170.521871 mean_delta=2319.283492 median_delta=750.761273 viol(plane<sphere)=232
+
+Trial 19/100 seed=4699887100244660065
+Elapsed time for computing randomConvexHullE3: 6.3404221534729
+Elapsed time for computing newton_packing (Orick's Newton method): 0.156113862991333
+Elapsed time for computing canonical_spherical_layout: 48.6299729347229
+packing tangency residual=1.578e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000009 min_sphere=0.999999 min_delta=-5.592044 mean_delta=2691.505325 median_delta=675.454155 viol(plane<sphere)=27
+DFS                      124 CERTIFIED overlap(s), worst deficit=1.417e+01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0019_dfs_124overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0019_dfs_124overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0019_dfs_124overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-13.173949 min_sphere=0.999999 min_delta=-93976.845988 mean_delta=24492.933238 median_delta=6286.868351 viol(plane<sphere)=11787
+BFS                      7 CERTIFIED overlap(s), worst deficit=5.492e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0019_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0019_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0019_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.450813 min_sphere=0.999999 min_delta=-32.169194 mean_delta=3248.451102 median_delta=783.937591 viol(plane<sphere)=197
+
+Trial 20/100 seed=5005236397009794220
+Elapsed time for computing randomConvexHullE3: 6.317879915237427
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15208196640014648
+Elapsed time for computing canonical_spherical_layout: 48.3058180809021
+packing tangency residual=6.440e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000013 min_sphere=0.999995 min_delta=-1.745359 mean_delta=2308.812249 median_delta=666.458080 viol(plane<sphere)=15
+DFS                      56 CERTIFIED overlap(s), worst deficit=5.205e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0020_dfs_56overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0020_dfs_56overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0020_dfs_56overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.205125 min_sphere=0.999994 min_delta=-15337.616623 mean_delta=26163.051086 median_delta=6000.487279 viol(plane<sphere)=24258
+BFS                      3 CERTIFIED overlap(s), worst deficit=1.297e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0020_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0020_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0020_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.870323 min_sphere=0.999995 min_delta=-56.218403 mean_delta=2859.607644 median_delta=679.324625 viol(plane<sphere)=181
+
+Trial 21/100 seed=4378648649719540856
+Elapsed time for computing randomConvexHullE3: 6.293955087661743
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1495652198791504
+Elapsed time for computing canonical_spherical_layout: 48.396170139312744
+packing tangency residual=1.463e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000040 min_sphere=0.999999 min_delta=-1.097227 mean_delta=2383.788761 median_delta=645.848791 viol(plane<sphere)=18
+DFS                      59 CERTIFIED overlap(s), worst deficit=1.983e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0021_dfs_59overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0021_dfs_59overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0021_dfs_59overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.983163 min_sphere=1.000000 min_delta=-2697.764443 mean_delta=20660.216137 median_delta=6553.445567 viol(plane<sphere)=5591
+BFS                      4 CERTIFIED overlap(s), worst deficit=2.903e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0021_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0021_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0021_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.709732 min_sphere=0.999999 min_delta=-38.165381 mean_delta=2324.709018 median_delta=727.322778 viol(plane<sphere)=156
+
+Trial 22/100 seed=7636370006120797076
+Elapsed time for computing randomConvexHullE3: 6.328024625778198
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1486680507659912
+Elapsed time for computing canonical_spherical_layout: 47.92741012573242
+packing tangency residual=2.829e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000065 min_sphere=1.000000 min_delta=-1.858409 mean_delta=2297.650864 median_delta=681.900720 viol(plane<sphere)=7
+DFS                      30 CERTIFIED overlap(s), worst deficit=1.841e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0022_dfs_30overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0022_dfs_30overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0022_dfs_30overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.841032 min_sphere=1.000000 min_delta=-17448.394281 mean_delta=20759.150305 median_delta=5901.470245 viol(plane<sphere)=6738
+BFS                      4 CERTIFIED overlap(s), worst deficit=1.697e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0022_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0022_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0022_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.830260 min_sphere=1.000000 min_delta=-86.815797 mean_delta=2447.632998 median_delta=785.295210 viol(plane<sphere)=233
+
+Trial 23/100 seed=3042604979567025397
+Elapsed time for computing randomConvexHullE3: 6.352953910827637
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15610814094543457
+Elapsed time for computing canonical_spherical_layout: 48.30043959617615
+packing tangency residual=6.612e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000053 min_sphere=1.000000 min_delta=-1.504927 mean_delta=3008.706750 median_delta=696.238552 viol(plane<sphere)=18
+DFS                      33 CERTIFIED overlap(s), worst deficit=1.533e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0023_dfs_33overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0023_dfs_33overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0023_dfs_33overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.532996 min_sphere=1.000000 min_delta=-715353.091444 mean_delta=15995.673367 median_delta=4870.096107 viol(plane<sphere)=31600
+BFS                      7 CERTIFIED overlap(s), worst deficit=1.218e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0023_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0023_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0023_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.878161 min_sphere=1.000000 min_delta=-33.838964 mean_delta=2878.256281 median_delta=846.549991 viol(plane<sphere)=346
+
+Trial 24/100 seed=6543412802997874999
+Elapsed time for computing randomConvexHullE3: 6.350034952163696
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1487112045288086
+Elapsed time for computing canonical_spherical_layout: 48.174328088760376
+packing tangency residual=8.512e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000009 min_sphere=0.999999 min_delta=-1.871314 mean_delta=2791.841659 median_delta=704.046903 viol(plane<sphere)=9
+DFS                      14 CERTIFIED overlap(s), worst deficit=1.257e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0024_dfs_14overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0024_dfs_14overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0024_dfs_14overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.256837 min_sphere=0.999999 min_delta=-16671.730950 mean_delta=19785.223101 median_delta=4795.897787 viol(plane<sphere)=3969
+BFS                      4 CERTIFIED overlap(s), worst deficit=6.035e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0024_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0024_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0024_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.396535 min_sphere=0.999999 min_delta=-40.575941 mean_delta=2978.837036 median_delta=799.806143 viol(plane<sphere)=349
+
+Trial 25/100 seed=4384301719290692380
+Elapsed time for computing randomConvexHullE3: 6.260205030441284
+Elapsed time for computing newton_packing (Orick's Newton method): 0.2102980613708496
+Elapsed time for computing canonical_spherical_layout: 48.51283097267151
+packing tangency residual=1.440e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000008 min_sphere=0.999999 min_delta=-0.237862 mean_delta=3470.909022 median_delta=664.125328 viol(plane<sphere)=7
+DFS                      52 CERTIFIED overlap(s), worst deficit=1.046e+01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0025_dfs_52overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0025_dfs_52overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0025_dfs_52overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-9.464291 min_sphere=0.999999 min_delta=-7073.626956 mean_delta=22025.957980 median_delta=4440.528306 viol(plane<sphere)=6144
+BFS                      6 CERTIFIED overlap(s), worst deficit=1.415e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0025_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0025_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0025_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.858505 min_sphere=0.999999 min_delta=-27.821706 mean_delta=3970.030503 median_delta=719.255571 viol(plane<sphere)=159
+
+Trial 26/100 seed=6566873676024726475
+Elapsed time for computing randomConvexHullE3: 6.2532970905303955
+Elapsed time for computing newton_packing (Orick's Newton method): 0.18662595748901367
+Elapsed time for computing canonical_spherical_layout: 49.731653690338135
+packing tangency residual=1.820e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000035 min_sphere=1.000000 min_delta=-1.865010 mean_delta=2038.250088 median_delta=634.138670 viol(plane<sphere)=14
+DFS                      108 CERTIFIED overlap(s), worst deficit=3.008e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0026_dfs_108overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0026_dfs_108overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0026_dfs_108overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.007742 min_sphere=1.000000 min_delta=-11786.180223 mean_delta=14952.985642 median_delta=4427.054655 viol(plane<sphere)=17617
+BFS                      3 CERTIFIED overlap(s), worst deficit=3.002e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0026_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0026_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0026_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.969984 min_sphere=1.000000 min_delta=-4.643379 mean_delta=3384.586126 median_delta=651.120475 viol(plane<sphere)=64
+
+Trial 27/100 seed=5471282679605648046
+Elapsed time for computing randomConvexHullE3: 6.339816093444824
+Elapsed time for computing newton_packing (Orick's Newton method): 0.22361302375793457
+Elapsed time for computing canonical_spherical_layout: 48.10208010673523
+packing tangency residual=9.239e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000035 min_sphere=0.999999 min_delta=-3.021546 mean_delta=2505.463039 median_delta=670.233860 viol(plane<sphere)=27
+DFS                      23 CERTIFIED overlap(s), worst deficit=1.843e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0027_dfs_23overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0027_dfs_23overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0027_dfs_23overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.842640 min_sphere=0.999999 min_delta=-10827.931989 mean_delta=17413.883829 median_delta=3824.320321 viol(plane<sphere)=10052
+BFS                      2 CERTIFIED overlap(s), worst deficit=1.457e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0027_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0027_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0027_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.854346 min_sphere=0.999999 min_delta=-28.466933 mean_delta=3479.827050 median_delta=678.595833 viol(plane<sphere)=100
+
+Trial 28/100 seed=8764977479338594647
+Elapsed time for computing randomConvexHullE3: 6.350250005722046
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14942097663879395
+Elapsed time for computing canonical_spherical_layout: 48.53671908378601
+packing tangency residual=8.228e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000026 min_sphere=0.999999 min_delta=-3.212100 mean_delta=2438.503549 median_delta=666.770481 viol(plane<sphere)=13
+DFS                      66 CERTIFIED overlap(s), worst deficit=3.097e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0028_dfs_66overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0028_dfs_66overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0028_dfs_66overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.097135 min_sphere=0.999999 min_delta=-33856.494466 mean_delta=19227.815102 median_delta=4431.852147 viol(plane<sphere)=14153
+BFS                      2 CERTIFIED overlap(s), worst deficit=1.498e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0028_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0028_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0028_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.850188 min_sphere=0.999999 min_delta=-11.116708 mean_delta=3373.827147 median_delta=707.147287 viol(plane<sphere)=111
+
+Trial 29/100 seed=6220206136202535912
+Elapsed time for computing randomConvexHullE3: 6.257737398147583
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1499159336090088
+Elapsed time for computing canonical_spherical_layout: 48.39820885658264
+packing tangency residual=1.020e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000006 min_sphere=0.999990 min_delta=-3.166787 mean_delta=2530.544552 median_delta=659.374647 viol(plane<sphere)=12
+DFS                      33 CERTIFIED overlap(s), worst deficit=3.173e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0029_dfs_33overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0029_dfs_33overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0029_dfs_33overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.172973 min_sphere=0.999990 min_delta=-10559.775805 mean_delta=16173.205581 median_delta=5265.684906 viol(plane<sphere)=11418
+BFS                      5 CERTIFIED overlap(s), worst deficit=6.341e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0029_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0029_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0029_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.936594 min_sphere=0.999990 min_delta=-194.474891 mean_delta=2467.209180 median_delta=790.005190 viol(plane<sphere)=443
+
+Trial 30/100 seed=9093254768134781790
+Elapsed time for computing randomConvexHullE3: 6.299653053283691
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14874505996704102
+Elapsed time for computing canonical_spherical_layout: 48.26720595359802
+packing tangency residual=3.538e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000015 min_sphere=1.000000 min_delta=-1.749568 mean_delta=2853.975306 median_delta=653.919606 viol(plane<sphere)=8
+DFS                      84 CERTIFIED overlap(s), worst deficit=3.685e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0030_dfs_84overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0030_dfs_84overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0030_dfs_84overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.685021 min_sphere=1.000000 min_delta=-2457.932681 mean_delta=21579.578142 median_delta=4137.391516 viol(plane<sphere)=15173
+BFS                      1 CERTIFIED overlap(s), worst deficit=3.851e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0030_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0030_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0030_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.961485 min_sphere=1.000000 min_delta=-22.876414 mean_delta=3072.541778 median_delta=774.711033 viol(plane<sphere)=273
+
+Trial 31/100 seed=6247613969580995298
+Elapsed time for computing randomConvexHullE3: 6.278791189193726
+Elapsed time for computing newton_packing (Orick's Newton method): 0.152817964553833
+Elapsed time for computing canonical_spherical_layout: 50.48627972602844
+packing tangency residual=1.883e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000060 min_sphere=1.000000 min_delta=-0.537928 mean_delta=2167.349202 median_delta=684.445874 viol(plane<sphere)=8
+DFS                      16 CERTIFIED overlap(s), worst deficit=1.146e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0031_dfs_16overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0031_dfs_16overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0031_dfs_16overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.145551 min_sphere=1.000000 min_delta=-1411.438706 mean_delta=23489.315053 median_delta=8395.058693 viol(plane<sphere)=3425
+BFS                      4 CERTIFIED overlap(s), worst deficit=3.021e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0031_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0031_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0031_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.697889 min_sphere=1.000000 min_delta=-42.168541 mean_delta=2336.782421 median_delta=773.021912 viol(plane<sphere)=352
+
+Trial 32/100 seed=5424320764851651855
+Elapsed time for computing randomConvexHullE3: 6.341282844543457
+Elapsed time for computing newton_packing (Orick's Newton method): 0.16776227951049805
+Elapsed time for computing canonical_spherical_layout: 47.70730686187744
+packing tangency residual=4.644e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000043 min_sphere=1.000000 min_delta=-1.418689 mean_delta=2269.245941 median_delta=662.816868 viol(plane<sphere)=7
+DFS                      44 CERTIFIED overlap(s), worst deficit=1.186e+01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0032_dfs_44overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0032_dfs_44overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0032_dfs_44overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-10.857479 min_sphere=1.000000 min_delta=-8176.857622 mean_delta=15354.657576 median_delta=4465.315402 viol(plane<sphere)=9108
+BFS                      3 CERTIFIED overlap(s), worst deficit=5.946e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0032_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0032_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0032_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.405413 min_sphere=1.000000 min_delta=-16.023476 mean_delta=2534.190117 median_delta=834.837201 viol(plane<sphere)=103
+
+Trial 33/100 seed=8260222591295672775
+Elapsed time for computing randomConvexHullE3: 6.304805040359497
+Elapsed time for computing newton_packing (Orick's Newton method): 0.21292400360107422
+Elapsed time for computing canonical_spherical_layout: 48.25736713409424
+packing tangency residual=1.294e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000050 min_sphere=1.000000 min_delta=-1.510292 mean_delta=3201.195919 median_delta=654.329020 viol(plane<sphere)=5
+DFS                      25 CERTIFIED overlap(s), worst deficit=2.514e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0033_dfs_25overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0033_dfs_25overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0033_dfs_25overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.513530 min_sphere=1.000000 min_delta=-8142.860233 mean_delta=20000.235175 median_delta=5019.854754 viol(plane<sphere)=5050
+BFS                      3 CERTIFIED overlap(s), worst deficit=6.624e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0033_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0033_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0033_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.933759 min_sphere=1.000000 min_delta=-15.811158 mean_delta=2458.278351 median_delta=719.463558 viol(plane<sphere)=197
+
+Trial 34/100 seed=4680151618992639317
+Elapsed time for computing randomConvexHullE3: 6.234630823135376
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14982199668884277
+Elapsed time for computing canonical_spherical_layout: 49.92569184303284
+packing tangency residual=1.987e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000003 min_sphere=0.999987 min_delta=-3.876066 mean_delta=2461.399814 median_delta=682.686947 viol(plane<sphere)=11
+DFS                      38 CERTIFIED overlap(s), worst deficit=2.073e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0034_dfs_38overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0034_dfs_38overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0034_dfs_38overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.072732 min_sphere=0.999980 min_delta=-4043.816101 mean_delta=22843.328578 median_delta=4795.156764 viol(plane<sphere)=9716
+BFS                      9 CERTIFIED overlap(s), worst deficit=6.791e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0034_bfs_9overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0034_bfs_9overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0034_bfs_9overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.320946 min_sphere=0.999980 min_delta=-58.157838 mean_delta=3139.722027 median_delta=713.345547 viol(plane<sphere)=144
+
+Trial 35/100 seed=7167596089142818742
+Elapsed time for computing randomConvexHullE3: 6.26572322845459
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14818906784057617
+Elapsed time for computing canonical_spherical_layout: 49.4681510925293
+packing tangency residual=6.137e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000019 min_sphere=0.999994 min_delta=-4.006008 mean_delta=2220.213729 median_delta=662.976981 viol(plane<sphere)=18
+DFS                      31 CERTIFIED overlap(s), worst deficit=3.181e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0035_dfs_31overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0035_dfs_31overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0035_dfs_31overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.181435 min_sphere=0.999994 min_delta=-1951.357484 mean_delta=20741.968270 median_delta=5371.005803 viol(plane<sphere)=4156
+BFS                      1 CERTIFIED overlap(s), worst deficit=4.348e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0035_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0035_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0035_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.956518 min_sphere=0.999994 min_delta=-18.010305 mean_delta=2614.957556 median_delta=733.077086 viol(plane<sphere)=309
+
+Trial 36/100 seed=6969263311526103164
+Elapsed time for computing randomConvexHullE3: 6.367284059524536
+Elapsed time for computing newton_packing (Orick's Newton method): 0.16947507858276367
+Elapsed time for computing canonical_spherical_layout: 48.50846791267395
+packing tangency residual=1.501e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000018 min_sphere=1.000000 min_delta=-2.364941 mean_delta=2612.152212 median_delta=650.139970 viol(plane<sphere)=20
+DFS                      37 CERTIFIED overlap(s), worst deficit=3.394e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0036_dfs_37overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0036_dfs_37overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0036_dfs_37overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.393564 min_sphere=1.000000 min_delta=-7108.095013 mean_delta=14610.411386 median_delta=3766.686686 viol(plane<sphere)=4756
+BFS                      4 CERTIFIED overlap(s), worst deficit=4.341e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0036_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0036_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0036_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.956594 min_sphere=1.000000 min_delta=-12.539717 mean_delta=2764.629393 median_delta=712.760698 viol(plane<sphere)=152
+
+Trial 37/100 seed=4605485081868171753
+Elapsed time for computing randomConvexHullE3: 6.223573923110962
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15622401237487793
+Elapsed time for computing canonical_spherical_layout: 48.63442301750183
+packing tangency residual=3.275e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000018 min_sphere=0.999996 min_delta=-3.623367 mean_delta=2632.752429 median_delta=667.331195 viol(plane<sphere)=15
+DFS                      109 CERTIFIED overlap(s), worst deficit=5.096e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0037_dfs_109overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0037_dfs_109overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0037_dfs_109overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.096432 min_sphere=0.999997 min_delta=-3999.222388 mean_delta=19628.589731 median_delta=4363.496632 viol(plane<sphere)=13111
+BFS                      5 CERTIFIED overlap(s), worst deficit=4.900e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0037_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0037_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0037_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.509964 min_sphere=0.999996 min_delta=-152.187238 mean_delta=3003.583240 median_delta=692.453645 viol(plane<sphere)=150
+
+Trial 38/100 seed=4971083489374626988
+Elapsed time for computing randomConvexHullE3: 6.293569087982178
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1781597137451172
+Elapsed time for computing canonical_spherical_layout: 48.88556480407715
+packing tangency residual=3.641e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000060 min_sphere=0.999999 min_delta=-8.325995 mean_delta=2322.834603 median_delta=658.969122 viol(plane<sphere)=35
+DFS                      80 CERTIFIED overlap(s), worst deficit=2.319e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0038_dfs_80overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0038_dfs_80overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0038_dfs_80overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.318668 min_sphere=0.999999 min_delta=-18312.492043 mean_delta=18733.390234 median_delta=4203.437046 viol(plane<sphere)=10679
+BFS                      4 CERTIFIED overlap(s), worst deficit=1.438e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0038_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0038_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0038_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.856227 min_sphere=0.999999 min_delta=-12.910187 mean_delta=3710.861870 median_delta=674.048338 viol(plane<sphere)=96
+
+Trial 39/100 seed=8635764439659194209
+Elapsed time for computing randomConvexHullE3: 6.401113986968994
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15137672424316406
+Elapsed time for computing canonical_spherical_layout: 48.623382806777954
+packing tangency residual=7.313e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000031 min_sphere=0.999999 min_delta=-1.572620 mean_delta=2541.488139 median_delta=645.855392 viol(plane<sphere)=19
+DFS                      27 CERTIFIED overlap(s), worst deficit=2.007e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0039_dfs_27overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0039_dfs_27overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0039_dfs_27overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.007208 min_sphere=0.999999 min_delta=-5588.211233 mean_delta=22331.138107 median_delta=7192.758325 viol(plane<sphere)=8238
+BFS                      4 CERTIFIED overlap(s), worst deficit=6.792e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0039_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0039_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0039_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.320840 min_sphere=0.999999 min_delta=-34.771905 mean_delta=2924.963397 median_delta=751.408102 viol(plane<sphere)=417
+
+Trial 40/100 seed=3202245990058088462
+Elapsed time for computing randomConvexHullE3: 6.33091926574707
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15141797065734863
+Elapsed time for computing canonical_spherical_layout: 48.983537912368774
+packing tangency residual=5.128e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000110 min_sphere=1.000000 min_delta=-0.809761 mean_delta=2102.129697 median_delta=643.135195 viol(plane<sphere)=12
+DFS                      38 CERTIFIED overlap(s), worst deficit=5.566e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0040_dfs_38overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0040_dfs_38overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0040_dfs_38overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.565514 min_sphere=1.000000 min_delta=-5503.000188 mean_delta=19048.271465 median_delta=6978.784622 viol(plane<sphere)=6059
+BFS                      7 CERTIFIED overlap(s), worst deficit=1.445e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0040_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0040_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0040_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=-0.444656 min_sphere=1.000000 min_delta=-18.587198 mean_delta=2181.147047 median_delta=745.524338 viol(plane<sphere)=247
+
+Trial 41/100 seed=3255773258619246728
+Elapsed time for computing randomConvexHullE3: 6.301123857498169
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14790701866149902
+Elapsed time for computing canonical_spherical_layout: 48.12076783180237
+packing tangency residual=3.597e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000017 min_sphere=1.000000 min_delta=-6.938296 mean_delta=2420.387199 median_delta=674.762944 viol(plane<sphere)=35
+DFS                      45 CERTIFIED overlap(s), worst deficit=2.259e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0041_dfs_45overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0041_dfs_45overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0041_dfs_45overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.259389 min_sphere=1.000000 min_delta=-26621.678824 mean_delta=18612.768670 median_delta=4835.496338 viol(plane<sphere)=9207
+BFS                      2 CERTIFIED overlap(s), worst deficit=1.392e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0041_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0041_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0041_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.860789 min_sphere=1.000000 min_delta=-20.976296 mean_delta=2635.819254 median_delta=770.599969 viol(plane<sphere)=85
+
+Trial 42/100 seed=2508897227714486398
+Elapsed time for computing randomConvexHullE3: 6.347198963165283
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1635599136352539
+Elapsed time for computing canonical_spherical_layout: 48.51208281517029
+packing tangency residual=4.788e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000017 min_sphere=0.999995 min_delta=-0.552064 mean_delta=2833.865798 median_delta=669.214174 viol(plane<sphere)=12
+DFS                      44 CERTIFIED overlap(s), worst deficit=2.066e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0042_dfs_44overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0042_dfs_44overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0042_dfs_44overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.065639 min_sphere=0.999995 min_delta=-18209.589797 mean_delta=17588.104935 median_delta=5670.345444 viol(plane<sphere)=6208
+BFS                      1 CERTIFIED overlap(s), worst deficit=2.422e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0042_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0042_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0042_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.975784 min_sphere=0.999995 min_delta=-11.002822 mean_delta=2441.128067 median_delta=778.835486 viol(plane<sphere)=129
+
+Trial 43/100 seed=1156264573095747009
+Elapsed time for computing randomConvexHullE3: 6.327008962631226
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14907503128051758
+Elapsed time for computing canonical_spherical_layout: 48.75815200805664
+packing tangency residual=7.297e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000062 min_sphere=1.000000 min_delta=-0.814364 mean_delta=2124.265344 median_delta=662.901682 viol(plane<sphere)=16
+DFS                      35 CERTIFIED overlap(s), worst deficit=2.012e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0043_dfs_35overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0043_dfs_35overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0043_dfs_35overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.012120 min_sphere=1.000000 min_delta=-9256.545558 mean_delta=24004.085907 median_delta=5919.160572 viol(plane<sphere)=19247
+BFS                      4 CERTIFIED overlap(s), worst deficit=1.237e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0043_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0043_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0043_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.876306 min_sphere=1.000000 min_delta=-31.120479 mean_delta=2163.868785 median_delta=708.654158 viol(plane<sphere)=196
+
+Trial 44/100 seed=8329617986206032381
+Elapsed time for computing randomConvexHullE3: 6.295365333557129
+Elapsed time for computing newton_packing (Orick's Newton method): 0.3725252151489258
+Elapsed time for computing canonical_spherical_layout: 49.011762857437134
+packing tangency residual=1.403e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000048 min_sphere=1.000000 min_delta=-4.593027 mean_delta=2705.910903 median_delta=691.648932 viol(plane<sphere)=22
+DFS                      41 CERTIFIED overlap(s), worst deficit=2.064e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0044_dfs_41overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0044_dfs_41overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0044_dfs_41overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.064068 min_sphere=1.000000 min_delta=-6033.814078 mean_delta=24257.364601 median_delta=5022.509606 viol(plane<sphere)=13642
+BFS                      2 CERTIFIED overlap(s), worst deficit=1.725e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0044_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0044_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0044_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.827504 min_sphere=1.000000 min_delta=-483.764302 mean_delta=3310.182838 median_delta=703.892833 viol(plane<sphere)=176
+
+Trial 45/100 seed=979793212101036386
+Elapsed time for computing randomConvexHullE3: 6.242893934249878
+Elapsed time for computing newton_packing (Orick's Newton method): 0.16436195373535156
+Elapsed time for computing canonical_spherical_layout: 48.87522506713867
+packing tangency residual=5.363e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000057 min_sphere=1.000000 min_delta=-1.335356 mean_delta=2026.512867 median_delta=650.980155 viol(plane<sphere)=17
+DFS                      85 CERTIFIED overlap(s), worst deficit=4.573e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0045_dfs_85overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0045_dfs_85overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0045_dfs_85overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-3.573241 min_sphere=1.000000 min_delta=-11743.450306 mean_delta=17668.764625 median_delta=5097.762988 viol(plane<sphere)=17079
+BFS                      3 CERTIFIED overlap(s), worst deficit=1.156e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0045_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0045_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0045_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.884428 min_sphere=1.000000 min_delta=-45.137589 mean_delta=2487.126147 median_delta=706.545721 viol(plane<sphere)=147
+
+Trial 46/100 seed=506190325885617661
+Elapsed time for computing randomConvexHullE3: 6.272384166717529
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1495518684387207
+Elapsed time for computing canonical_spherical_layout: 49.015368938446045
+packing tangency residual=4.649e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000002 min_sphere=0.999995 min_delta=-5.941487 mean_delta=2617.996270 median_delta=657.764944 viol(plane<sphere)=37
+DFS                      14 CERTIFIED overlap(s), worst deficit=3.003e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0046_dfs_14overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0046_dfs_14overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0046_dfs_14overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.003221 min_sphere=0.999995 min_delta=-6513.408667 mean_delta=22418.737702 median_delta=5956.648430 viol(plane<sphere)=7037
+BFS                      4 CERTIFIED overlap(s), worst deficit=1.485e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0046_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0046_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0046_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.851540 min_sphere=0.999995 min_delta=-19.860671 mean_delta=2632.915360 median_delta=741.495512 viol(plane<sphere)=211
+
+Trial 47/100 seed=4501807776463982385
+Elapsed time for computing randomConvexHullE3: 6.365979194641113
+Elapsed time for computing newton_packing (Orick's Newton method): 0.17491888999938965
+Elapsed time for computing canonical_spherical_layout: 48.8136990070343
+packing tangency residual=3.925e-05
+STEEPEST_EDGE            1 overlap(s) within packing noise (residual=3.925e-05) - NOT counted as real
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0047_steepest_edge_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0047_steepest_edge_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0047_steepest_edge_1overlaps_1500verts_metadata.txt
+STEEPEST_EDGE pairs=1122751 min_plane=0.999964 min_sphere=0.999961 min_delta=-4.554723 mean_delta=2702.676532 median_delta=716.876245 viol(plane<sphere)=27
+DFS                      2 overlap(s) within packing noise (residual=3.925e-05) - NOT counted as real
+DFS                      20 CERTIFIED overlap(s), worst deficit=2.077e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0047_dfs_22overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0047_dfs_22overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0047_dfs_22overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.077255 min_sphere=0.999961 min_delta=-89531.603524 mean_delta=25216.044596 median_delta=6605.601273 viol(plane<sphere)=7654
+BFS                      4 CERTIFIED overlap(s), worst deficit=4.058e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0047_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0047_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0047_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.594154 min_sphere=0.999961 min_delta=-129.204849 mean_delta=3003.257550 median_delta=812.632474 viol(plane<sphere)=222
+
+Trial 48/100 seed=3029703036988654613
+Elapsed time for computing randomConvexHullE3: 6.25496506690979
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14861631393432617
+Elapsed time for computing canonical_spherical_layout: 48.546637773513794
+packing tangency residual=2.038e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000018 min_sphere=1.000000 min_delta=-4.827609 mean_delta=2332.446924 median_delta=676.792638 viol(plane<sphere)=25
+DFS                      111 CERTIFIED overlap(s), worst deficit=5.476e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0048_dfs_111overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0048_dfs_111overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0048_dfs_111overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.475711 min_sphere=1.000000 min_delta=-7292.616908 mean_delta=22838.759360 median_delta=4929.042516 viol(plane<sphere)=15502
+BFS                      1 CERTIFIED overlap(s), worst deficit=2.382e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0048_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0048_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0048_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.761802 min_sphere=1.000000 min_delta=-16.211166 mean_delta=4116.873926 median_delta=680.791738 viol(plane<sphere)=95
+
+Trial 49/100 seed=6175158341770149455
+Elapsed time for computing randomConvexHullE3: 6.285139799118042
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1470472812652588
+Elapsed time for computing canonical_spherical_layout: 48.56614875793457
+packing tangency residual=6.340e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000029 min_sphere=0.999999 min_delta=-1.022204 mean_delta=2561.891778 median_delta=678.778439 viol(plane<sphere)=12
+DFS                      52 CERTIFIED overlap(s), worst deficit=3.656e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0049_dfs_52overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0049_dfs_52overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0049_dfs_52overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.656297 min_sphere=0.999999 min_delta=-6499.586534 mean_delta=23340.919626 median_delta=4731.128869 viol(plane<sphere)=13379
+BFS                      4 CERTIFIED overlap(s), worst deficit=6.057e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0049_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0049_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0049_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.939429 min_sphere=0.999999 min_delta=-111.091468 mean_delta=3144.024706 median_delta=748.754091 viol(plane<sphere)=372
+
+Trial 50/100 seed=964159007840712029
+Elapsed time for computing randomConvexHullE3: 6.347875118255615
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14859485626220703
+Elapsed time for computing canonical_spherical_layout: 49.02075815200806
+packing tangency residual=1.895e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000006 min_sphere=0.999999 min_delta=-1.049026 mean_delta=3184.496640 median_delta=670.100241 viol(plane<sphere)=8
+DFS                      187 CERTIFIED overlap(s), worst deficit=2.117e+01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0050_dfs_187overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0050_dfs_187overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0050_dfs_187overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-20.167218 min_sphere=0.999999 min_delta=-88131.809337 mean_delta=31365.124075 median_delta=5289.938918 viol(plane<sphere)=17077
+BFS                      5 CERTIFIED overlap(s), worst deficit=9.980e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0050_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0050_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0050_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.900204 min_sphere=0.999999 min_delta=-47.633318 mean_delta=3561.349353 median_delta=683.304834 viol(plane<sphere)=175
+
+Trial 51/100 seed=8969669901179768420
+Elapsed time for computing randomConvexHullE3: 6.284900903701782
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1524190902709961
+Elapsed time for computing canonical_spherical_layout: 49.25703287124634
+packing tangency residual=5.468e-05
+STEEPEST_EDGE            1 overlap(s) within packing noise (residual=5.468e-05) - NOT counted as real
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0051_steepest_edge_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0051_steepest_edge_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0051_steepest_edge_1overlaps_1500verts_metadata.txt
+STEEPEST_EDGE pairs=1122751 min_plane=0.999979 min_sphere=0.999997 min_delta=-1.014620 mean_delta=2803.355811 median_delta=691.219854 viol(plane<sphere)=17
+DFS                      131 CERTIFIED overlap(s), worst deficit=5.366e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0051_dfs_131overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0051_dfs_131overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0051_dfs_131overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.366349 min_sphere=0.999997 min_delta=-9218.304940 mean_delta=34694.017585 median_delta=6702.953910 viol(plane<sphere)=19802
+BFS                      5 CERTIFIED overlap(s), worst deficit=7.312e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0051_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0051_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0051_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.268816 min_sphere=0.999997 min_delta=-13.535227 mean_delta=3522.109291 median_delta=761.455929 viol(plane<sphere)=308
+
+Trial 52/100 seed=5363681628884199990
+Elapsed time for computing randomConvexHullE3: 6.275795936584473
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1499638557434082
+Elapsed time for computing canonical_spherical_layout: 49.48486924171448
+packing tangency residual=5.469e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000011 min_sphere=0.999999 min_delta=-0.281558 mean_delta=2451.899916 median_delta=667.761200 viol(plane<sphere)=7
+DFS                      42 CERTIFIED overlap(s), worst deficit=2.393e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0052_dfs_42overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0052_dfs_42overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0052_dfs_42overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.392536 min_sphere=1.000000 min_delta=-5305.625048 mean_delta=22630.224874 median_delta=7211.644053 viol(plane<sphere)=6282
+BFS                      5 CERTIFIED overlap(s), worst deficit=3.875e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0052_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0052_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0052_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.612481 min_sphere=0.999999 min_delta=-61.025917 mean_delta=2721.489637 median_delta=787.546090 viol(plane<sphere)=182
+
+Trial 53/100 seed=4008609483652790022
+Elapsed time for computing randomConvexHullE3: 6.349334955215454
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15793728828430176
+Elapsed time for computing canonical_spherical_layout: 49.0698139667511
+packing tangency residual=2.606e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000026 min_sphere=1.000000 min_delta=-4.107714 mean_delta=2278.152679 median_delta=670.831122 viol(plane<sphere)=13
+DFS                      34 CERTIFIED overlap(s), worst deficit=4.280e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0053_dfs_34overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0053_dfs_34overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0053_dfs_34overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-3.280434 min_sphere=1.000000 min_delta=-11510.603347 mean_delta=21178.107531 median_delta=6389.600563 viol(plane<sphere)=13712
+BFS                      2 CERTIFIED overlap(s), worst deficit=1.595e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0053_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0053_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0053_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.840515 min_sphere=1.000000 min_delta=-18.487020 mean_delta=2668.848509 median_delta=700.488084 viol(plane<sphere)=179
+
+Trial 54/100 seed=2761540582796036697
+Elapsed time for computing randomConvexHullE3: 6.347085952758789
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1520850658416748
+Elapsed time for computing canonical_spherical_layout: 48.69268178939819
+packing tangency residual=3.054e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000010 min_sphere=0.999997 min_delta=-0.676349 mean_delta=2902.145395 median_delta=696.898979 viol(plane<sphere)=7
+DFS                      23 CERTIFIED overlap(s), worst deficit=1.785e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0054_dfs_23overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0054_dfs_23overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0054_dfs_23overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.785002 min_sphere=0.999997 min_delta=-3508.999467 mean_delta=28169.656443 median_delta=6237.829265 viol(plane<sphere)=7424
+BFS                      7 CERTIFIED overlap(s), worst deficit=3.138e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0054_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0054_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0054_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.686210 min_sphere=0.999997 min_delta=-38.046196 mean_delta=3329.507771 median_delta=721.196700 viol(plane<sphere)=109
+
+Trial 55/100 seed=4103024821784146369
+Elapsed time for computing randomConvexHullE3: 6.291230916976929
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14861798286437988
+Elapsed time for computing canonical_spherical_layout: 54.25603795051575
+packing tangency residual=1.550e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000049 min_sphere=0.999999 min_delta=-12.610027 mean_delta=2390.460122 median_delta=690.921027 viol(plane<sphere)=18
+DFS                      21 CERTIFIED overlap(s), worst deficit=2.053e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0055_dfs_21overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0055_dfs_21overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0055_dfs_21overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.052672 min_sphere=0.999999 min_delta=-4633.668019 mean_delta=18753.483891 median_delta=5722.328351 viol(plane<sphere)=4928
+BFS                      4 CERTIFIED overlap(s), worst deficit=9.056e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0055_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0055_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0055_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.909435 min_sphere=0.999998 min_delta=-33.982604 mean_delta=2539.155198 median_delta=822.128864 viol(plane<sphere)=209
+
+Trial 56/100 seed=8919966808661574273
+Elapsed time for computing randomConvexHullE3: 6.450669050216675
+Elapsed time for computing newton_packing (Orick's Newton method): 0.16481494903564453
+Elapsed time for computing canonical_spherical_layout: 49.91888499259949
+packing tangency residual=3.509e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000018 min_sphere=0.999996 min_delta=-1.705762 mean_delta=2265.619773 median_delta=666.720288 viol(plane<sphere)=15
+DFS                      26 CERTIFIED overlap(s), worst deficit=1.895e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0056_dfs_26overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0056_dfs_26overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0056_dfs_26overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.894916 min_sphere=0.999996 min_delta=-2481.854450 mean_delta=17788.708440 median_delta=4684.686761 viol(plane<sphere)=6107
+BFS                      1 CERTIFIED overlap(s), worst deficit=2.287e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0056_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0056_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0056_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.771305 min_sphere=0.999996 min_delta=-264.216860 mean_delta=2313.271768 median_delta=748.778840 viol(plane<sphere)=472
+
+Trial 57/100 seed=4530572456795211933
+Elapsed time for computing randomConvexHullE3: 6.457079887390137
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1519920825958252
+Elapsed time for computing canonical_spherical_layout: 49.37976002693176
+packing tangency residual=5.875e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000015 min_sphere=1.000000 min_delta=-0.295444 mean_delta=2479.382017 median_delta=678.375025 viol(plane<sphere)=10
+DFS                      47 CERTIFIED overlap(s), worst deficit=2.748e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0057_dfs_47overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0057_dfs_47overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0057_dfs_47overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.748132 min_sphere=1.000000 min_delta=-4818.626972 mean_delta=15393.603862 median_delta=4724.900238 viol(plane<sphere)=8301
+BFS                      1 CERTIFIED overlap(s), worst deficit=6.493e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0057_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0057_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0057_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.935073 min_sphere=1.000000 min_delta=-34.601620 mean_delta=2646.336742 median_delta=816.921446 viol(plane<sphere)=184
+
+Trial 58/100 seed=5299340067352578660
+Elapsed time for computing randomConvexHullE3: 6.405083894729614
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15932893753051758
+Elapsed time for computing canonical_spherical_layout: 49.025099992752075
+packing tangency residual=6.849e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000025 min_sphere=0.999977 min_delta=-4.633609 mean_delta=2634.020991 median_delta=668.230259 viol(plane<sphere)=43
+DFS                      1 overlap(s) within packing noise (residual=6.849e-05) - NOT counted as real
+DFS                      107 CERTIFIED overlap(s), worst deficit=5.038e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0058_dfs_108overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0058_dfs_108overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0058_dfs_108overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.038120 min_sphere=0.999977 min_delta=-7925.227920 mean_delta=25494.938848 median_delta=4841.100653 viol(plane<sphere)=11822
+BFS                      5 CERTIFIED overlap(s), worst deficit=1.530e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0058_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0058_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0058_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.846974 min_sphere=0.999977 min_delta=-15.509722 mean_delta=3453.039474 median_delta=744.534644 viol(plane<sphere)=137
+
+Trial 59/100 seed=8458818344570498203
+Elapsed time for computing randomConvexHullE3: 6.36699104309082
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1511080265045166
+Elapsed time for computing canonical_spherical_layout: 49.54658031463623
+packing tangency residual=1.753e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000014 min_sphere=0.999999 min_delta=-1.256621 mean_delta=2395.314023 median_delta=665.397241 viol(plane<sphere)=50
+DFS                      18 CERTIFIED overlap(s), worst deficit=2.281e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0059_dfs_18overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0059_dfs_18overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0059_dfs_18overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.280750 min_sphere=0.999998 min_delta=-8065.858971 mean_delta=16264.509653 median_delta=4156.936574 viol(plane<sphere)=5704
+BFS                      3 CERTIFIED overlap(s), worst deficit=1.979e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0059_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0059_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0059_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.802122 min_sphere=0.999998 min_delta=-74.707978 mean_delta=2874.392771 median_delta=728.345260 viol(plane<sphere)=153
+
+Trial 60/100 seed=3848932787934124453
+Elapsed time for computing randomConvexHullE3: 6.260126113891602
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14778804779052734
+Elapsed time for computing canonical_spherical_layout: 48.84805512428284
+packing tangency residual=3.352e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000041 min_sphere=0.999998 min_delta=-1.298179 mean_delta=2212.741148 median_delta=667.860257 viol(plane<sphere)=28
+DFS                      28 CERTIFIED overlap(s), worst deficit=2.545e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0060_dfs_28overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0060_dfs_28overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0060_dfs_28overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.544721 min_sphere=0.999998 min_delta=-7237.370552 mean_delta=23847.622355 median_delta=5523.051469 viol(plane<sphere)=12728
+BFS                      1 CERTIFIED overlap(s), worst deficit=4.467e-03
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0060_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0060_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0060_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.995533 min_sphere=0.999997 min_delta=-19.592781 mean_delta=2965.370726 median_delta=737.870950 viol(plane<sphere)=306
+
+Trial 61/100 seed=8347139559412496211
+Elapsed time for computing randomConvexHullE3: 6.327728033065796
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14750981330871582
+Elapsed time for computing canonical_spherical_layout: 49.112460136413574
+packing tangency residual=4.804e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000043 min_sphere=1.000000 min_delta=-0.158184 mean_delta=2841.066956 median_delta=667.379071 viol(plane<sphere)=7
+DFS                      83 CERTIFIED overlap(s), worst deficit=2.670e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0061_dfs_83overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0061_dfs_83overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0061_dfs_83overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.669974 min_sphere=1.000000 min_delta=-27659.986707 mean_delta=7487.472987 median_delta=2270.230007 viol(plane<sphere)=17051
+BFS                      4 CERTIFIED overlap(s), worst deficit=8.338e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0061_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0061_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0061_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.166210 min_sphere=1.000000 min_delta=-16.076970 mean_delta=2803.276200 median_delta=744.052926 viol(plane<sphere)=242
+
+Trial 62/100 seed=8514643909793583461
+Elapsed time for computing randomConvexHullE3: 6.319253921508789
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14925599098205566
+Elapsed time for computing canonical_spherical_layout: 49.16383600234985
+packing tangency residual=4.928e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000041 min_sphere=0.999997 min_delta=-2.214811 mean_delta=2407.113173 median_delta=673.738098 viol(plane<sphere)=16
+DFS                      31 CERTIFIED overlap(s), worst deficit=2.781e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0062_dfs_31overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0062_dfs_31overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0062_dfs_31overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.781265 min_sphere=0.999997 min_delta=-24908.650983 mean_delta=15444.378372 median_delta=5297.767819 viol(plane<sphere)=5374
+BFS                      6 CERTIFIED overlap(s), worst deficit=1.413e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0062_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0062_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0062_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.858656 min_sphere=0.999997 min_delta=-35.533492 mean_delta=2634.100416 median_delta=810.443241 viol(plane<sphere)=180
+
+Trial 63/100 seed=1376085001909172549
+Elapsed time for computing randomConvexHullE3: 6.424473762512207
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15091872215270996
+Elapsed time for computing canonical_spherical_layout: 48.571239948272705
+packing tangency residual=9.500e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000038 min_sphere=1.000000 min_delta=-12.607504 mean_delta=2276.299117 median_delta=649.328405 viol(plane<sphere)=19
+DFS                      62 CERTIFIED overlap(s), worst deficit=4.364e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0063_dfs_62overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0063_dfs_62overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0063_dfs_62overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-3.363534 min_sphere=1.000000 min_delta=-6478.582050 mean_delta=14091.477690 median_delta=3143.698423 viol(plane<sphere)=10659
+BFS                      5 CERTIFIED overlap(s), worst deficit=3.095e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0063_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0063_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0063_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.690525 min_sphere=1.000000 min_delta=-24.154358 mean_delta=2913.344418 median_delta=701.412456 viol(plane<sphere)=178
+
+Trial 64/100 seed=6697199596095082467
+Elapsed time for computing randomConvexHullE3: 6.4001758098602295
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1612567901611328
+Elapsed time for computing canonical_spherical_layout: 49.259541034698486
+packing tangency residual=8.582e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000017 min_sphere=0.999998 min_delta=-1.102306 mean_delta=4070.211882 median_delta=690.493569 viol(plane<sphere)=12
+DFS                      97 CERTIFIED overlap(s), worst deficit=5.457e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0064_dfs_97overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0064_dfs_97overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0064_dfs_97overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.457013 min_sphere=0.999998 min_delta=-26213.428934 mean_delta=37466.868074 median_delta=6083.240694 viol(plane<sphere)=30579
+BFS                      1 overlap(s) within packing noise (residual=8.582e-05) - NOT counted as real
+BFS                      4 CERTIFIED overlap(s), worst deficit=2.095e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0064_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0064_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0064_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.790543 min_sphere=0.999998 min_delta=-14.961156 mean_delta=6821.631314 median_delta=725.961107 viol(plane<sphere)=150
+
+Trial 65/100 seed=7568216833775745453
+Elapsed time for computing randomConvexHullE3: 6.361234903335571
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14997220039367676
+Elapsed time for computing canonical_spherical_layout: 48.35408091545105
+packing tangency residual=6.016e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000021 min_sphere=0.999999 min_delta=-1.895204 mean_delta=2353.984043 median_delta=673.205028 viol(plane<sphere)=16
+DFS                      62 CERTIFIED overlap(s), worst deficit=3.910e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0065_dfs_62overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0065_dfs_62overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0065_dfs_62overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.910186 min_sphere=0.999999 min_delta=-8335.508409 mean_delta=17046.076499 median_delta=4268.710127 viol(plane<sphere)=11850
+BFS                      4 CERTIFIED overlap(s), worst deficit=3.010e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0065_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0065_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0065_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.698958 min_sphere=0.999999 min_delta=-132.849488 mean_delta=2581.574666 median_delta=791.159087 viol(plane<sphere)=514
+
+Trial 66/100 seed=4594476558560835096
+Elapsed time for computing randomConvexHullE3: 6.359826326370239
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15059566497802734
+Elapsed time for computing canonical_spherical_layout: 49.07024788856506
+packing tangency residual=1.980e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000002 min_sphere=0.999980 min_delta=-9.375115 mean_delta=3135.566726 median_delta=681.225666 viol(plane<sphere)=20
+DFS                      2 overlap(s) within packing noise (residual=1.980e-05) - NOT counted as real
+DFS                      50 CERTIFIED overlap(s), worst deficit=2.269e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0066_dfs_52overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0066_dfs_52overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0066_dfs_52overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.268571 min_sphere=0.999980 min_delta=-309438.592514 mean_delta=19649.646296 median_delta=5116.946854 viol(plane<sphere)=15102
+BFS                      1 overlap(s) within packing noise (residual=1.980e-05) - NOT counted as real
+BFS                      4 CERTIFIED overlap(s), worst deficit=2.240e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0066_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0066_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0066_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.776020 min_sphere=0.999980 min_delta=-52.382587 mean_delta=3330.302979 median_delta=765.886259 viol(plane<sphere)=207
+
+Trial 67/100 seed=3152908016553797427
+Elapsed time for computing randomConvexHullE3: 6.380469083786011
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1493513584136963
+Elapsed time for computing canonical_spherical_layout: 48.86004590988159
+packing tangency residual=2.733e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000020 min_sphere=1.000000 min_delta=-6.793087 mean_delta=3086.167053 median_delta=661.541044 viol(plane<sphere)=26
+DFS                      101 CERTIFIED overlap(s), worst deficit=3.238e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0067_dfs_101overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0067_dfs_101overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0067_dfs_101overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.238268 min_sphere=1.000000 min_delta=-9336.118040 mean_delta=18228.222806 median_delta=4194.469909 viol(plane<sphere)=10504
+BFS                      2 CERTIFIED overlap(s), worst deficit=7.724e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0067_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0067_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0067_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.922762 min_sphere=1.000000 min_delta=-201.298977 mean_delta=3283.588737 median_delta=705.698077 viol(plane<sphere)=210
+
+Trial 68/100 seed=8378089496139982729
+Elapsed time for computing randomConvexHullE3: 6.369293689727783
+Elapsed time for computing newton_packing (Orick's Newton method): 0.19456791877746582
+Elapsed time for computing canonical_spherical_layout: 48.94705319404602
+packing tangency residual=1.121e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000013 min_sphere=0.999989 min_delta=-0.897125 mean_delta=2515.502969 median_delta=662.914624 viol(plane<sphere)=31
+DFS                      17 CERTIFIED overlap(s), worst deficit=1.988e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0068_dfs_17overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0068_dfs_17overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0068_dfs_17overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.988343 min_sphere=0.999989 min_delta=-16542.402680 mean_delta=26740.009085 median_delta=7620.997808 viol(plane<sphere)=10023
+BFS                      2 CERTIFIED overlap(s), worst deficit=8.806e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0068_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0068_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0068_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.119360 min_sphere=0.999989 min_delta=-155.674999 mean_delta=2749.528812 median_delta=732.148004 viol(plane<sphere)=254
+
+Trial 69/100 seed=5897183995598795932
+Elapsed time for computing randomConvexHullE3: 6.244200229644775
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14850568771362305
+Elapsed time for computing canonical_spherical_layout: 48.596084117889404
+packing tangency residual=1.527e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000014 min_sphere=1.000000 min_delta=-5.000416 mean_delta=2510.927210 median_delta=686.998841 viol(plane<sphere)=27
+DFS                      19 CERTIFIED overlap(s), worst deficit=3.192e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0069_dfs_19overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0069_dfs_19overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0069_dfs_19overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.191948 min_sphere=1.000000 min_delta=-28291.983379 mean_delta=25900.616555 median_delta=7193.174149 viol(plane<sphere)=5889
+BFS                      2 CERTIFIED overlap(s), worst deficit=1.349e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0069_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0069_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0069_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.986509 min_sphere=1.000000 min_delta=-14.316996 mean_delta=2896.310001 median_delta=756.879558 viol(plane<sphere)=186
+
+Trial 70/100 seed=2534977708743796532
+Elapsed time for computing randomConvexHullE3: 6.2985241413116455
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15006208419799805
+Elapsed time for computing canonical_spherical_layout: 48.90967917442322
+packing tangency residual=1.558e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000012 min_sphere=0.999984 min_delta=-3.178458 mean_delta=2169.731723 median_delta=645.670082 viol(plane<sphere)=33
+DFS                      25 CERTIFIED overlap(s), worst deficit=3.478e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0070_dfs_25overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0070_dfs_25overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0070_dfs_25overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.478450 min_sphere=0.999990 min_delta=-1913.466887 mean_delta=20257.589199 median_delta=7232.637675 viol(plane<sphere)=2747
+BFS                      6 CERTIFIED overlap(s), worst deficit=1.884e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0070_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0070_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0070_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=-0.883965 min_sphere=0.999984 min_delta=-45.192235 mean_delta=2254.137245 median_delta=729.671057 viol(plane<sphere)=440
+
+Trial 71/100 seed=362347119293670412
+Elapsed time for computing randomConvexHullE3: 6.334184885025024
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14972710609436035
+Elapsed time for computing canonical_spherical_layout: 48.51922821998596
+packing tangency residual=4.691e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000007 min_sphere=1.000000 min_delta=-5.829064 mean_delta=3006.276776 median_delta=690.090959 viol(plane<sphere)=40
+DFS                      34 CERTIFIED overlap(s), worst deficit=2.487e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0071_dfs_34overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0071_dfs_34overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0071_dfs_34overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.486626 min_sphere=1.000000 min_delta=-26821.962705 mean_delta=27118.689699 median_delta=7502.021426 viol(plane<sphere)=14380
+BFS                      3 CERTIFIED overlap(s), worst deficit=1.850e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0071_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0071_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0071_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.814993 min_sphere=1.000000 min_delta=-47.614919 mean_delta=3050.016335 median_delta=800.656724 viol(plane<sphere)=265
+
+Trial 72/100 seed=221283158767449245
+Elapsed time for computing randomConvexHullE3: 6.3364880084991455
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14878416061401367
+Elapsed time for computing canonical_spherical_layout: 48.54205894470215
+packing tangency residual=6.147e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000077 min_sphere=0.999999 min_delta=-1.059385 mean_delta=2134.160079 median_delta=647.529542 viol(plane<sphere)=4
+DFS                      79 CERTIFIED overlap(s), worst deficit=2.464e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0072_dfs_79overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0072_dfs_79overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0072_dfs_79overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.464308 min_sphere=1.000000 min_delta=-3615.193768 mean_delta=15933.339354 median_delta=3838.972633 viol(plane<sphere)=16444
+BFS                      4 CERTIFIED overlap(s), worst deficit=7.032e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0072_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0072_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0072_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.296848 min_sphere=0.999999 min_delta=-25.442970 mean_delta=2960.665200 median_delta=691.180108 viol(plane<sphere)=130
+
+Trial 73/100 seed=3527507540679704824
+Elapsed time for computing randomConvexHullE3: 6.322575092315674
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14980292320251465
+Elapsed time for computing canonical_spherical_layout: 48.783190965652466
+packing tangency residual=1.865e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000013 min_sphere=0.999999 min_delta=-1.110493 mean_delta=2613.625711 median_delta=657.503060 viol(plane<sphere)=27
+DFS                      17 CERTIFIED overlap(s), worst deficit=2.569e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0073_dfs_17overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0073_dfs_17overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0073_dfs_17overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.569304 min_sphere=0.999999 min_delta=-1068.672299 mean_delta=22667.175096 median_delta=6103.435612 viol(plane<sphere)=1864
+BFS                      1 CERTIFIED overlap(s), worst deficit=2.549e-03
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0073_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0073_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0073_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.997451 min_sphere=0.999999 min_delta=-53.156220 mean_delta=2676.148404 median_delta=753.873207 viol(plane<sphere)=218
+
+Trial 74/100 seed=1842676979802328090
+Elapsed time for computing randomConvexHullE3: 6.341506004333496
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15226125717163086
+Elapsed time for computing canonical_spherical_layout: 48.927207946777344
+packing tangency residual=1.299e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000016 min_sphere=0.999996 min_delta=-0.253678 mean_delta=2345.333385 median_delta=678.268319 viol(plane<sphere)=6
+DFS                      53 CERTIFIED overlap(s), worst deficit=3.326e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0074_dfs_53overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0074_dfs_53overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0074_dfs_53overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.325730 min_sphere=0.999995 min_delta=-1818.494502 mean_delta=20950.161377 median_delta=6549.092359 viol(plane<sphere)=6930
+BFS                      3 CERTIFIED overlap(s), worst deficit=2.095e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0074_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0074_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0074_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.790536 min_sphere=0.999995 min_delta=-22.999814 mean_delta=2500.540344 median_delta=786.374439 viol(plane<sphere)=141
+
+Trial 75/100 seed=7728232240299770564
+Elapsed time for computing randomConvexHullE3: 6.331840991973877
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1481318473815918
+Elapsed time for computing canonical_spherical_layout: 48.51832604408264
+packing tangency residual=4.616e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000089 min_sphere=1.000000 min_delta=-15.155369 mean_delta=2041.257101 median_delta=649.899941 viol(plane<sphere)=17
+DFS                      88 CERTIFIED overlap(s), worst deficit=3.214e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0075_dfs_88overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0075_dfs_88overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0075_dfs_88overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.213833 min_sphere=1.000000 min_delta=-7914.850228 mean_delta=17507.340689 median_delta=4571.276006 viol(plane<sphere)=8704
+BFS                      6 CERTIFIED overlap(s), worst deficit=4.537e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0075_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0075_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0075_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.546301 min_sphere=1.000000 min_delta=-8.289037 mean_delta=3344.607289 median_delta=659.716744 viol(plane<sphere)=95
+
+Trial 76/100 seed=8246331580901531205
+Elapsed time for computing randomConvexHullE3: 6.248471021652222
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1474459171295166
+Elapsed time for computing canonical_spherical_layout: 48.52848696708679
+packing tangency residual=3.776e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000007 min_sphere=0.999996 min_delta=-3.862491 mean_delta=2812.667897 median_delta=693.811496 viol(plane<sphere)=22
+DFS                      54 CERTIFIED overlap(s), worst deficit=6.444e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0076_dfs_54overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0076_dfs_54overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0076_dfs_54overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-5.444107 min_sphere=0.999996 min_delta=-27489.477358 mean_delta=16543.220082 median_delta=4476.120806 viol(plane<sphere)=11897
+BFS                      3 CERTIFIED overlap(s), worst deficit=2.660e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0076_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0076_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0076_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.734033 min_sphere=0.999996 min_delta=-15.117050 mean_delta=3155.957716 median_delta=848.507904 viol(plane<sphere)=140
+
+Trial 77/100 seed=2460267416727825222
+Elapsed time for computing randomConvexHullE3: 6.282306909561157
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14844322204589844
+Elapsed time for computing canonical_spherical_layout: 48.756513833999634
+packing tangency residual=4.954e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000011 min_sphere=1.000000 min_delta=-8.826352 mean_delta=2621.521197 median_delta=666.346084 viol(plane<sphere)=18
+DFS                      34 CERTIFIED overlap(s), worst deficit=2.027e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0077_dfs_34overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0077_dfs_34overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0077_dfs_34overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.027086 min_sphere=1.000000 min_delta=-23309.758664 mean_delta=22965.898643 median_delta=4835.609551 viol(plane<sphere)=24662
+BFS                      3 CERTIFIED overlap(s), worst deficit=4.917e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0077_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0077_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0077_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.508270 min_sphere=1.000000 min_delta=-15.365796 mean_delta=3689.420721 median_delta=697.685552 viol(plane<sphere)=101
+
+Trial 78/100 seed=2006910397880510009
+Elapsed time for computing randomConvexHullE3: 6.347028970718384
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1485607624053955
+Elapsed time for computing canonical_spherical_layout: 47.963958978652954
+packing tangency residual=1.071e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000024 min_sphere=0.999990 min_delta=-4.075304 mean_delta=2346.987441 median_delta=666.522648 viol(plane<sphere)=28
+DFS                      22 CERTIFIED overlap(s), worst deficit=8.434e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0078_dfs_22overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0078_dfs_22overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0078_dfs_22overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=0.156579 min_sphere=0.999990 min_delta=-57213.541620 mean_delta=26781.901300 median_delta=7615.333371 viol(plane<sphere)=21044
+BFS                      7 CERTIFIED overlap(s), worst deficit=1.607e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0078_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0078_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0078_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.839276 min_sphere=0.999990 min_delta=-65.888492 mean_delta=3082.180731 median_delta=729.683318 viol(plane<sphere)=228
+
+Trial 79/100 seed=5734068021392928056
+Elapsed time for computing randomConvexHullE3: 6.362766981124878
+Elapsed time for computing newton_packing (Orick's Newton method): 0.2649228572845459
+Elapsed time for computing canonical_spherical_layout: 48.8445029258728
+packing tangency residual=4.195e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000017 min_sphere=1.000000 min_delta=-2.677955 mean_delta=2346.498213 median_delta=661.687430 viol(plane<sphere)=13
+DFS                      36 CERTIFIED overlap(s), worst deficit=2.383e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0079_dfs_36overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0079_dfs_36overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0079_dfs_36overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.383460 min_sphere=1.000000 min_delta=-1297.499283 mean_delta=25272.581211 median_delta=6954.348018 viol(plane<sphere)=5914
+BFS                      3 CERTIFIED overlap(s), worst deficit=2.020e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0079_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0079_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0079_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.797985 min_sphere=1.000000 min_delta=-34.385550 mean_delta=2373.695983 median_delta=742.548921 viol(plane<sphere)=235
+
+Trial 80/100 seed=1485905269102954961
+Elapsed time for computing randomConvexHullE3: 6.327740907669067
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1490330696105957
+Elapsed time for computing canonical_spherical_layout: 48.74057078361511
+packing tangency residual=6.802e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000036 min_sphere=0.999999 min_delta=-4.116282 mean_delta=2106.004264 median_delta=672.340126 viol(plane<sphere)=5
+DFS                      141 CERTIFIED overlap(s), worst deficit=5.983e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0080_dfs_141overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0080_dfs_141overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0080_dfs_141overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.982604 min_sphere=0.999999 min_delta=-14954.576636 mean_delta=14850.360910 median_delta=4096.745492 viol(plane<sphere)=24550
+BFS                      4 CERTIFIED overlap(s), worst deficit=1.185e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0080_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0080_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0080_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.881516 min_sphere=0.999999 min_delta=-84.914545 mean_delta=2500.808530 median_delta=764.022506 viol(plane<sphere)=372
+
+Trial 81/100 seed=8837013868932953024
+Elapsed time for computing randomConvexHullE3: 6.3137781620025635
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1518387794494629
+Elapsed time for computing canonical_spherical_layout: 48.806241035461426
+packing tangency residual=1.819e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000001 min_sphere=0.999999 min_delta=-0.464568 mean_delta=3086.448523 median_delta=687.533226 viol(plane<sphere)=4
+DFS                      80 CERTIFIED overlap(s), worst deficit=7.491e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0081_dfs_80overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0081_dfs_80overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0081_dfs_80overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-6.490786 min_sphere=0.999999 min_delta=-32060.063944 mean_delta=24604.655494 median_delta=5001.672922 viol(plane<sphere)=13639
+BFS                      4 CERTIFIED overlap(s), worst deficit=2.598e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0081_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0081_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0081_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.740240 min_sphere=1.000000 min_delta=-21.366314 mean_delta=3176.964815 median_delta=715.134652 viol(plane<sphere)=228
+
+Trial 82/100 seed=8307845260272486820
+Elapsed time for computing randomConvexHullE3: 6.327517032623291
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14752817153930664
+Elapsed time for computing canonical_spherical_layout: 48.558289766311646
+packing tangency residual=9.193e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000010 min_sphere=1.000000 min_delta=-1.242545 mean_delta=2705.135578 median_delta=690.652613 viol(plane<sphere)=16
+DFS                      60 CERTIFIED overlap(s), worst deficit=8.566e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0082_dfs_60overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0082_dfs_60overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0082_dfs_60overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-7.566088 min_sphere=1.000000 min_delta=-15028.574885 mean_delta=23441.889773 median_delta=4095.645685 viol(plane<sphere)=14087
+BFS                      3 CERTIFIED overlap(s), worst deficit=4.298e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0082_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0082_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0082_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.957017 min_sphere=1.000000 min_delta=-124.909325 mean_delta=3037.045390 median_delta=765.432371 viol(plane<sphere)=233
+
+Trial 83/100 seed=5549224317604618360
+Elapsed time for computing randomConvexHullE3: 6.34228777885437
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1479051113128662
+Elapsed time for computing canonical_spherical_layout: 48.79405498504639
+packing tangency residual=1.716e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000068 min_sphere=0.999986 min_delta=-1.188781 mean_delta=2688.995729 median_delta=681.827081 viol(plane<sphere)=21
+DFS                      84 CERTIFIED overlap(s), worst deficit=5.342e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0083_dfs_84overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0083_dfs_84overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0083_dfs_84overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-4.341837 min_sphere=0.999986 min_delta=-5985.854949 mean_delta=23627.891345 median_delta=5095.542407 viol(plane<sphere)=9771
+BFS                      5 CERTIFIED overlap(s), worst deficit=1.073e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0083_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0083_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0083_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.892748 min_sphere=0.999983 min_delta=-85.542876 mean_delta=2767.908015 median_delta=747.097969 viol(plane<sphere)=337
+
+Trial 84/100 seed=4690040412222019107
+Elapsed time for computing randomConvexHullE3: 6.321960926055908
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1595010757446289
+Elapsed time for computing canonical_spherical_layout: 49.30509305000305
+packing tangency residual=5.484e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000019 min_sphere=0.999999 min_delta=-4.744537 mean_delta=2947.900812 median_delta=696.979561 viol(plane<sphere)=17
+DFS                      24 CERTIFIED overlap(s), worst deficit=2.215e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0084_dfs_24overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0084_dfs_24overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0084_dfs_24overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.214786 min_sphere=0.999999 min_delta=-18356.127115 mean_delta=15679.777143 median_delta=3733.520028 viol(plane<sphere)=5906
+BFS                      1 CERTIFIED overlap(s), worst deficit=3.610e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0084_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0084_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0084_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.963904 min_sphere=0.999999 min_delta=-24.747875 mean_delta=3636.361768 median_delta=758.388101 viol(plane<sphere)=312
+
+Trial 85/100 seed=701949602226783324
+Elapsed time for computing randomConvexHullE3: 6.339808940887451
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14981985092163086
+Elapsed time for computing canonical_spherical_layout: 49.2266891002655
+packing tangency residual=2.820e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000084 min_sphere=1.000000 min_delta=-2.261415 mean_delta=2211.660218 median_delta=673.907200 viol(plane<sphere)=13
+DFS                      36 CERTIFIED overlap(s), worst deficit=2.161e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0085_dfs_36overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0085_dfs_36overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0085_dfs_36overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.160546 min_sphere=1.000000 min_delta=-666.014991 mean_delta=18629.227775 median_delta=5424.472813 viol(plane<sphere)=4074
+BFS                      2 CERTIFIED overlap(s), worst deficit=5.531e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0085_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0085_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0085_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.944694 min_sphere=1.000000 min_delta=-30.329276 mean_delta=2520.922279 median_delta=738.975378 viol(plane<sphere)=207
+
+Trial 86/100 seed=106159665292364662
+Elapsed time for computing randomConvexHullE3: 6.283066987991333
+Elapsed time for computing newton_packing (Orick's Newton method): 0.17334389686584473
+Elapsed time for computing canonical_spherical_layout: 49.01321077346802
+packing tangency residual=2.921e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000023 min_sphere=1.000000 min_delta=-1.295833 mean_delta=2587.152359 median_delta=664.924135 viol(plane<sphere)=30
+DFS                      110 CERTIFIED overlap(s), worst deficit=4.622e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0086_dfs_110overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0086_dfs_110overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0086_dfs_110overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-3.621968 min_sphere=1.000000 min_delta=-3070.020454 mean_delta=15079.327032 median_delta=3881.124095 viol(plane<sphere)=13596
+BFS                      5 CERTIFIED overlap(s), worst deficit=6.050e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0086_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0086_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0086_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.395024 min_sphere=1.000000 min_delta=-35.784718 mean_delta=2797.180803 median_delta=707.735663 viol(plane<sphere)=288
+
+Trial 87/100 seed=6959372063572749186
+Elapsed time for computing randomConvexHullE3: 6.297378778457642
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15020322799682617
+Elapsed time for computing canonical_spherical_layout: 49.40373516082764
+packing tangency residual=2.074e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000025 min_sphere=1.000000 min_delta=-6.188227 mean_delta=2397.039754 median_delta=691.706987 viol(plane<sphere)=9
+DFS                      39 CERTIFIED overlap(s), worst deficit=1.986e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0087_dfs_39overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0087_dfs_39overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0087_dfs_39overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.986336 min_sphere=1.000000 min_delta=-7754.007827 mean_delta=14357.134547 median_delta=3600.975175 viol(plane<sphere)=13245
+BFS                      5 CERTIFIED overlap(s), worst deficit=1.139e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0087_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0087_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0087_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.886061 min_sphere=1.000000 min_delta=-267.571573 mean_delta=2700.406041 median_delta=760.276734 viol(plane<sphere)=239
+
+Trial 88/100 seed=8167172120281484005
+Elapsed time for computing randomConvexHullE3: 6.3599419593811035
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15024876594543457
+Elapsed time for computing canonical_spherical_layout: 48.86150288581848
+packing tangency residual=1.185e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000052 min_sphere=0.999999 min_delta=-1.375663 mean_delta=2058.006428 median_delta=646.882953 viol(plane<sphere)=11
+DFS                      19 CERTIFIED overlap(s), worst deficit=6.394e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0088_dfs_19overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0088_dfs_19overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0088_dfs_19overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=0.360636 min_sphere=0.999999 min_delta=-7397.940923 mean_delta=11950.703761 median_delta=4339.138365 viol(plane<sphere)=7527
+BFS                      7 CERTIFIED overlap(s), worst deficit=1.534e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0088_bfs_7overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0088_bfs_7overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0088_bfs_7overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=-0.533884 min_sphere=0.999999 min_delta=-222.022444 mean_delta=2318.615156 median_delta=739.192455 viol(plane<sphere)=246
+
+Trial 89/100 seed=8636369378642212964
+Elapsed time for computing randomConvexHullE3: 6.341754913330078
+Elapsed time for computing newton_packing (Orick's Newton method): 0.17103099822998047
+Elapsed time for computing canonical_spherical_layout: 49.51171016693115
+packing tangency residual=1.706e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000037 min_sphere=0.999995 min_delta=-1.796577 mean_delta=3137.579142 median_delta=708.191667 viol(plane<sphere)=23
+DFS                      23 CERTIFIED overlap(s), worst deficit=1.813e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0089_dfs_23overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0089_dfs_23overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0089_dfs_23overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.813183 min_sphere=0.999996 min_delta=-5342.123590 mean_delta=22950.291149 median_delta=5730.128791 viol(plane<sphere)=4389
+BFS                      6 CERTIFIED overlap(s), worst deficit=1.866e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0089_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0089_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0089_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.813410 min_sphere=0.999995 min_delta=-1200.756180 mean_delta=3474.760186 median_delta=769.429174 viol(plane<sphere)=315
+
+Trial 90/100 seed=371214945477387408
+Elapsed time for computing randomConvexHullE3: 6.279250144958496
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14787793159484863
+Elapsed time for computing canonical_spherical_layout: 49.41038489341736
+packing tangency residual=3.144e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000034 min_sphere=0.999999 min_delta=-0.972174 mean_delta=2349.971402 median_delta=673.696975 viol(plane<sphere)=7
+DFS                      33 CERTIFIED overlap(s), worst deficit=2.444e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0090_dfs_33overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0090_dfs_33overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0090_dfs_33overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.443642 min_sphere=0.999999 min_delta=-26175.605471 mean_delta=23165.736221 median_delta=4963.022285 viol(plane<sphere)=16452
+BFS                      2 CERTIFIED overlap(s), worst deficit=6.110e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0090_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0090_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0090_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.938901 min_sphere=0.999999 min_delta=-11.438914 mean_delta=3057.445854 median_delta=716.047865 viol(plane<sphere)=198
+
+Trial 91/100 seed=1742098940807834616
+Elapsed time for computing randomConvexHullE3: 6.30837607383728
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15585088729858398
+Elapsed time for computing canonical_spherical_layout: 49.37314200401306
+packing tangency residual=2.384e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000015 min_sphere=0.999998 min_delta=-1.628102 mean_delta=2647.367188 median_delta=679.356519 viol(plane<sphere)=23
+DFS                      45 CERTIFIED overlap(s), worst deficit=2.469e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0091_dfs_45overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0091_dfs_45overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0091_dfs_45overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.469156 min_sphere=0.999998 min_delta=-32916.745056 mean_delta=22195.240623 median_delta=4794.345293 viol(plane<sphere)=23965
+BFS                      4 CERTIFIED overlap(s), worst deficit=1.914e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0091_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0091_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0091_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.808646 min_sphere=0.999998 min_delta=-17.039364 mean_delta=3295.217508 median_delta=720.530540 viol(plane<sphere)=233
+
+Trial 92/100 seed=4892566673031148119
+Elapsed time for computing randomConvexHullE3: 6.350267171859741
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1486968994140625
+Elapsed time for computing canonical_spherical_layout: 49.014424085617065
+packing tangency residual=2.533e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000066 min_sphere=1.000000 min_delta=-10.782916 mean_delta=2647.789261 median_delta=681.380608 viol(plane<sphere)=25
+DFS                      191 CERTIFIED overlap(s), worst deficit=7.178e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0092_dfs_191overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0092_dfs_191overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0092_dfs_191overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-6.177753 min_sphere=1.000000 min_delta=-24597.415327 mean_delta=16193.263317 median_delta=3507.034985 viol(plane<sphere)=16056
+BFS                      6 CERTIFIED overlap(s), worst deficit=1.035e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0092_bfs_6overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0092_bfs_6overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0092_bfs_6overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.896527 min_sphere=1.000000 min_delta=-13.904163 mean_delta=2537.181841 median_delta=732.165313 viol(plane<sphere)=144
+
+Trial 93/100 seed=3314510161191948442
+Elapsed time for computing randomConvexHullE3: 6.280147075653076
+Elapsed time for computing newton_packing (Orick's Newton method): 0.16913795471191406
+Elapsed time for computing canonical_spherical_layout: 48.675119161605835
+packing tangency residual=8.185e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000032 min_sphere=0.999999 min_delta=-2.948153 mean_delta=2650.323023 median_delta=670.390513 viol(plane<sphere)=15
+DFS                      54 CERTIFIED overlap(s), worst deficit=3.178e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0093_dfs_54overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0093_dfs_54overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0093_dfs_54overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-2.177936 min_sphere=0.999999 min_delta=-5501.717748 mean_delta=22263.981655 median_delta=5839.209246 viol(plane<sphere)=10928
+BFS                      5 CERTIFIED overlap(s), worst deficit=1.259e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0093_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0093_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0093_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.874148 min_sphere=0.999999 min_delta=-795.148990 mean_delta=2728.490593 median_delta=787.669817 viol(plane<sphere)=464
+
+Trial 94/100 seed=2046095201650856281
+Elapsed time for computing randomConvexHullE3: 6.219089984893799
+Elapsed time for computing newton_packing (Orick's Newton method): 0.19886112213134766
+Elapsed time for computing canonical_spherical_layout: 48.89523100852966
+packing tangency residual=1.852e-05
+STEEPEST_EDGE pairs=1122751 min_plane=1.000010 min_sphere=0.999981 min_delta=-1.309596 mean_delta=2943.725326 median_delta=690.503114 viol(plane<sphere)=11
+DFS                      25 CERTIFIED overlap(s), worst deficit=2.554e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0094_dfs_25overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0094_dfs_25overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0094_dfs_25overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.553634 min_sphere=0.999981 min_delta=-5328.460702 mean_delta=24964.279643 median_delta=6808.150921 viol(plane<sphere)=5526
+BFS                      1 CERTIFIED overlap(s), worst deficit=1.717e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0094_bfs_1overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0094_bfs_1overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0094_bfs_1overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.828324 min_sphere=0.999981 min_delta=-276.629791 mean_delta=3098.068921 median_delta=757.059082 viol(plane<sphere)=350
+
+Trial 95/100 seed=1014381525396438432
+Elapsed time for computing randomConvexHullE3: 6.332571268081665
+Elapsed time for computing newton_packing (Orick's Newton method): 0.15062689781188965
+Elapsed time for computing canonical_spherical_layout: 48.52678394317627
+packing tangency residual=6.867e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000092 min_sphere=0.999999 min_delta=-0.743271 mean_delta=2383.905063 median_delta=672.338971 viol(plane<sphere)=5
+DFS                      17 CERTIFIED overlap(s), worst deficit=1.905e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0095_dfs_17overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0095_dfs_17overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0095_dfs_17overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-0.905078 min_sphere=0.999999 min_delta=-4735.017662 mean_delta=21316.518419 median_delta=6192.329695 viol(plane<sphere)=7140
+BFS                      4 CERTIFIED overlap(s), worst deficit=3.253e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0095_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0095_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0095_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.674690 min_sphere=0.999999 min_delta=-48.235494 mean_delta=2752.877000 median_delta=715.190684 viol(plane<sphere)=432
+
+Trial 96/100 seed=2424527168775093447
+Elapsed time for computing randomConvexHullE3: 6.337989091873169
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14856910705566406
+Elapsed time for computing canonical_spherical_layout: 49.32747793197632
+packing tangency residual=2.292e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000033 min_sphere=1.000000 min_delta=-1.661946 mean_delta=2702.896287 median_delta=687.156840 viol(plane<sphere)=14
+DFS                      79 CERTIFIED overlap(s), worst deficit=7.398e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0096_dfs_79overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0096_dfs_79overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0096_dfs_79overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-6.397928 min_sphere=1.000000 min_delta=-40854.673493 mean_delta=15576.186828 median_delta=4437.637287 viol(plane<sphere)=14335
+BFS                      4 CERTIFIED overlap(s), worst deficit=3.491e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0096_bfs_4overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0096_bfs_4overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0096_bfs_4overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.650872 min_sphere=1.000000 min_delta=-26.900850 mean_delta=2763.973783 median_delta=702.488032 viol(plane<sphere)=178
+
+Trial 97/100 seed=8094564760137502598
+Elapsed time for computing randomConvexHullE3: 6.225341796875
+Elapsed time for computing newton_packing (Orick's Newton method): 0.17049479484558105
+Elapsed time for computing canonical_spherical_layout: 49.49146795272827
+packing tangency residual=7.702e-07
+STEEPEST_EDGE pairs=1122751 min_plane=1.000030 min_sphere=1.000000 min_delta=-0.741935 mean_delta=2379.471776 median_delta=695.418992 viol(plane<sphere)=26
+DFS                      54 CERTIFIED overlap(s), worst deficit=2.740e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0097_dfs_54overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0097_dfs_54overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0097_dfs_54overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.739687 min_sphere=1.000000 min_delta=-12150.196795 mean_delta=18279.053757 median_delta=5321.327928 viol(plane<sphere)=11905
+BFS                      5 CERTIFIED overlap(s), worst deficit=1.701e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0097_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0097_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0097_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.829932 min_sphere=1.000000 min_delta=-119.205619 mean_delta=2689.643288 median_delta=816.707684 viol(plane<sphere)=259
+
+Trial 98/100 seed=3686698499395441603
+Elapsed time for computing randomConvexHullE3: 6.269642114639282
+Elapsed time for computing newton_packing (Orick's Newton method): 0.150529146194458
+Elapsed time for computing canonical_spherical_layout: 49.43989682197571
+packing tangency residual=1.043e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000004 min_sphere=0.999999 min_delta=-4.306607 mean_delta=2357.329713 median_delta=656.045924 viol(plane<sphere)=12
+DFS                      55 CERTIFIED overlap(s), worst deficit=2.549e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0098_dfs_55overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0098_dfs_55overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0098_dfs_55overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.549291 min_sphere=0.999999 min_delta=-4865.438009 mean_delta=18370.523931 median_delta=4163.494021 viol(plane<sphere)=8512
+BFS                      2 CERTIFIED overlap(s), worst deficit=4.656e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0098_bfs_2overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0098_bfs_2overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0098_bfs_2overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.534417 min_sphere=0.999999 min_delta=-8.813314 mean_delta=2655.694633 median_delta=682.099970 viol(plane<sphere)=180
+
+Trial 99/100 seed=5910151150876385730
+Elapsed time for computing randomConvexHullE3: 6.319809913635254
+Elapsed time for computing newton_packing (Orick's Newton method): 0.14885306358337402
+Elapsed time for computing canonical_spherical_layout: 49.284706115722656
+packing tangency residual=5.116e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000062 min_sphere=0.999996 min_delta=-1.195009 mean_delta=2223.080023 median_delta=671.564975 viol(plane<sphere)=37
+DFS                      67 CERTIFIED overlap(s), worst deficit=2.607e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0099_dfs_67overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0099_dfs_67overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0099_dfs_67overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.606558 min_sphere=0.999996 min_delta=-4940.194123 mean_delta=16964.289466 median_delta=3839.717543 viol(plane<sphere)=18505
+BFS                      5 CERTIFIED overlap(s), worst deficit=2.574e-01
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0099_bfs_5overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0099_bfs_5overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0099_bfs_5overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.742620 min_sphere=0.999995 min_delta=-188.474404 mean_delta=2889.531847 median_delta=668.674396 viol(plane<sphere)=215
+
+Trial 100/100 seed=9137951233234673777
+Elapsed time for computing randomConvexHullE3: 6.285431861877441
+Elapsed time for computing newton_packing (Orick's Newton method): 0.1508190631866455
+Elapsed time for computing canonical_spherical_layout: 49.45611310005188
+packing tangency residual=9.009e-06
+STEEPEST_EDGE pairs=1122751 min_plane=1.000030 min_sphere=0.999996 min_delta=-3.787522 mean_delta=2078.322774 median_delta=655.888625 viol(plane<sphere)=15
+DFS                      1 overlap(s) within packing noise (residual=9.009e-06) - NOT counted as real
+DFS                      75 CERTIFIED overlap(s), worst deficit=2.179e+00
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0100_dfs_76overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0100_dfs_76overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0100_dfs_76overlaps_1500verts_metadata.txt
+DFS  pairs=1122751 min_plane=-1.179491 min_sphere=0.999991 min_delta=-4545.162987 mean_delta=20702.333028 median_delta=6204.611819 viol(plane<sphere)=8729
+BFS                      3 CERTIFIED overlap(s), worst deficit=8.748e-02
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0100_bfs_3overlaps_1500verts_packing.pkl
+  Saved overlapping DCEL: overlapping_packings/base1790184832759178000_trial0100_bfs_3overlaps_1500verts_unfolding.pkl
+  Saved metadata: overlapping_packings/base1790184832759178000_trial0100_bfs_3overlaps_1500verts_metadata.txt
+BFS  pairs=1122751 min_plane=0.912525 min_sphere=0.999991 min_delta=-13.076244 mean_delta=2485.788297 median_delta=713.627513 viol(plane<sphere)=194
+
+Aggregate
+STEEPEST_EDGE avg_pairs=1122751.0 avg_min_plane=1.000031 avg_min_sphere=0.999997 avg_min_delta=-2.985545 avg_mean_delta=2526.149616 avg_median_delta=672.265710 avg_viol=16.78
+DFS  avg_pairs=1122751.0 avg_min_plane=-2.797704 avg_min_sphere=0.999997 avg_min_delta=-25986.704112 avg_mean_delta=20456.153455 avg_median_delta=5195.931022 avg_viol=11461.24
+BFS  avg_pairs=1122751.0 avg_min_plane=0.716978 avg_min_sphere=0.999996 avg_min_delta=-81.574965 avg_mean_delta=2944.308810 avg_median_delta=741.045635 avg_viol=222.60
+
+Violation localization (rate by bin):
+STEEPEST_EDGE depth[early:171/12780108(0.0000) mid:1113/75653240(0.0000) late:394/23841752(0.0000)] order[early:161/12425100(0.0000) mid:509/37425000(0.0000) late:1008/62425000(0.0000)]
+DFS  depth[early:401115/10308999(0.0389) mid:149952/34133796(0.0044) late:595057/67832305(0.0088)] order[early:448949/12425100(0.0361) mid:107030/37425000(0.0029) late:590145/62425000(0.0095)]
+BFS  depth[early:1015/3743051(0.0003) mid:10856/44644652(0.0002) late:10389/63887397(0.0002)] order[early:3527/12425100(0.0003) mid:9226/37425000(0.0002) late:9507/62425000(0.0002)]
+
+Reproducibility seed record
+base_seed=1790184832759178000
+trial_seeds=[6413397404940542553, 8959654010396178345, 3351085715199464496, 3732583323848299802, 1390845137665045149, 2989053615273573838, 4775486439448133031, 8694516108146728737, 1389004102109873387, 1842128750138304527, 2606272041393647879, 8942630373204010552, 8537618541185423047, 7120473799224613747, 8929811877126082036, 2127854224580855757, 8674846704181861005, 4834892672411001602, 4699887100244660065, 5005236397009794220, 4378648649719540856, 7636370006120797076, 3042604979567025397, 6543412802997874999, 4384301719290692380, 6566873676024726475, 5471282679605648046, 8764977479338594647, 6220206136202535912, 9093254768134781790, 6247613969580995298, 5424320764851651855, 8260222591295672775, 4680151618992639317, 7167596089142818742, 6969263311526103164, 4605485081868171753, 4971083489374626988, 8635764439659194209, 3202245990058088462, 3255773258619246728, 2508897227714486398, 1156264573095747009, 8329617986206032381, 979793212101036386, 506190325885617661, 4501807776463982385, 3029703036988654613, 6175158341770149455, 964159007840712029, 8969669901179768420, 5363681628884199990, 4008609483652790022, 2761540582796036697, 4103024821784146369, 8919966808661574273, 4530572456795211933, 5299340067352578660, 8458818344570498203, 3848932787934124453, 8347139559412496211, 8514643909793583461, 1376085001909172549, 6697199596095082467, 7568216833775745453, 4594476558560835096, 3152908016553797427, 8378089496139982729, 5897183995598795932, 2534977708743796532, 362347119293670412, 221283158767449245, 3527507540679704824, 1842676979802328090, 7728232240299770564, 8246331580901531205, 2460267416727825222, 2006910397880510009, 5734068021392928056, 1485905269102954961, 8837013868932953024, 8307845260272486820, 5549224317604618360, 4690040412222019107, 701949602226783324, 106159665292364662, 6959372063572749186, 8167172120281484005, 8636369378642212964, 371214945477387408, 1742098940807834616, 4892566673031148119, 3314510161191948442, 2046095201650856281, 1014381525396438432, 2424527168775093447, 8094564760137502598, 3686698499395441603, 5910151150876385730, 9137951233234673777]
+
+203 overlapping DCEL(s) saved to 'overlapping_packings/'
+
+Saved 300 trial metric row(s) to 'scaling_sweep_data/quick_n1500_trials.csv'
+Saved 150000 pair margin row(s) to 'scaling_sweep_data/quick_n1500_pairs.csv'
